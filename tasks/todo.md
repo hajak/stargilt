@@ -828,3 +828,20 @@ Late-boss tuning deferred: almost all human data is pre-v0.8 (cap-7 era); need v
 - DEFERRED to user (parked, not built): (a) free-Act-1-mercy is a judgment call — pull it if it feels wrong;
   (b) run persistence + CONTINUE (state is session-only, a mid-run close loses 30-60 min); (c) tally speed-up
   for 10+ card late chains.
+
+## Round 41 — v0.8.5: run persistence + auto tally speed-up (2026-07-17)
+The two parked playtest items.
+- [x] (1) RUN PERSISTENCE: autosave to localStorage `ch-sg-save` at each turn boundary (saveRun() before dealCards,
+      state clean). Start menu shows CONTINUE (primary, first: "resume · Act N, turn T, NNN★") when a save exists for
+      THIS device's player (localStorage name match — session name is blank on a reopened tab); PLAY drops to "a new
+      run". restoreRun() rebuilds deck/discard/relics(+shattered)/market/kingdom/commissions/counters/twist; boot()
+      restore hook after initMarket, guarded by wantRestore. Forged cards (coin_f/coin_f_f) rebuilt via new
+      defFromId() (base root + forgedDefOf per _f; null → card dropped, graceful for old saves). clearRun() on death +
+      RESTART; KEPT on QUIT-to-menu (leave & resume). "THE FORGE REMEMBERS YOU" slam on resume.
+- [x] (2) AUTO TALLY SPEED-UP: endTurn's tw() gains actScale — Acts 1-2 full ceremony, Act 3+ (turn 13+) delays
+      ×0.45 (~2.2× faster). Fixes the long-late-chain drag (per-card loop ran 10-15× every turn). Click-to-rush
+      (40ms cap) still layers on top. Mercy/charm dramatic beats (raw wait()) untouched.
+- Tests: v085test (13: save shape, forged round-trip, CONTINUE menu+note+demotion, exact resume, death-clears,
+      Act-3 boundary + scaling wired), full regression (v084 7, burn 8, v080 12, v069 14, scores 46, card-overflow
+      clean). git committed. NOTE: v084 menu-order query updated to filter hidden items (CONTINUE is always in the DOM).
+- Both parked items from the playtest report (Round 40) are now DONE.
