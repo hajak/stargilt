@@ -857,3 +857,22 @@ The two parked playtest items.
       name prompt, and asserts a resumed Bazaar card is BUYABLE (deck grows) + slots wired to state. 14/14.
 - Verified: resumed board screenshot shows a real interactive Bazaar; full regression clean; git committed; deployed.
 - PENDING (user will send): a list of design improvements — parked for now.
+
+## Round 43 — v0.9.0: six UI/balance improvements (2026-07-17)
+- [x] (1) Deck+Discard piles → upper-right HUD (position:fixed, top:76px, below END TURN) so a big hand fan no
+      longer occludes them. anchor()/screenXY() read live rects → all fly-to-pile animations follow, no anim change.
+- [x] (2) Pile view TABS: ALL / DRAW / DISCARD / PLAYED (pvTab + pvSource() filter; PLAYED is view-only).
+- [x] (3) ENTER → endTurn (new keydown handler, guarded vs INPUT/TEXTAREA, every overlay .on, burnMode/inspectCtx/
+      boonResolve, and #endturn.disabled; endTurn re-checks busy/gameOver/burnMode).
+- [x] (4) LATE-GAME MATH (the wall): demand is geometric (×1.28) but score is ~linear×capped-mult → t42-48 needed
+      ~68k base★ (impossible). FIX: (a) demand TAPER — pure 1.28 through t18 (Acts 1-3 byte-identical), then 1.13/turn
+      (DEMAND_KNEE=19, DEMAND_LATE_RATE=1.13); t48 4.1M→97k (~676 base★, reachable). (b) MULT cap RISES: effMultCap()
+      = 15 + 3×bossesCleared + benchSum('capBonus') (15→36 by final boss), routed through computeScore + meter +
+      reveal. (c) 2 optional stacking cap relics — furnaceregulator (capBonus:4, T2), unboundforge (capBonus:8, T3);
+      new capBonus field in the 3 relic-text renderers. Not mandatory (cap already rises per boss). Math verified.
+- [x] (5) .gm-back links restyled: dotted-underline text (old-HTML look) → gold ghost pill (border, radius, gradient).
+- [x] (6) Playtime → ACTIVE time: Telemetry.elapsed() now accumulates only visible spans (pauses on
+      visibilitychange:hidden), so idle open-tab time no longer inflates it. Admin relabelled "Active time" (foreground
+      only). aggregate.js unchanged. NOTE: Erik's 14h55m WAS open-tab wall-clock incl. idle — new data is accurate.
+- Tests: v090test (13), full regression (v085 14, v084 7, burn 8, v080 12, v069 14, scores 46, admin 32) + overflow
+      clean (2 new relics). git committed; deployed.
