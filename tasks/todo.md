@@ -876,3 +876,12 @@ The two parked playtest items.
       only). aggregate.js unchanged. NOTE: Erik's 14h55m WAS open-tab wall-clock incl. idle — new data is accurate.
 - Tests: v090test (13), full regression (v085 14, v084 7, burn 8, v080 12, v069 14, scores 46, admin 32) + overflow
       clean (2 new relics). git committed; deployed.
+
+## Round 44 — v0.9.1 bugfix + dopamine design handoff (2026-07-17)
+- [x] v0.9.1 BUGFIX: deck/discard piles jumped when playing a card — v0.9.0 made them position:fixed inside #app,
+      and shake() transforms #app → a fixed element re-anchors to the transformed ancestor (containing-block flip),
+      snapping the piles each shake. Fixed: position:absolute + direct children of #app (they ride the shake).
+      pilejumptest.mjs (5) + full regression green; deployed.
+- [ ] DOPAMINE & JUICE OVERHAUL — designed via a 6-agent research workflow + adversarial critique; spec in
+      tasks/dopamine-plan.md (approved: whole system, bold-tiered, evolving music; critique bugs B1-B4 folded in).
+      HANDOVER.md written. User switching models to build it. NOT STARTED.
