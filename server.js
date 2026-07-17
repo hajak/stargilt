@@ -396,7 +396,9 @@ async function handle(req, res) {
     return res.end(gatePage(false));
   }
   const file = path.normalize(path.join(ROOT, urlPath));
-  if (!file.startsWith(ROOT)) { res.writeHead(403); return res.end('forbidden'); }
+  // Must live strictly INSIDE ROOT: require the trailing separator so a sibling dir sharing ROOT's
+  // name prefix (e.g. `<ROOT>-secret/`) can't satisfy a bare startsWith and leak files.
+  if (file !== ROOT && !file.startsWith(ROOT + path.sep)) { res.writeHead(403); return res.end('forbidden'); }
   fs.readFile(file, (err, data) => {
     if (err) { res.writeHead(404); return res.end('not found'); }
     res.writeHead(200, {

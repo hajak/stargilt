@@ -266,7 +266,7 @@ canvas.fxcanvas{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:n
 #tithe .ts-mult{font-weight:800;color:#ff8a5c}
 #tithe .ts-mult b{font-size:1.35rem;color:#ff8a5c;text-shadow:0 0 12px rgba(255,110,60,.55)}
 /* MULT ceiling: a quiet "/7" denominator that the player can learn, flipping to a gold "MAX" when the additive bucket caps */
-#tithe .ts-mult .cap-hint{display:none;font-size:.62rem;font-weight:700;color:var(--dim);letter-spacing:.02em;margin-left:.12em;vertical-align:.35em}
+#tithe .ts-mult .cap-hint{display:none;font-size:.56rem;font-weight:700;color:var(--dim);letter-spacing:.06em;margin-left:.4em;vertical-align:.4em;opacity:.72;text-transform:uppercase}
 #tithe .ts-mult.showcap .cap-hint{display:inline}
 #tithe .ts-mult.capped b{color:#ffd257;text-shadow:0 0 14px rgba(255,210,87,.85)}
 #tithe .ts-mult.capped .cap-hint{color:#ffd257;font-weight:800;opacity:1}
@@ -520,8 +520,10 @@ body:has(#mrdraft.on) #cardlayer,body:has(#mrdraft.on) #combobadge{opacity:.16;t
 
 /* ── game over ─────────────────────────────────────── */
 #gameover{position:fixed;inset:0;z-index:260;display:flex;align-items:center;justify-content:center;
-  background:radial-gradient(circle at 50% 46%,rgba(30,8,4,.6),rgba(4,2,6,.94));
+  /* v0.8.4: opaque enough that the still-bright board/hand behind the ceremony stop competing with the stats + honor roll */
+  background:radial-gradient(circle at 50% 46%,rgba(30,8,4,.9),rgba(3,1,5,.98));
   opacity:0;pointer-events:none;transition:opacity .8s}
+#gameover.win{background:radial-gradient(circle at 50% 44%,rgba(46,30,6,.9),rgba(3,1,5,.98))}
 #gameover.show{opacity:1;pointer-events:auto}
 #gorays{position:absolute;width:900px;height:900px;border-radius:50%;
   background:repeating-conic-gradient(rgba(180,70,40,.1) 0deg 6deg, transparent 6deg 18deg);
@@ -1135,6 +1137,13 @@ body.boss-turn #tithe .t-label{color:var(--boss-c,#ff7a52)}
 .sm-item .sm-key{font-family:var(--sans);font-weight:800;font-size:1.05rem;letter-spacing:.18em;color:var(--gold-bright)}
 .sm-item.ghost{background:none;border-color:rgba(232,182,76,.16)}
 .sm-item.ghost .sm-key{color:var(--dim-bright);font-size:.92rem}
+/* v0.8.4: PLAY is the primary action — gold-filled, above LEARN (the optional tutorial) */
+.sm-item.primary{background:linear-gradient(172deg,#ffe3a0,#e8b64c 55%,#c8923a);border-color:#f5d78e;
+  box-shadow:0 10px 30px rgba(232,182,76,.25)}
+.sm-item.primary .sm-key{color:#241703}
+.sm-item.primary:hover{box-shadow:0 14px 36px rgba(232,182,76,.4),0 0 26px rgba(232,182,76,.3)}
+.sm-item{flex-direction:column;align-items:flex-start;gap:.15rem}
+.sm-item .sm-note{font-family:var(--sans);font-weight:600;font-size:.62rem;letter-spacing:.06em;color:var(--dim)}
 /* pause every menu flourish while the title screen is hidden — no rAF/paint cost during a game */
 #startmenu:not(.on) .sm-forge,#startmenu:not(.on) .sm-heat,
 #startmenu:not(.on) .sm-embers b,#startmenu:not(.on) .sm-title{animation-play-state:paused}
@@ -1271,7 +1280,7 @@ body.boss-turn #tithe .t-label{color:var(--boss-c,#ff7a52)}
         <div class="t-score">
           <span class="ts-base"><b id="t-stars">0</b>★</span>
           <span class="ts-x">×</span>
-          <span class="ts-mult"><b id="t-mult">1</b><span class="cap-hint" id="t-cap">/7</span></span>
+          <span class="ts-mult"><b id="t-mult">1</b><span class="cap-hint" id="t-cap">cap 15</span></span>
           <span class="ts-keystone" id="t-keystone"></span>
           <span class="ts-hand"><span class="ts-plus">+</span><b id="t-hand">0</b>★</span>
           <span class="ts-eq" id="t-eq">=</span>
@@ -1415,8 +1424,8 @@ body.boss-turn #tithe .t-label{color:var(--boss-c,#ff7a52)}
       <p class="sm-tag">FEED THE FORGE</p>
       <div class="sm-rule"></div>
       <nav class="sm-nav">
-        <button id="sm-learn" class="sm-item"><span class="sm-key">LEARN</span></button>
-        <button id="sm-play" class="sm-item"><span class="sm-key">PLAY</span></button>
+        <button id="sm-play" class="sm-item primary"><span class="sm-key">PLAY</span></button>
+        <button id="sm-learn" class="sm-item"><span class="sm-key">LEARN</span><span class="sm-note">the optional tutorial</span></button>
         <button id="sm-scores" class="sm-item"><span class="sm-key">HIGHSCORE</span></button>
         <button id="sm-quit" class="sm-item ghost"><span class="sm-key">QUIT</span></button>
       </nav>
@@ -1464,7 +1473,7 @@ body.boss-turn #tithe .t-label{color:var(--boss-c,#ff7a52)}
 <script>
 'use strict';
 /* ═══════════════════ utils ═══════════════════ */
-const BUILD='chapters · v0.8.3'; // v0.8.3: BURN needs a CONFIRM — the picked card zooms to centre wearing a big BURN button (+★ shown), CANCEL keeps the prompt armed, SKIP BURN spares everything; coach follows in ('BURN IT'). Fixes mis-click incinerations from a crowded hand. Relic mounts (rack buys + master drafts) now ride the ch_run card tally (cards.relics) for the admin Compare tab. // v0.8.2: card-corner wedges fixed — the .foot/.nameplate scrims and the .cardo hot-glow shadow painted SQUARE corners past the 12px cardface radius (face can't clip: badges must overflow); all three now carry the matching radius. // v0.8.1: removed the stranded 'PLAYED ×N' pill (v0.3 tight-stack relic left floating in empty space after the v0.7.2 cluster move; COMBO ×N already shows the chain). v0.8.0 BALANCE (v0.7.0 overshot — too easy): the six ungated mythics now gate properly — leviathan/abyss deep (rank 2), dragon/incarnate/mirrortwin deep+afterBoss:2 (t12+), THE GILDED FRACTAL (the ×1.5 xMult exploder that landed in Act 1-2) deep+afterBoss:3 (t18+). DEMAND_BASE 10.4→11.7 (half the v0.7 cut restored, −10% vs original). NEW Dross-for-power T1 wares (strong + 1❖ to play, each play silts a Dross): Pyre Bloom (c4, 4★), Silt Dredger (c5, 3★ +draw2), Ashgilt Idol (c5, 3★ +2⬤). NEW mid burn-engine The Twin Pyre (c5 cantrip, +1❖, burn 1, afterBoss:1) — Altar → Twin Pyre → Great Kiln. v0.7.2: the played-card cluster occludes less — anchor 45%→55% (sits low on the board) and rows are 8 wide (was 5), so a 15-card chain is 2 short rows instead of a 3-row wall across the centre. v0.7.1: § debug is keyboard-only — removed the corner tap element (no clickable trace on screen). v0.7.0 BALANCE: MULT_CAP 7→15 (the ×7 ceiling could not answer the late-boss curve), DEMAND_BASE 13→10.4 (flat −20%, playtest verdict), and three SCALING star engines so base ★ can grow with the run — Ashfall Reliquary (rare, +1★/card burned this run), Crown of Hours (mythic, +1★×turn number), Anvil of the Green World (mythic, +1★/card played); new syn kinds starPerBurn/starPerTurn in starsFor(). Admin: Forge Console redesign (funnels, demand-vs-score chart, clear-rate bars, live feed, per-player run timelines via /api/admin/balance?cid= + /api/admin/events). v0.6.9: (1) pile-view recede fixed — dim/pop now keyed to the card actually under the pointer via JS classes (.receding/.hot), not container :hover; resting the mouse between cards (or a forge re-render under a still pointer) no longer washes out every card with nothing popped. (2) § secret debug — press § or click the faint corner § → copyable JSON dump of the exact game state (build, run, piles, score, overlays, ch-* storage, recent errors via an early error ring buffer) for bug reports. (3) admin: "Furthest" split into Learn (tutorial funnel: skipped/started/Trial N/Graduated) and Game (real-run depth: just looked/started/Act N·turn/Forged ★) so tutorial adoption is visible. v0.6.8: SHARED honor roll — run scores post to /api/score (cid+per-run rid; a win that rolls into an Endless death keeps ONE slot at its peak) and the HIGHSCORE panel + game-over board show the global top 10 from /api/scores, own rows highlighted via a server-computed `me` flag (raw cids never leave the server). localStorage board unchanged as the offline/test fallback; net is gated by Telemetry.off so :5713/file:// stay silent. v0.6.7 (test-player fixes): (1) a Boon is a free reward — a stray backdrop click no longer discards it; only a card or DECLINE dismisses. (2) the end-turn MULT reveal no longer overshoots the cap then snaps down (showed ×58=13456 → ×14=3262); the meter now climbs only to the true capped total, AND the ×7 MULT cap is made legible — a persistent "/7 max" on the MULT meter that turns gold "MAX" at the cap, a "★ MULT MAXED · ×7" callout the instant you hit it, and the keystone (× bucket) shown as its own ⚡×N chip. v0.6.6 (pile view): hovering a card now recedes its neighbours (opacity .38) so their gold forge buttons / count badges stop peeking past the enlarged card's corners (the "yellow corner"), and the popped card wears a tighter gold lift-shadow (negative spread) with a softer count-badge drop — fixes the black-box/yellow-corner hover-zoom artifacts. v0.6.5 (pile view): hover-zoom no longer clips an edge card (grid overflow visible while the deck fits, real scroll box only on genuine overflow); cards vertically centred when the deck fits; removed the redundant forge-preview eye button; dropped the dark card-name scrim that read as a black frame across the top of the enlarged pile-view cards. v0.6.4: PLAY is open from the first visit — removed the Learn-before-Play lock (LEARN is now an optional tutorial). v0.6.3: server-side "Mellon" password gate for the private playtest (removed the misbuilt invite button). v0.6.2: full-screen pile view, Ledger buff, card-usage telemetry, Learn gate + deep sweep
+const BUILD='chapters · v0.8.4'; // v0.8.4 (playtest pass): FREE Act-1 first-miss mercy — the Forge forgives an apprentice once (prod data: Boss 1 killed 44% of Erik's runs, once by 2★, while barely touching Hampus); does NOT count as clearing. BUGFIX: opening market ignored afterBoss (Twin Pyre seeded turn 1) — pickReverie now filters both gates. POLISH: game-over backdrop opaque (was competing with the bright board), MULT cap reads 'cap 15' not '/15' (slash misread as a fraction), start menu PLAY primary+first above LEARN (optional tutorial). SECURITY: static-file guard requires ROOT+sep (sibling-prefix dir couldn't leak, now can't at all). // v0.8.3: BURN needs a CONFIRM — the picked card zooms to centre wearing a big BURN button (+★ shown), CANCEL keeps the prompt armed, SKIP BURN spares everything; coach follows in ('BURN IT'). Fixes mis-click incinerations from a crowded hand. Relic mounts (rack buys + master drafts) now ride the ch_run card tally (cards.relics) for the admin Compare tab. // v0.8.2: card-corner wedges fixed — the .foot/.nameplate scrims and the .cardo hot-glow shadow painted SQUARE corners past the 12px cardface radius (face can't clip: badges must overflow); all three now carry the matching radius. // v0.8.1: removed the stranded 'PLAYED ×N' pill (v0.3 tight-stack relic left floating in empty space after the v0.7.2 cluster move; COMBO ×N already shows the chain). v0.8.0 BALANCE (v0.7.0 overshot — too easy): the six ungated mythics now gate properly — leviathan/abyss deep (rank 2), dragon/incarnate/mirrortwin deep+afterBoss:2 (t12+), THE GILDED FRACTAL (the ×1.5 xMult exploder that landed in Act 1-2) deep+afterBoss:3 (t18+). DEMAND_BASE 10.4→11.7 (half the v0.7 cut restored, −10% vs original). NEW Dross-for-power T1 wares (strong + 1❖ to play, each play silts a Dross): Pyre Bloom (c4, 4★), Silt Dredger (c5, 3★ +draw2), Ashgilt Idol (c5, 3★ +2⬤). NEW mid burn-engine The Twin Pyre (c5 cantrip, +1❖, burn 1, afterBoss:1) — Altar → Twin Pyre → Great Kiln. v0.7.2: the played-card cluster occludes less — anchor 45%→55% (sits low on the board) and rows are 8 wide (was 5), so a 15-card chain is 2 short rows instead of a 3-row wall across the centre. v0.7.1: § debug is keyboard-only — removed the corner tap element (no clickable trace on screen). v0.7.0 BALANCE: MULT_CAP 7→15 (the ×7 ceiling could not answer the late-boss curve), DEMAND_BASE 13→10.4 (flat −20%, playtest verdict), and three SCALING star engines so base ★ can grow with the run — Ashfall Reliquary (rare, +1★/card burned this run), Crown of Hours (mythic, +1★×turn number), Anvil of the Green World (mythic, +1★/card played); new syn kinds starPerBurn/starPerTurn in starsFor(). Admin: Forge Console redesign (funnels, demand-vs-score chart, clear-rate bars, live feed, per-player run timelines via /api/admin/balance?cid= + /api/admin/events). v0.6.9: (1) pile-view recede fixed — dim/pop now keyed to the card actually under the pointer via JS classes (.receding/.hot), not container :hover; resting the mouse between cards (or a forge re-render under a still pointer) no longer washes out every card with nothing popped. (2) § secret debug — press § or click the faint corner § → copyable JSON dump of the exact game state (build, run, piles, score, overlays, ch-* storage, recent errors via an early error ring buffer) for bug reports. (3) admin: "Furthest" split into Learn (tutorial funnel: skipped/started/Trial N/Graduated) and Game (real-run depth: just looked/started/Act N·turn/Forged ★) so tutorial adoption is visible. v0.6.8: SHARED honor roll — run scores post to /api/score (cid+per-run rid; a win that rolls into an Endless death keeps ONE slot at its peak) and the HIGHSCORE panel + game-over board show the global top 10 from /api/scores, own rows highlighted via a server-computed `me` flag (raw cids never leave the server). localStorage board unchanged as the offline/test fallback; net is gated by Telemetry.off so :5713/file:// stay silent. v0.6.7 (test-player fixes): (1) a Boon is a free reward — a stray backdrop click no longer discards it; only a card or DECLINE dismisses. (2) the end-turn MULT reveal no longer overshoots the cap then snaps down (showed ×58=13456 → ×14=3262); the meter now climbs only to the true capped total, AND the ×7 MULT cap is made legible — a persistent "/7 max" on the MULT meter that turns gold "MAX" at the cap, a "★ MULT MAXED · ×7" callout the instant you hit it, and the keystone (× bucket) shown as its own ⚡×N chip. v0.6.6 (pile view): hovering a card now recedes its neighbours (opacity .38) so their gold forge buttons / count badges stop peeking past the enlarged card's corners (the "yellow corner"), and the popped card wears a tighter gold lift-shadow (negative spread) with a softer count-badge drop — fixes the black-box/yellow-corner hover-zoom artifacts. v0.6.5 (pile view): hover-zoom no longer clips an edge card (grid overflow visible while the deck fits, real scroll box only on genuine overflow); cards vertically centred when the deck fits; removed the redundant forge-preview eye button; dropped the dark card-name scrim that read as a black frame across the top of the enlarged pile-view cards. v0.6.4: PLAY is open from the first visit — removed the Learn-before-Play lock (LEARN is now an optional tutorial). v0.6.3: server-side "Mellon" password gate for the private playtest (removed the misbuilt invite button). v0.6.2: full-screen pile view, Ledger buff, card-usage telemetry, Learn gate + deep sweep
 const $=s=>document.querySelector(s);
 /* ── error ring buffer (feeds the § debug dump) — installed first so nothing escapes it ── */
 window.__sgErrLog=[];
@@ -2408,6 +2417,7 @@ const state={
   busy:false,hoverIdx:-1,market:[],pendingEffects:[],
   tithe:6,gameOver:false,burned:0,boonsClaimed:0,relics:[],commissions:[],
   twist:null,bossesCleared:0,usedTwists:[],endless:false,pendingVictory:false, // chapters
+  act1Mercy:false, // v0.8.4: the one free first-miss forgiveness (Act 1 only) — spent or not
 };
 const isFreePlay=def=>!TRIAL.focusOn||!!(def.treasure||def.cantrip); // trial I: everything plays free
 // v0.4 #8: impressive cards cost 2 ❖ (rare/mythic or cost≥6); ordinary cards cost 1; free-play cards cost 0.
@@ -2694,7 +2704,7 @@ function updateTitheMeter(sc){
     $('#t-mult').textContent=fmtMult(addShown);
     tsMult.classList.add('showcap');
     tsMult.classList.toggle('capped',maxed);
-    capHint.textContent=maxed?'MAX':'/'+MULT_CAP;
+    capHint.textContent=maxed?'MAX':'cap '+MULT_CAP; // v0.8.4: "cap 15" not "/15" — the slash read as a fraction (×3.85 fifteenths)
     if(s.x>1){ks.textContent='⚡×'+fmtMult(Math.min(X_CAP,s.x));ks.classList.add('on');}
     else ks.classList.remove('on');
   }else{
@@ -4020,7 +4030,7 @@ async function payGains(g,s){
 /* ── the Reverie: this run's kingdom, Dominion-style ── */
 function pickReverie(){
   if(TRIAL.kingdomIds)return TRIAL.kingdomIds.map(id=>DB[id]);
-  const pool=MARKET_POOL.filter(d=>!d.deep); // the deep tier arrives with rank
+  const pool=MARKET_POOL.filter(d=>!d.deep&&!d.afterBoss); // v0.8.4: the opening market must respect BOTH gates — afterBoss cards (Twin Pyre) were seeding turn 1
   const take=pred=>{
     const c=pool.filter(pred);
     if(!c.length)return null;
@@ -4529,8 +4539,24 @@ async function endTurn(){
   await tw(350);
   if(inTrial()&&state.glory>=TRIAL.goal)return trialVictory(); // the goal outranks the judgment
   if(turnGlory<state.tithe){
-    // Mercy is no longer free — it's a charm you bought (mercyCharge). If you hold one, it shatters and forgives
-    // this miss; with none left, the run ends. (v0.3 #4 — replaces the auto-armed heart.)
+    // v0.8.4: the Forge forgives an apprentice ONCE — a free first-miss mercy, Act 1 only.
+    // Prod data: Boss 1 killed 44% of Erik's attempts (once 2★ short) while barely touching Hampus —
+    // this softens the newcomer floor without changing mid/late difficulty. Charms stay the real insurance.
+    // Like a charm, forgiveness does NOT count as clearing a boss.
+    if(!state.act1Mercy&&actOf(state.turn)===1&&chapterMode()){
+      state.act1Mercy=true;
+      Music.duckNow(.15,2);
+      flashWash('rgba(232,182,76,.25)');
+      await wait(400);
+      slamText('THE FORGE FORGIVES — ONCE',{color:'#ffd98a',size:2.5});
+      AudioFX.strum(392,3);
+      await wait(1000);
+      slamText('AN APPRENTICE MAY STUMBLE · NOT TWICE',{color:'#c07a5a',size:1.5});
+      AudioFX.tone({f:66,f2:24,type:'sine',dur:1.2,g:.4});
+      await wait(500);
+    }else{
+    // Mercy is no longer free past Act 1 — it's a charm you bought (mercyCharge). If you hold one, it shatters
+    // and forgives this miss; with none left, the run ends. (v0.3 #4 — replaces the auto-armed heart.)
     const charm=state.relics.find(r=>r.def.mercyCharge&&!r.shattered);
     if(!charm)return gameOverSequence(turnGlory);
     charm.shattered=true; // v0.6 #2: the charm crumbles but STAYS on the bench (cracked) — a visible tally of how many you've spent
@@ -4546,6 +4572,7 @@ async function endTurn(){
     slamText(state.relics.some(r=>r.def.mercyCharge&&!r.shattered)?'IT FORGIVES THE MISS':'BUY ANOTHER AT THE BAZAAR',{color:'#c07a5a',size:1.6});
     AudioFX.tone({f:66,f2:24,type:'sine',dur:1.2,g:.4});
     await wait(500);
+    }
   }else{
     const surplus=turnGlory-state.tithe;
     slamText(surplus>=state.tithe?`THE FORGE FEASTS · ${surplus} ★ OVER`:'TITHE PAID',
