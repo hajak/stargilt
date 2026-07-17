@@ -483,7 +483,7 @@ function renderStats(o, players) {
     <div class="stat"><div class="k">Full runs</div><div class="v num">${o.totalFullGames}</div><div class="sub">${o.totalTrials} trial runs</div></div>
     <div class="stat"><div class="k">Forged (won)</div><div class="v num">${wins}<em> / ${withRuns.length}</em></div><div class="sub">${withRuns.length ? Math.round(100 * wins / withRuns.length) + '% of players with runs' : 'no runs yet'}</div></div>
     <div class="stat"><div class="k">Median depth</div><div class="v num">${medDepth ? 't' + medDepth : '—'}</div><div class="sub">${medDepth ? 'Act ' + Math.min(8, Math.ceil(medDepth / 6)) + ' of 8' : 'best turn reached'}</div></div>
-    <div class="stat"><div class="k">Playtime</div><div class="v num">${fmtDur(o.totalPlaytimeMs)}</div><div class="sub">across all sessions</div></div>
+    <div class="stat"><div class="k">Active time</div><div class="v num">${fmtDur(o.totalPlaytimeMs)}</div><div class="sub">foreground only (excl. idle tabs)</div></div>
     <div class="stat"><div class="k">Countries</div><div class="v num">${cty.length}</div><div class="chips">${cty.slice(0, 4).map(([c, n]) => `<span class="chip">${esc(c)} · ${n}</span>`).join('') || '<span class="sub">unknown</span>'}</div></div>
     <div class="stat"><div class="k">Builds</div><div class="v num">${o.builds.length}</div><div class="chips">${o.builds.slice(0, 3).map((b) => `<span class="chip">${esc(b.replace('chapters · ', ''))}</span>`).join('')}</div></div>`;
 }
@@ -760,7 +760,7 @@ const COLS = [
   ['bestGlory', 'Best', (p) => (p.bestGlory ? `<span class="glory num">${p.bestGlory} ★</span> ${esc(p.bestRank || '')}` : '—'), (p) => p.bestGlory],
   ['learn', 'Learn', (p) => learnBadge(p.learn), (p) => learnSort(p.learn)],
   ['game', 'Game', (p) => `<div>${gameBadge(p.game)}${p.game && p.game.bestTurn ? '<div style="margin-top:3px">' + actMeter(p.game.bestTurn, p.game.won) + '</div>' : ''}</div>`, (p) => gameSort(p.game)],
-  ['playtimeMs', 'Playtime', (p, max) => `<span class="num">${fmtDur(p.playtimeMs)}</span>${p.playtimeMs ? `<span class="ptbar"><i style="width:${Math.max(3, Math.round(100 * p.playtimeMs / (max || p.playtimeMs)))}%"></i></span>` : ''}`, (p) => p.playtimeMs],
+  ['playtimeMs', 'Active', (p, max) => `<span class="num">${fmtDur(p.playtimeMs)}</span>${p.playtimeMs ? `<span class="ptbar"><i style="width:${Math.max(3, Math.round(100 * p.playtimeMs / (max || p.playtimeMs)))}%"></i></span>` : ''}`, (p) => p.playtimeMs],
   ['sessions', 'Visits', (p) => `<span class="num">${p.sessions}</span>`, (p) => p.sessions],
   ['lastSeen', 'Last seen', (p) => ago(p.lastSeen), (p) => new Date(p.lastSeen).getTime() || 0],
 ];
@@ -794,7 +794,7 @@ const CMP_COLS = [
   ['relics', 'Relics/run', (p) => p.style.relics],
   ['plays', 'Plays/run', (p) => p.style.plays],
   ['maxMult', 'Max MULT', (p) => p.style.maxMult],
-  ['playtimeMs', 'Playtime', (p) => p.playtimeMs],
+  ['playtimeMs', 'Active', (p) => p.playtimeMs],
 ];
 function renderCompare(players) {
   const rows = players.filter((p) => p.style);
@@ -901,7 +901,7 @@ async function openDetail(cid) {
       <button class="mini" id="dr-save">Save name</button>
     </div>
     <div class="kv" style="margin-bottom:.4rem">
-      <span class="k">Sessions</span><span class="val num">${p.sessions} visit${p.sessions === 1 ? '' : 's'} · ${fmtDur(p.playtimeMs)} total playtime</span>
+      <span class="k">Sessions</span><span class="val num">${p.sessions} visit${p.sessions === 1 ? '' : 's'} · ${fmtDur(p.playtimeMs)} active time</span>
       <span class="k">Runs</span><span class="val num">${p.fullGames} full · ${p.trials} trial${p.trials === 1 ? '' : 's'}</span>
       <span class="k">Tutorial</span><span class="val">${p.learn && p.learn.graduated ? 'graduated (all three trials)' : p.learn && p.learn.cleared ? 'cleared Trial ' + roman(p.learn.cleared) + ' of III' : p.learn && (p.learn.started || p.learn.reached) ? 'started, nothing cleared yet' : 'never opened LEARN'}</span>
       <span class="k">Seen</span><span class="val">first ${ago(p.firstSeen)} · last ${ago(p.lastSeen)}</span>

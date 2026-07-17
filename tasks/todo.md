@@ -845,3 +845,15 @@ The two parked playtest items.
       Act-3 boundary + scaling wired), full regression (v084 7, burn 8, v080 12, v069 14, scores 46, card-overflow
       clean). git committed. NOTE: v084 menu-order query updated to filter hidden items (CONTINUE is always in the DOM).
 - Both parked items from the playtest report (Round 40) are now DONE.
+
+## Round 42 — v0.8.6: fix broken CONTINUE (2026-07-17)
+- [x] BUG (user: "CONTINUE doesn't work"): the resume rebuilt the market DATA but not the market DOM.
+      restoreRun() set state.market to restored slots (slotEl:null), but the Bazaar still showed the fresh
+      random market DOM from initMarket() → phantom un-clickable cards (turn/glory/deck/hand all resumed fine).
+      FIX: extracted initMarket's DOM-building loop into buildMarketDOM() (railhead split by slot.rack not index,
+      since a restored market may reorder); boot() restore block calls it after restoreRun() + updateAnvil().
+- [x] TEST GAP that let it ship: v0.8.5's CONTINUE test kept sessionStorage across reload, so askName never fired
+      and the real reopen path wasn't covered. v085test now sessionStorage.clear() before reload, completes the
+      name prompt, and asserts a resumed Bazaar card is BUYABLE (deck grows) + slots wired to state. 14/14.
+- Verified: resumed board screenshot shows a real interactive Bazaar; full regression clean; git committed; deployed.
+- PENDING (user will send): a list of design improvements — parked for now.
