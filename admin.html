@@ -1,0 +1,1015 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>StarGilt · Forge Console</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path d='M50 6l12.6 28.3 30.9 3.1-23.2 20.7 6.7 30.3L50 72.6 23 88.4l6.7-30.3L6.5 37.4l30.9-3.1z' fill='%23e8b64c'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@700;900&family=Alegreya+Sans:wght@400;500;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
+<style>
+/* ── Forge Console: StarGilt identity, console discipline. Display type = masthead only;
+     everything functional is the humanist sans, hairline borders, tabular numbers. ── */
+:root{
+  --gold:#e8b64c; --gold-bright:#ffd98a;
+  --bg:#0b0a12; --surface:#130d1d; --surface-2:#1a1226;
+  --ink-1:#f0e6d2; --ink-2:#b9ad92; --ink-3:#7d7566;
+  --hair:rgba(232,182,76,.16); --hair-soft:rgba(232,182,76,.09);
+  /* chart palette — validated (dataviz six checks) against var(--surface) in dark mode */
+  --ch-score:#2f8fe6; --ch-gold:#b8880f; --ch-good:#2fae5f; --ch-demand:#e0492a; --ch-umbra:#9a55e8;
+  --c-ember:#ff5c38; --c-tide:#41a8ff; --c-verdant:#4ade80; --c-umbra:#b06cff;
+  --sans:'Alegreya Sans','Helvetica Neue',sans-serif;
+  --disp:'Fraunces',Georgia,serif;
+  --mono:ui-monospace,'SF Mono',Menlo,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;font-family:var(--sans);color:var(--ink-1);background:var(--bg);
+  -webkit-font-smoothing:antialiased;padding:0 1.5rem 5rem}
+.wrap{max-width:1220px;margin:0 auto}
+.eyebrow{font-weight:800;letter-spacing:.26em;text-transform:uppercase;color:var(--ink-2)}
+.num{font-variant-numeric:tabular-nums}
+.muted{color:var(--ink-3);font-size:.78rem}
+
+/* ── topbar ── */
+header.top{position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-content:space-between;gap:1rem;
+  margin:0 -1.5rem 1.4rem;padding:.85rem 1.5rem;background:rgba(11,10,18,.92);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--hair)}
+.brand{display:flex;align-items:baseline;gap:.8rem}
+.brand h1{font-family:'Grenze Gotisch',serif;font-weight:900;font-size:1.5rem;line-height:1;letter-spacing:.03em;
+  background:linear-gradient(175deg,#ffe9b0 8%,#e8b64c 42%,#96621c 78%,#d9a53f 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.brand .eyebrow{font-size:.56rem}
+.top .right{display:flex;gap:.55rem;align-items:center;flex-wrap:wrap}
+.live-pill{display:inline-flex;align-items:center;gap:.4rem;font-size:.7rem;font-weight:800;letter-spacing:.08em;
+  color:var(--c-verdant);padding:.28rem .7rem;border-radius:20px;border:1px solid rgba(74,222,128,.3);background:rgba(74,222,128,.07)}
+.live-pill.idle{color:var(--ink-3);border-color:rgba(255,255,255,.1);background:rgba(255,255,255,.03)}
+.live-pill .dot{width:7px;height:7px;border-radius:50%;background:currentColor}
+.live-pill:not(.idle) .dot{animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.btn-ghost{font-family:var(--sans);font-weight:700;font-size:.74rem;letter-spacing:.06em;cursor:pointer;color:var(--ink-1);
+  padding:.42rem .85rem;border-radius:9px;background:var(--surface-2);border:1px solid var(--hair);transition:border-color .18s,color .18s}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold-bright)}
+.btn-ghost.on{color:var(--c-verdant);border-color:rgba(74,222,128,.4)}
+
+/* ── tabs: the console is four short pages, not one tall one ── */
+.tabs{display:flex;gap:.35rem;margin-top:1rem;border-bottom:1px solid var(--hair-soft);padding-bottom:0}
+.tab{font-family:var(--sans);font-weight:800;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;
+  color:var(--ink-3);padding:.55rem .95rem;background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tab:hover{color:var(--ink-1)}
+.tab.on{color:var(--gold-bright);border-bottom-color:var(--gold)}
+section[data-tab]{display:none}
+section[data-tab].tab-on{display:block}
+
+/* ── cards / grids ── */
+.card{border-radius:14px;background:var(--surface);border:1px solid var(--hair);margin-top:1.1rem}
+.card > .hd{display:flex;align-items:center;justify-content:space-between;gap:.8rem;flex-wrap:wrap;
+  padding:.85rem 1.15rem .7rem;border-bottom:1px solid var(--hair-soft)}
+.card > .hd h2{font-weight:800;font-size:.68rem;letter-spacing:.24em;color:var(--gold);text-transform:uppercase}
+.card > .hd .sub{font-size:.7rem;color:var(--ink-3)}
+.card > .bd{padding:.9rem 1.15rem 1.05rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 1.1rem}
+@media(max-width:860px){.grid2{grid-template-columns:1fr}}
+
+/* ── stat tiles ── */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.7rem}
+.stat{padding:.85rem 1rem;border-radius:12px;background:var(--surface);border:1px solid var(--hair-soft)}
+.stat .k{font-weight:800;font-size:.54rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3)}
+.stat .v{font-family:var(--disp);font-weight:600;font-size:1.75rem;line-height:1.15;margin-top:.1rem;color:var(--ink-1)}
+.stat .v em{font-style:normal;font-size:1rem;color:var(--ink-2)}
+.stat .sub{font-size:.68rem;color:var(--ink-3);margin-top:.05rem}
+.chips{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.35rem}
+.chip{font-size:.64rem;font-weight:700;color:var(--ink-2);padding:.1rem .45rem;border-radius:20px;
+  background:rgba(232,182,76,.08);border:1px solid var(--hair-soft)}
+
+/* ── funnels ── */
+.funnel{padding:.25rem 0}
+.fstage{display:grid;grid-template-columns:8.2rem 1fr 5.4rem;gap:.7rem;align-items:center;padding:.28rem 0;font-size:.78rem}
+.fstage .fl{color:var(--ink-2);text-align:right;font-weight:700}
+.fstage .fbar{height:20px;border-radius:4px;position:relative;background:rgba(255,255,255,.035)}
+.fstage .fbar i{position:absolute;inset:0 auto 0 0;border-radius:4px;background:var(--fc,var(--ch-gold));min-width:2px}
+.fstage .fbar i.zero{display:none}
+.fstage .fn{color:var(--ink-1);font-weight:800}
+.fstage .fn em{font-style:normal;font-weight:600;color:var(--ink-3);font-size:.68rem;margin-left:.3rem}
+
+/* ── difficulty ── */
+.controls{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}
+select.ctl{font-family:var(--sans);font-weight:700;font-size:.74rem;color:var(--ink-1);background:var(--surface-2);
+  border:1px solid var(--hair);border-radius:8px;padding:.34rem .6rem;outline:none;max-width:15rem}
+select.ctl:focus{border-color:var(--gold)}
+.chartbox{position:relative;margin-top:.4rem}
+.chartbox svg{display:block;width:100%;height:auto}
+.tip{position:absolute;pointer-events:none;background:#1e1530;border:1px solid var(--hair);border-radius:8px;
+  padding:.45rem .6rem;font-size:.7rem;line-height:1.5;color:var(--ink-1);box-shadow:0 10px 30px rgba(0,0,0,.5);
+  white-space:nowrap;display:none;z-index:5}
+.tip b{font-weight:800}
+.legendrow{display:flex;gap:1rem;flex-wrap:wrap;font-size:.68rem;color:var(--ink-2);margin:.35rem 0 0}
+.legendrow .li{display:inline-flex;align-items:center;gap:.35rem;font-weight:700}
+.legendrow .sw{width:14px;height:3px;border-radius:2px}
+.legendrow .swd{width:9px;height:9px;border-radius:2px}
+.ballegend{display:flex;gap:.9rem;flex-wrap:wrap;font-size:.66rem;color:var(--ink-3);margin:.7rem 0 .5rem}
+.ballegend b{font-weight:800}
+.balrun{padding:.6rem 0;border-bottom:1px solid var(--hair-soft)}
+.balrun:last-child{border-bottom:none}
+.balrun .rh{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;margin-bottom:.45rem;font-size:.78rem}
+.balrun .rh b{color:var(--ink-1);font-weight:800}
+.res{font-weight:800;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;padding:.1rem .48rem;border-radius:6px}
+.res.won{background:rgba(47,174,95,.16);color:var(--c-verdant);border:1px solid rgba(47,174,95,.4)}
+.res.died{background:rgba(224,73,42,.14);color:var(--c-ember);border:1px solid rgba(224,73,42,.4)}
+.res.live{background:rgba(255,255,255,.05);color:var(--ink-3);border:1px solid rgba(255,255,255,.1)}
+.balcells{display:flex;flex-wrap:wrap;gap:3px}
+.balcell{min-width:50px;padding:.24rem .3rem;border-radius:6px;text-align:center;border:1px solid transparent;line-height:1.25}
+.balcell .m{font-weight:800;font-size:.75rem}
+.balcell .ds{font-size:.58rem;color:var(--ink-3)}
+.balcell.boss{border-color:rgba(255,255,255,.35)}
+.balcell.miss{background:rgba(224,73,42,.22)} .balcell.miss .m{color:#ff8a5c}
+.balcell.tight{background:rgba(232,182,76,.18)} .balcell.tight .m{color:var(--gold-bright)}
+.balcell.ok{background:rgba(47,174,95,.14)} .balcell.ok .m{color:var(--c-verdant)}
+.balcell.easy{background:rgba(47,143,230,.14)} .balcell.easy .m{color:#8fc7ff}
+
+/* ── compare ── */
+.cmp-head,.cmp-row{display:grid;grid-template-columns:1.6fr 1.3fr .8fr .55fr .7fr .7fr .7fr .7fr .7fr .7fr .8fr .8fr;gap:.5rem;align-items:center}
+.cmp-head{padding:.3rem .6rem;border-bottom:1px solid var(--hair-soft);margin-bottom:.2rem}
+.cmp-head span{font-size:.54rem;font-weight:800;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-3);cursor:pointer;user-select:none}
+.cmp-head span:hover{color:var(--gold)}
+.cmp-head span.sorted{color:var(--gold-bright)}
+.cmp-row{padding:.45rem .6rem;border-radius:8px;font-size:.78rem;color:var(--ink-2);cursor:pointer;border:1px solid transparent}
+.cmp-row:nth-child(odd){background:rgba(255,255,255,.02)}
+.cmp-row:hover{background:rgba(232,182,76,.07);border-color:var(--hair)}
+.cmp-row .who b{color:var(--ink-1);font-weight:800;font-size:.84rem}
+.cmp-cell{display:flex;flex-direction:column;gap:2px}
+.cmp-cell b{font-weight:800;color:var(--ink-1)}
+.cmp-cell .cb{height:3px;border-radius:2px;background:rgba(255,255,255,.06);max-width:56px}
+.cmp-cell .cb i{display:block;height:100%;border-radius:2px;background:var(--ch-score)}
+.cmp-cell.outlier{position:relative}
+.cmp-cell.outlier b{color:#ff8a5c}
+.cmp-cell.outlier::after{content:'';position:absolute;inset:-4px -6px;border:1px solid rgba(224,73,42,.55);border-radius:7px;pointer-events:none}
+.dur{color:var(--gold-bright);font-weight:800;font-size:.72rem}
+
+/* ── live feed ── */
+.feedctl{display:flex;gap:.4rem;flex-wrap:wrap;align-items:center}
+.fchip{font-size:.64rem;font-weight:800;letter-spacing:.05em;cursor:pointer;color:var(--ink-3);padding:.22rem .6rem;
+  border-radius:20px;border:1px solid var(--hair-soft);background:transparent;user-select:none}
+.fchip.on{color:var(--ink-1);border-color:var(--hair);background:rgba(232,182,76,.08)}
+#feed{max-height:430px;overflow-y:auto;font-size:.76rem}
+.fe{display:grid;grid-template-columns:4.6rem 9rem 8.6rem 1fr 6rem;gap:.6rem;align-items:baseline;
+  padding:.3rem .5rem;border-radius:6px}
+.fe:nth-child(odd){background:rgba(255,255,255,.025)}
+.fe .t{color:var(--ink-3);font-size:.66rem}
+.fe .who{color:var(--ink-1);font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
+.fe .who:hover{color:var(--gold-bright)}
+.fe .ev{font-weight:800;font-size:.64rem;letter-spacing:.05em;text-transform:uppercase}
+.fe .info{color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fe .bld{color:var(--ink-3);font-size:.62rem;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ev.g-session{color:var(--c-umbra)} .ev.g-learn{color:var(--gold)} .ev.g-run{color:var(--c-tide)}
+.ev.g-win{color:var(--c-verdant)} .ev.g-death{color:var(--c-ember)} .ev.g-turn{color:var(--ink-3)}
+
+/* ── honor roll ── */
+.hsrow{display:grid;grid-template-columns:1.6rem 4.4rem 1fr 4.4rem 5rem;gap:.6rem;align-items:baseline;
+  padding:.3rem .5rem;border-radius:6px;font-size:.8rem}
+.hsrow:nth-child(odd){background:rgba(255,255,255,.025)}
+.hsrow .r{color:var(--ink-3);font-weight:800}
+.hsrow .g{color:var(--gold-bright);font-weight:800}
+.hsrow .n{color:var(--ink-1);font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hsrow .d{color:var(--ink-3);font-size:.68rem;text-align:right}
+
+/* ── card usage ── */
+#cardusage{display:flex;flex-direction:column;gap:2px}
+.cu-row{display:grid;grid-template-columns:1fr 4rem 4rem 4rem 4rem 4.6rem;align-items:center;gap:.4rem;padding:.3rem .55rem;border-radius:6px}
+.cu-row:not(.cu-head){background:linear-gradient(90deg,rgba(184,136,15,.16) var(--bar,0%),transparent var(--bar,0%))}
+.cu-row:not(.cu-head):hover{background:linear-gradient(90deg,rgba(184,136,15,.26) var(--bar,0%),rgba(255,255,255,.03) var(--bar,0%))}
+.cu-row.cold{opacity:.5}
+.cu-head{font-size:.56rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);
+  border-bottom:1px solid var(--hair-soft);border-radius:0;padding-bottom:.4rem;margin-bottom:.15rem}
+.cu-row span:not(.cu-name){text-align:right;font-size:.78rem;color:var(--ink-2)}
+.cu-name{font-size:.8rem;color:var(--ink-1);font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cu-name i{color:var(--ink-3);font-size:.58rem;font-style:normal;font-weight:400;margin-left:.4rem}
+.cu-row .z{color:var(--ink-3);opacity:.4}
+.cu-row .burn{color:var(--c-ember)}
+
+/* ── players table ── */
+.thead,.trow{display:grid;grid-template-columns:1.9fr 1.2fr .55fr 1.15fr 1.05fr 1.25fr .8fr .55fr .95fr;gap:.55rem;align-items:center}
+.thead{padding:.3rem .6rem;border-bottom:1px solid var(--hair-soft);margin-bottom:.2rem}
+.thead span{font-size:.56rem;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);cursor:pointer;user-select:none}
+.thead span:hover{color:var(--gold)}
+.thead span.sorted{color:var(--gold-bright)}
+.trow{padding:.45rem .6rem;border-radius:8px;font-size:.8rem;color:var(--ink-2);cursor:pointer;transition:background .12s,border-color .12s;border:1px solid transparent}
+.trow:hover{background:rgba(232,182,76,.07);border-color:var(--hair)}
+.trow .who{display:flex;flex-direction:column;gap:1px}
+.trow .who b{color:var(--ink-1);font-weight:800;font-size:.86rem}
+.trow .who .id{font-size:.6rem;color:var(--ink-3);letter-spacing:.04em}
+.trow .glory{color:var(--gold-bright);font-weight:800}
+.badge{display:inline-block;font-size:.6rem;font-weight:800;letter-spacing:.06em;padding:.1rem .45rem;border-radius:6px;white-space:nowrap}
+.badge.grad{background:rgba(74,222,128,.14);color:var(--c-verdant);border:1px solid rgba(74,222,128,.35)}
+.badge.trial{background:rgba(232,182,76,.14);color:var(--gold-bright);border:1px solid rgba(232,182,76,.35)}
+.badge.full{background:rgba(65,168,255,.12);color:var(--c-tide);border:1px solid rgba(65,168,255,.3)}
+.badge.none{background:rgba(255,255,255,.05);color:var(--ink-3);border:1px solid rgba(255,255,255,.08)}
+.empty{text-align:center;color:var(--ink-3);padding:2.2rem 1rem;font-size:.85rem}
+
+/* ── login gate ── */
+#gate{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:50;
+  background:radial-gradient(circle at 50% 36%,#241a0d,#0b0a12 62%)}
+.gate-card{display:flex;flex-direction:column;align-items:center;text-align:center;width:min(400px,90vw);padding:2.6rem;
+  border-radius:16px;background:var(--surface);border:1px solid var(--hair)}
+.gate-card h2{font-family:var(--disp);font-weight:600;font-size:1.9rem;margin:.4rem 0 1.3rem;
+  background:linear-gradient(175deg,#fff3cf,#e8b64c 70%);-webkit-background-clip:text;background-clip:text;color:transparent}
+input.field{width:100%;text-align:center;font-family:var(--sans);font-weight:700;font-size:1.05rem;letter-spacing:.04em;
+  color:var(--ink-1);background:rgba(10,8,16,.6);border:1px solid var(--hair);border-radius:11px;
+  padding:.7rem 1rem;outline:none;transition:border-color .2s,box-shadow .2s}
+input.field:focus{border-color:var(--gold);box-shadow:0 0 18px rgba(232,182,76,.22)}
+.btn-gold{font-family:var(--sans);font-weight:800;letter-spacing:.1em;cursor:pointer;color:#241703;
+  padding:.68rem 1.7rem;border-radius:11px;border:1px solid #f5d78e;
+  background:linear-gradient(172deg,#ffe3a0,#e8b64c 55%,#c8923a);box-shadow:0 8px 26px rgba(232,182,76,.25)}
+.btn-gold:hover{filter:brightness(1.08)}
+.err{color:var(--c-ember);font-size:.8rem;min-height:1.1em;margin-top:.7rem}
+
+/* ── detail drawer ── */
+#scrim{position:fixed;inset:0;background:rgba(5,3,10,.6);opacity:0;pointer-events:none;transition:opacity .25s;z-index:60}
+#scrim.on{opacity:1;pointer-events:auto}
+#drawer{position:fixed;top:0;right:0;height:100%;width:min(580px,94vw);z-index:70;overflow-y:auto;
+  background:linear-gradient(200deg,#1c1329,#120c1c);border-left:1px solid var(--hair);
+  box-shadow:-30px 0 90px rgba(0,0,0,.6);transform:translateX(100%);transition:transform .3s cubic-bezier(.3,.9,.3,1);padding:1.7rem 1.7rem 3rem}
+#drawer.on{transform:translateX(0)}
+.dr-close{position:absolute;top:1.1rem;right:1.2rem;background:none;border:none;color:var(--ink-3);font-size:1.4rem;cursor:pointer;line-height:1}
+.dr-close:hover{color:var(--ink-1)}
+.dr-name{font-family:var(--disp);font-weight:600;font-size:1.7rem;color:var(--ink-1);margin-bottom:.2rem;padding-right:2rem}
+.dr-labelrow{display:flex;gap:.5rem;margin:.6rem 0 1.3rem}
+.dr-labelrow input{flex:1;font-family:var(--sans);font-weight:700;color:var(--ink-1);background:rgba(10,8,16,.6);
+  border:1px solid var(--hair);border-radius:9px;padding:.5rem .8rem;outline:none}
+.dr-labelrow input:focus{border-color:var(--gold)}
+.dr-sec{margin-top:1.4rem}
+.dr-sec > .eyebrow{font-size:.56rem;color:var(--gold);display:block;margin-bottom:.6rem}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:.3rem .9rem;font-size:.8rem}
+.kv .k{color:var(--ink-3);white-space:nowrap}
+.kv .val{color:var(--ink-2);word-break:break-word}
+.run{display:grid;grid-template-columns:auto 1fr auto;gap:.6rem;align-items:baseline;padding:.4rem .6rem;border-radius:8px;font-size:.78rem}
+.run:nth-child(odd){background:rgba(255,255,255,.03)}
+.run .when{color:var(--ink-3);font-size:.7rem}
+.run .g{color:var(--gold-bright);font-weight:800}
+.drrun{display:flex;align-items:center;gap:.65rem;padding:.45rem .4rem;border-bottom:1px solid var(--hair-soft)}
+.drrun:last-child{border-bottom:none}
+.drrun .sparkbox{flex:0 0 272px}  /* fixed holder, left-aligned lines — sparkline LENGTH = run depth */
+/* 8-act depth meter: filled cells = acts survived; reads as a progress bar at any size */
+.acts{display:inline-flex;gap:2px;vertical-align:middle}
+.acts i{width:8px;height:9px;border-radius:2px;background:rgba(255,255,255,.08)}
+.acts i.f{background:#2f8fe6}
+.acts i.hf{background:linear-gradient(90deg,#2f8fe6 50%,rgba(255,255,255,.08) 50%)}
+.acts.won i.f,.acts.won i.hf{background:#2fae5f}
+/* proportional bar behind session rows / playtime cells — time you can SEE */
+.run.sbar{background:linear-gradient(90deg,rgba(184,136,15,.14) var(--bar,0%),transparent var(--bar,0%))}
+.run.sbar:nth-child(odd){background:linear-gradient(90deg,rgba(184,136,15,.17) var(--bar,0%),rgba(255,255,255,.03) var(--bar,0%))}
+.ptbar{display:block;height:3px;border-radius:2px;background:rgba(255,255,255,.06);margin-top:3px;max-width:64px}
+.ptbar i{display:block;height:100%;border-radius:2px;background:var(--ch-gold)}
+.drrun .meta{font-size:.7rem;color:var(--ink-3);line-height:1.4}
+.drrun .meta b{color:var(--ink-1);font-size:.78rem}
+.sug{padding:.7rem .85rem;border-radius:11px;background:rgba(255,255,255,.03);border:1px solid var(--hair-soft);margin-bottom:.6rem}
+.sug .top{display:flex;align-items:center;justify-content:space-between;gap:.6rem}
+.sug .top b{color:var(--ink-1);font-size:.9rem}
+.sug .sigs{font-size:.72rem;color:var(--ink-2);margin-top:.25rem;line-height:1.5}
+.conf{font-size:.56rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:.1rem .45rem;border-radius:5px}
+.conf.high{background:rgba(232,182,76,.18);color:var(--gold-bright);border:1px solid rgba(232,182,76,.4)}
+.conf.medium{background:rgba(232,182,76,.09);color:var(--gold);border:1px solid rgba(232,182,76,.22)}
+.conf.low{background:rgba(255,255,255,.04);color:var(--ink-3);border:1px solid rgba(255,255,255,.08)}
+.caveat{font-size:.7rem;color:var(--ink-3);font-style:italic;line-height:1.5;margin-bottom:.8rem}
+.alias{display:inline-flex;align-items:center;gap:.4rem;font-size:.68rem;color:var(--ink-2);
+  background:rgba(232,182,76,.08);border:1px solid var(--hair-soft);border-radius:6px;padding:.15rem .4rem;margin:.15rem .25rem .15rem 0}
+.alias button{background:none;border:none;color:var(--c-ember);cursor:pointer;font-size:.85rem;line-height:1;padding:0}
+.mini{font-size:.7rem;font-weight:700;letter-spacing:.05em;cursor:pointer;color:#241703;padding:.32rem .8rem;border-radius:8px;
+  border:1px solid #f5d78e;background:linear-gradient(172deg,#ffe3a0,#e8b64c 60%,#c8923a)}
+.mini:hover{filter:brightness(1.08)}
+</style>
+</head>
+<body>
+<div class="wrap" id="app" hidden>
+  <header class="top">
+    <div class="brand">
+      <h1>STARGILT</h1>
+      <div class="eyebrow">Forge Console</div>
+    </div>
+    <div class="right">
+      <span class="live-pill idle" id="livepill"><span class="dot"></span><span id="livecount">0 live</span></span>
+      <span class="muted num" id="freshness"></span>
+      <button class="btn-ghost" id="autoref" title="refresh every 12s while this tab is visible">⟳ Auto</button>
+      <button class="btn-ghost" id="refresh">↻ Refresh</button>
+      <button class="btn-ghost" id="logout">Sign out</button>
+    </div>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button class="tab" data-tab="pulse">Pulse</button>
+    <button class="tab" data-tab="difficulty">⚖ Difficulty</button>
+    <button class="tab" data-tab="compare">⇄ Compare</button>
+    <button class="tab" data-tab="cards">⚒ Cards</button>
+    <button class="tab" data-tab="players">Players</button>
+  </nav>
+
+  <section data-tab="pulse">
+    <div class="stats" id="stats"></div>
+    <div class="card">
+      <div class="hd"><h2>Funnels · does the tutorial work, how deep do runs go</h2><span class="sub">each bar = share of ALL players · % = conversion from the stage above</span></div>
+      <div class="bd grid2">
+        <div><div class="eyebrow" style="font-size:.56rem;margin-bottom:.4rem">Learn — the optional tutorial</div><div class="funnel" id="learnfunnel"></div></div>
+        <div><div class="eyebrow" style="font-size:.56rem;margin-bottom:.4rem">Game — the real run (8 acts)</div><div class="funnel" id="gamefunnel"></div></div>
+      </div>
+    </div>
+    <div class="grid2" style="gap:1.1rem">
+      <div class="card" style="margin-top:1.1rem">
+        <div class="hd">
+          <h2>Live feed</h2>
+          <div class="feedctl" id="feedctl"></div>
+        </div>
+        <div class="bd"><div id="feed"></div></div>
+      </div>
+      <div class="card" style="margin-top:1.1rem">
+        <div class="hd"><h2>★ Honor roll · the shared top 10</h2><span class="sub" id="hs-sub"></span></div>
+        <div class="bd"><div id="honorroll"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section data-tab="difficulty">
+    <div class="card">
+      <div class="hd">
+        <h2>⚖ Difficulty · demand vs. score by turn</h2>
+        <div class="controls">
+          <select class="ctl" id="balplayer"><option value="">All players</option></select>
+          <select class="ctl" id="balbuild"><option value="">All builds</option></select>
+        </div>
+      </div>
+      <div class="bd">
+        <div class="chartbox" id="demchart"></div>
+        <div class="legendrow" id="demlegend"></div>
+        <div class="chartbox" id="clearchart" style="margin-top:.8rem"></div>
+        <div class="ballegend">
+          <span><b style="color:#ff8a5c">miss</b> &lt;1.0× (died / mercy)</span>
+          <span><b style="color:var(--gold-bright)">tight</b> 1.0–1.4× (ideal)</span>
+          <span><b style="color:var(--c-verdant)">roomy</b> 1.4–2.2×</span>
+          <span><b style="color:#8fc7ff">too easy</b> &gt;2.2×</span>
+          <span>◆ = boss turn · each cell = score ÷ demand</span>
+        </div>
+        <div id="balruns"></div>
+        <button class="btn-ghost" id="balmore" hidden style="margin-top:.6rem"></button>
+      </div>
+    </div>
+  </section>
+
+  <section data-tab="compare">
+    <div class="card">
+      <div class="hd"><h2>⇄ Compare · playstyles side by side</h2>
+        <span class="sub">per-run averages from the card tallies · <b style="color:var(--c-ember)">ember ring</b> = outlier (≥2σ from the field) — a very different tactic</span></div>
+      <div class="bd">
+        <div class="cmp-head" id="cmphead"></div>
+        <div id="cmprows"></div>
+      </div>
+    </div>
+  </section>
+
+  <section data-tab="cards">
+    <div class="card">
+      <div class="hd"><h2>⚒ Card usage · buy, play, forge, burn</h2>
+        <span class="sub">from <b id="cardruns">0</b> finished runs · bar = share of busiest · faded = trim candidates</span></div>
+      <div class="bd"><div id="cardusage"></div></div>
+    </div>
+  </section>
+
+  <section data-tab="players">
+    <div class="card">
+      <div class="hd"><h2>The Roll · every player</h2></div>
+      <div class="bd">
+        <div class="thead" id="thead"></div>
+        <div id="rows"></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div id="gate">
+  <div class="gate-card">
+    <div class="eyebrow" style="font-size:.6rem">Keeper of the Watchtower</div>
+    <h2>Speak the Word</h2>
+    <input class="field" id="gate-key" type="password" placeholder="admin passphrase" autocomplete="current-password">
+    <div class="err" id="gate-err"></div>
+    <button class="btn-gold" id="gate-go" style="margin-top:.4rem">ENTER</button>
+  </div>
+</div>
+
+<div id="scrim"></div>
+<aside id="drawer"></aside>
+
+<script>
+const $ = (s, r = document) => r.querySelector(s);
+const KEY_STORE = 'sg-admin-key';
+let adminKey = sessionStorage.getItem(KEY_STORE) || '';
+let SORT = { col: 'lastSeen', dir: -1 };
+let CACHE = null;      // last summary
+let BALCACHE = null;   // last balance payload for the current filter
+let BAL_EXPANDED = false; // difficulty run strips: capped at 8 until "show all"
+let AUTO = true;       // auto-refresh on by default (the "live" in live debugging)
+
+// ── api ──
+async function api(path, opts = {}) {
+  const res = await fetch(path, { ...opts, headers: { 'x-admin-key': adminKey, ...(opts.body ? { 'Content-Type': 'application/json' } : {}), ...(opts.headers || {}) } });
+  if (res.status === 204) return null;
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw Object.assign(new Error(json.error || res.statusText), { status: res.status });
+  return json;
+}
+
+// ── formatting ──
+const roman = (n) => ['', 'I', 'II', 'III', 'IV', 'V'][n] || String(n);
+const shortId = (c) => (c || '').slice(0, 8);
+const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const fmtN = (n) => (n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : n >= 1e4 ? Math.round(n / 1e3) + 'k' : n >= 1000 ? (n / 1e3).toFixed(1) + 'k' : String(n));
+function fmtDur(ms) {
+  if (!ms) return '—';
+  const s = Math.round(ms / 1000);
+  if (s < 60) return s + 's';
+  const m = Math.round(s / 60);
+  if (m < 60) return m + 'm';
+  const h = Math.floor(m / 60);
+  return h + 'h ' + (m % 60) + 'm';
+}
+function ago(iso) {
+  if (!iso) return '—';
+  const d = (Date.now() - new Date(iso).getTime()) / 1000;
+  if (d < 90) return 'just now';
+  if (d < 3600) return Math.round(d / 60) + 'm ago';
+  if (d < 86400) return Math.round(d / 3600) + 'h ago';
+  if (d < 6048e2) return Math.round(d / 86400) + 'd ago';
+  return new Date(iso).toISOString().slice(0, 10);
+}
+// Two separate funnels. Learn = the optional tutorial. Game = the real chapters run (6-turn acts, 8 acts).
+function learnBadge(l) {
+  if (!l) return '<span class="badge none">—</span>';
+  if (l.graduated) return '<span class="badge grad">Graduated ★</span>';
+  if (l.reached) return `<span class="badge trial">Trial ${roman(l.reached)}${l.cleared >= l.reached ? ' ✓' : '…'}</span>`;
+  if (l.started) return '<span class="badge trial">started…</span>';
+  return '<span class="badge none">skipped</span>';
+}
+function gameBadge(g) {
+  if (!g) return '<span class="badge none">—</span>';
+  if (g.won) return `<span class="badge grad">Forged ★${g.bestTurn > 48 ? ' · Endless t' + g.bestTurn : ''}</span>`;
+  if (g.bestTurn) return `<span class="badge full">Act ${Math.min(8, Math.ceil(g.bestTurn / 6))} · t${g.bestTurn}</span>`;
+  if (g.runs) return '<span class="badge full">started…</span>';
+  return '<span class="badge none">just looked</span>';
+}
+const learnSort = (l) => (!l ? -1 : l.graduated ? 100 : Math.max(l.reached, l.cleared) * 10 + (l.started ? 1 : 0));
+const gameSort = (g) => (!g ? -1 : g.won ? 1000 + (g.bestTurn || 0) : g.bestTurn * 10 + (g.runs ? 1 : 0));
+const where = (p) => {
+  const loc = p.locations.find((l) => l.city || l.country);
+  return loc ? [loc.city, loc.country].filter(Boolean).join(', ') : '—';
+};
+const displayName = (p) => p.label || p.names[0] || shortId(p.id);
+const nameOfCid = (cid) => {
+  if (!CACHE) return shortId(cid);
+  const p = CACHE.players.find((p) => p.id === cid || p.cids.includes(cid));
+  return p ? displayName(p) : shortId(cid);
+};
+
+// ── stat tiles (client-computed from the summary, so tiles and table can never disagree) ──
+function renderStats(o, players) {
+  const withRuns = players.filter((p) => p.game && (p.game.runs || p.game.bestTurn));
+  const wins = players.filter((p) => p.game && p.game.won).length;
+  const depths = withRuns.map((p) => p.game.bestTurn).filter(Boolean).sort((a, b) => a - b);
+  const medDepth = depths.length ? depths[Math.floor(depths.length / 2)] : 0;
+  const liveNow = players.filter((p) => p.lastSeen && Date.now() - new Date(p.lastSeen) < 3e5).length;
+  const pill = $('#livepill');
+  pill.classList.toggle('idle', !liveNow);
+  $('#livecount').textContent = liveNow ? liveNow + ' live now' : 'quiet';
+  const cty = Object.entries(o.countries).sort((a, b) => b[1] - a[1]);
+  $('#stats').innerHTML = `
+    <div class="stat"><div class="k">Players</div><div class="v num">${o.uniquePlayers}</div><div class="sub">${o.active7d} active 7d · ${o.active24h} today</div></div>
+    <div class="stat"><div class="k">Full runs</div><div class="v num">${o.totalFullGames}</div><div class="sub">${o.totalTrials} trial runs</div></div>
+    <div class="stat"><div class="k">Forged (won)</div><div class="v num">${wins}<em> / ${withRuns.length}</em></div><div class="sub">${withRuns.length ? Math.round(100 * wins / withRuns.length) + '% of players with runs' : 'no runs yet'}</div></div>
+    <div class="stat"><div class="k">Median depth</div><div class="v num">${medDepth ? 't' + medDepth : '—'}</div><div class="sub">${medDepth ? 'Act ' + Math.min(8, Math.ceil(medDepth / 6)) + ' of 8' : 'best turn reached'}</div></div>
+    <div class="stat"><div class="k">Playtime</div><div class="v num">${fmtDur(o.totalPlaytimeMs)}</div><div class="sub">across all sessions</div></div>
+    <div class="stat"><div class="k">Countries</div><div class="v num">${cty.length}</div><div class="chips">${cty.slice(0, 4).map(([c, n]) => `<span class="chip">${esc(c)} · ${n}</span>`).join('') || '<span class="sub">unknown</span>'}</div></div>
+    <div class="stat"><div class="k">Builds</div><div class="v num">${o.builds.length}</div><div class="chips">${o.builds.slice(0, 3).map((b) => `<span class="chip">${esc(b.replace('chapters · ', ''))}</span>`).join('')}</div></div>`;
+}
+
+// ── funnels ──
+function funnelHTML(stages, total, color) {
+  return stages.map((s, i) => {
+    const pctAll = total ? s.n / total : 0;
+    const prev = i ? stages[i - 1].n : total;
+    const conv = prev ? Math.round(100 * s.n / prev) : 0;
+    return `<div class="fstage">
+      <span class="fl">${esc(s.label)}</span>
+      <span class="fbar"><i class="${s.n ? '' : 'zero'}" style="width:${Math.max(2, Math.round(100 * pctAll))}%;--fc:${color}"></i></span>
+      <span class="fn num">${s.n}<em>${i ? conv + '%' : ''}</em></span>
+    </div>`;
+  }).join('');
+}
+function renderFunnels(players) {
+  const n = players.length;
+  const L = (f) => players.filter(f).length;
+  $('#learnfunnel').innerHTML = funnelHTML([
+    { label: 'Visited', n },
+    { label: 'Tried a trial', n: L((p) => p.learn && (p.learn.started || p.learn.reached)) },
+    { label: 'Trial I cleared', n: L((p) => p.learn && p.learn.cleared >= 1) },
+    { label: 'Trial II cleared', n: L((p) => p.learn && p.learn.cleared >= 2) },
+    { label: 'Graduated', n: L((p) => p.learn && p.learn.graduated) },
+  ], n, 'var(--ch-gold)');
+  $('#gamefunnel').innerHTML = funnelHTML([
+    { label: 'Visited', n },
+    { label: 'Started a run', n: L((p) => p.game && (p.game.runs || p.game.bestTurn)) },
+    { label: 'Act 2 reached', n: L((p) => p.game && p.game.bestTurn >= 7) },
+    { label: 'Act 4 reached', n: L((p) => p.game && p.game.bestTurn >= 19) },
+    { label: 'Act 6 reached', n: L((p) => p.game && p.game.bestTurn >= 31) },
+    { label: 'Forged ★', n: L((p) => p.game && p.game.won) },
+  ], n, 'var(--ch-score)');
+}
+
+// ── SVG line chart (demand vs score, log y) with crosshair tooltip ──
+function lineChart(box, { series, height = 240, logY = true, yFmt = fmtN, xLabel = 'turn', bossTicks = [] }) {
+  const W = 920, H = height, PL = 46, PR = 12, PT = 12, PB = 26;
+  const allPts = series.flatMap((s) => s.pts);
+  if (!allPts.length) { box.innerHTML = '<div class="empty">No run data yet for this filter.</div>'; return; }
+  const xs = [...new Set(allPts.map((p) => p.x))].sort((a, b) => a - b);
+  const xMin = xs[0], xMax = Math.max(xs[xs.length - 1], xMin + 1);
+  const yMaxRaw = Math.max(...allPts.map((p) => p.y), 10);
+  const ty = (v) => (logY ? Math.log10(Math.max(1, v)) : v);
+  const yMax = ty(yMaxRaw) * 1.06;
+  const X = (x) => PL + ((x - xMin) / (xMax - xMin)) * (W - PL - PR);
+  const Y = (v) => PT + (1 - ty(v) / yMax) * (H - PT - PB);
+  // y ticks: powers of 10 up to max (log) or 4 even steps
+  const ticks = [];
+  if (logY) { for (let p = 1; Math.pow(10, p - 1) <= yMaxRaw; p++) ticks.push(Math.pow(10, p - 1)); }
+  else { for (let i = 0; i <= 4; i++) ticks.push(Math.round((yMaxRaw / 4) * i)); }
+  const last = xs[xs.length - 1];
+  const xticks = [...new Set(xs.filter((x) => x === 1 || x % 6 === 0).concat(X(last) < W - PR - 52 ? last : []))];
+  let g = `<svg viewBox="0 0 ${W} ${H}" role="img">`;
+  g += ticks.map((t) => `<line x1="${PL}" y1="${Y(t)}" x2="${W - PR}" y2="${Y(t)}" stroke="rgba(255,255,255,.06)"/>
+    <text x="${PL - 7}" y="${Y(t) + 3}" text-anchor="end" font-size="9.5" fill="#7d7566" font-family="var(--sans)">${yFmt(t)}</text>`).join('');
+  g += xticks.map((x) => `<text x="${X(x)}" y="${H - 8}" text-anchor="middle" font-size="9.5" fill="${bossTicks.includes(x) ? '#b9ad92' : '#7d7566'}" font-family="var(--sans)">${bossTicks.includes(x) ? '◆' : ''}${x}</text>`).join('');
+  g += `<text x="${W - PR}" y="${H - 8}" text-anchor="end" font-size="9" fill="#7d7566">${xLabel} →</text>`;
+  series.forEach((s, si) => {
+    const pts = s.pts.slice().sort((a, b) => a.x - b.x);
+    const d = pts.map((p, i) => `${i ? 'L' : 'M'}${X(p.x).toFixed(1)},${Y(p.y).toFixed(1)}`).join('');
+    g += `<path d="${d}" fill="none" stroke="${s.color}" stroke-width="2" stroke-linejoin="round" ${s.dash ? `stroke-dasharray="${s.dash}"` : ''}/>`;
+    const last = pts[pts.length - 1];
+    // direct label: beside the line end when there's room, else anchored inside the right edge,
+    // nudged up/down per series so converging lines don't overprint their labels
+    const fits = X(last.x) + 5 + s.name.length * 6 < W - PR;
+    const lx = fits ? X(last.x) + 5 : W - PR - 3;
+    const ly = fits ? Y(last.y) + 3 : Y(last.y) + (si % 2 ? 14 : -8);
+    g += `<text x="${lx}" y="${ly}" text-anchor="${fits ? 'start' : 'end'}" font-size="10" font-weight="700" fill="${s.color}" font-family="var(--sans)">${esc(s.name)}</text>`;
+  });
+  g += `<line id="xh" x1="0" y1="${PT}" x2="0" y2="${H - PB}" stroke="rgba(255,255,255,.25)" visibility="hidden"/>`;
+  g += `<rect x="${PL}" y="${PT}" width="${W - PL - PR}" height="${H - PT - PB}" fill="transparent" style="cursor:crosshair"/>`;
+  g += '</svg><div class="tip"></div>';
+  box.innerHTML = g;
+  const svg = box.querySelector('svg'), tip = box.querySelector('.tip'), xh = box.querySelector('#xh');
+  svg.addEventListener('mousemove', (e) => {
+    const r = svg.getBoundingClientRect();
+    const mx = ((e.clientX - r.left) / r.width) * W;
+    let best = xs[0];
+    for (const x of xs) if (Math.abs(X(x) - mx) < Math.abs(X(best) - mx)) best = x;
+    xh.setAttribute('x1', X(best)); xh.setAttribute('x2', X(best)); xh.setAttribute('visibility', 'visible');
+    const rows = series.map((s) => {
+      const p = s.pts.find((p) => p.x === best);
+      return p ? `<span style="color:${s.color}">●</span> ${esc(s.name)}: <b class="num">${fmtN(Math.round(p.y))}</b>${p.note ? ' <span class="muted">' + esc(p.note) + '</span>' : ''}` : null;
+    }).filter(Boolean);
+    tip.innerHTML = `<b>Turn ${best}${bossTicks.includes(best) ? ' · BOSS' : ''}</b><br>` + rows.join('<br>');
+    tip.style.display = 'block';
+    const bx = box.getBoundingClientRect();
+    let lx = e.clientX - bx.left + 14;
+    if (lx + tip.offsetWidth > bx.width - 8) lx = e.clientX - bx.left - tip.offsetWidth - 14;
+    tip.style.left = lx + 'px';
+    tip.style.top = Math.max(0, e.clientY - bx.top - tip.offsetHeight - 10) + 'px';
+  });
+  svg.addEventListener('mouseleave', () => { tip.style.display = 'none'; xh.setAttribute('visibility', 'hidden'); });
+}
+
+// ── clear-rate bars (single-hue, height = % of alive runs that cleared the turn) ──
+function clearChart(box, byTurn, bossTicks) {
+  const xs = [...byTurn.keys()].sort((a, b) => a - b);
+  if (!xs.length) { box.innerHTML = ''; return; }
+  const W = 920, H = 88, PL = 46, PR = 12, PT = 10, PB = 20;
+  const xMin = xs[0], xMax = Math.max(xs[xs.length - 1], xMin + 1);
+  const bw = Math.min(14, Math.max(3, ((W - PL - PR) / (xMax - xMin + 1)) - 2));
+  const X = (x) => PL + ((x - xMin) / (xMax - xMin)) * (W - PL - PR - bw);
+  let g = `<svg viewBox="0 0 ${W} ${H}" role="img">`;
+  g += `<text x="${PL - 7}" y="${PT + 8}" text-anchor="end" font-size="9.5" fill="#7d7566">100%</text>
+        <text x="${PL - 7}" y="${H - PB}" text-anchor="end" font-size="9.5" fill="#7d7566">0%</text>
+        <line x1="${PL}" y1="${PT}" x2="${W - PR}" y2="${PT}" stroke="rgba(255,255,255,.06)"/>`;
+  for (const x of xs) {
+    const { cleared, alive } = byTurn.get(x);
+    const rate = alive ? cleared / alive : 0;
+    const h = Math.max(1.5, rate * (H - PT - PB));
+    g += `<rect x="${X(x)}" y="${H - PB - h}" width="${bw}" height="${h}" rx="2" fill="#2fae5f" opacity="${bossTicks.includes(x) ? 1 : .72}"><title>turn ${x}${bossTicks.includes(x) ? ' · BOSS' : ''}: ${cleared}/${alive} cleared (${Math.round(rate * 100)}%)</title></rect>`;
+  }
+  g += `<text x="${W - PR}" y="${H - 6}" text-anchor="end" font-size="9" fill="#7d7566">cleared, of runs alive at that turn →</text></svg>`;
+  box.innerHTML = g;
+}
+
+// ── difficulty panel ──
+async function loadBalance() {
+  const cid = $('#balplayer').value;
+  const data = await api('/api/admin/balance' + (cid ? '?cid=' + encodeURIComponent(cid) : ''));
+  BALCACHE = data;
+  renderBalance();
+}
+function renderBalance() {
+  const build = $('#balbuild').value;
+  let runs = (BALCACHE && BALCACHE.runs) || [];
+  const builds = [...new Set(runs.map((r) => r.build).filter(Boolean))];
+  const sel = $('#balbuild');
+  const keep = sel.value;
+  sel.innerHTML = '<option value="">All builds</option>' + builds.map((b) => `<option ${b === keep ? 'selected' : ''} value="${esc(b)}">${esc(b.replace('chapters · ', ''))}</option>`).join('');
+  if (build) runs = runs.filter((r) => r.build === build);
+  // aggregate by turn: median score, demand (same curve per build), clear rate
+  const byTurn = new Map();
+  for (const r of runs) for (const t of r.turns) {
+    let b = byTurn.get(t.t);
+    if (!b) { b = { scores: [], dem: t.dem, cleared: 0, alive: 0 }; byTurn.set(t.t, b); }
+    b.scores.push(t.score); b.dem = t.dem; b.alive++; if (t.cleared) b.cleared++;
+  }
+  const xs = [...byTurn.keys()].sort((a, b) => a - b);
+  const med = (a) => { const s = a.slice().sort((x, y) => x - y); return s[Math.floor(s.length / 2)]; };
+  const bossTicks = xs.filter((x) => x % 6 === 0);
+  lineChart($('#demchart'), {
+    bossTicks,
+    series: [
+      { name: 'demand', color: '#e0492a', dash: '5 4', pts: xs.map((x) => ({ x, y: byTurn.get(x).dem })) },
+      { name: 'median score', color: '#2f8fe6', pts: xs.map((x) => ({ x, y: med(byTurn.get(x).scores), note: `(${byTurn.get(x).alive} runs)` })) },
+    ],
+  });
+  $('#demlegend').innerHTML = xs.length ? `
+    <span class="li"><span class="sw" style="background:#e0492a"></span>demand (log scale)</span>
+    <span class="li"><span class="sw" style="background:#2f8fe6"></span>median score of runs alive that turn</span>
+    <span class="li"><span class="swd" style="background:#2fae5f"></span>clear-rate bars below · ${runs.length} runs</span>` : '';
+  clearChart($('#clearchart'), byTurn, bossTicks);
+  // per-run strips — capped so the Difficulty tab stays a short page; "show all" expands
+  const cls = (m) => (m < 1 ? 'miss' : m < 1.4 ? 'tight' : m < 2.2 ? 'ok' : 'easy');
+  const CAP = 8;
+  const shown = BAL_EXPANDED ? runs.slice(0, 60) : runs.slice(0, CAP);
+  const more = $('#balmore');
+  more.hidden = runs.length <= CAP;
+  more.textContent = BAL_EXPANDED ? '▲ show fewer' : `▼ show all ${runs.length} runs`;
+  $('#balruns').innerHTML = shown.length
+    ? shown.map((r) => {
+        const res = r.won === true ? '<span class="res won">WON</span>'
+          : r.won === false ? `<span class="res died">DIED t${r.endTurn}</span>`
+          : '<span class="res live">in progress</span>';
+        const who = nameOfCid(r.cid);
+        const cells = r.turns.map((t) => {
+          const m = t.dem > 0 ? t.score / t.dem : 0;
+          return `<div class="balcell ${cls(m)}${t.boss ? ' boss' : ''}" title="turn ${t.t}${t.boss ? ' · BOSS' : ''} · base ${t.base} × mult ${t.mult} = ${t.score} vs demand ${t.dem}"><div class="m num">${t.boss ? '◆' : ''}${m.toFixed(1)}×</div><div class="ds num">${fmtN(t.dem)}→${fmtN(t.score)}</div></div>`;
+        }).join('');
+        return `<div class="balrun"><div class="rh">${res} <b>${esc(who)}</b> <span class="dur num">⏱ ${fmtDur(new Date(r.ended || r.started) - new Date(r.started))}</span> <span class="muted">${esc((r.build || '').replace('chapters · ', ''))}</span> <span class="muted num">${ago(r.started)} · ${r.turns.length} turns · ${r.endGlory || 0}★</span></div><div class="balcells">${cells}</div></div>`;
+      }).join('')
+    : '<div class="empty">No runs logged for this filter yet. Each chapters turn played on the live server lands here.</div>';
+}
+
+// ── live feed ──
+const FEED_GROUPS = {
+  session: { label: 'sessions', on: true, types: ['session_start', 'session_end', 'name_set'] },
+  learn: { label: 'learn', on: true, types: ['trial_won', 'trial_death', 'graduated'] },
+  run: { label: 'runs', on: true, types: ['game_start', 'game_over', 'ch_run', 'ch_cards'] },
+  turn: { label: 'every turn', on: false, types: ['ch_turn'] },
+};
+const groupOf = (t) => Object.keys(FEED_GROUPS).find((g) => FEED_GROUPS[g].types.includes(t)) || 'run';
+function feedClass(e) {
+  if (e.type === 'ch_run') return e.extra && e.extra.won ? 'g-win' : 'g-death';
+  if (e.type === 'game_over' || e.type === 'trial_death') return 'g-death';
+  if (e.type === 'trial_won' || e.type === 'graduated') return 'g-win';
+  if (e.type === 'ch_turn') return 'g-turn';
+  if (FEED_GROUPS.session.types.includes(e.type)) return 'g-session';
+  if (FEED_GROUPS.learn.types.includes(e.type)) return 'g-learn';
+  return 'g-run';
+}
+function feedInfo(e) {
+  const x = e.extra || {};
+  switch (e.type) {
+    case 'ch_turn': return `t${x.t}${x.boss ? ' ◆BOSS' : ''} · ${fmtN(x.score ?? 0)} vs ${fmtN(x.dem ?? 0)}${x.cleared === false ? ' · MISSED' : ''} (base ${x.base} × ${x.mult})`;
+    case 'ch_run': return `${x.won ? 'WON' : 'died'} t${x.endTurn || e.turns || '?'} · ${e.glory || 0}★`;
+    case 'game_over': return `died t${e.turns || '?'} · ${e.glory || 0}★ lifetime`;
+    case 'game_start': return e.mode === 'trial' ? `Trial ${roman(e.stage)}` : 'full run begins';
+    case 'trial_won': return `Trial ${roman(e.stage)} cleared · ${e.glory || 0}★`;
+    case 'trial_death': return `Trial ${roman(e.stage)} fell`;
+    case 'graduated': return 'LEARN complete';
+    case 'name_set': return `name → “${esc(e.name || '')}”`;
+    case 'session_end': return `session over · ${fmtDur(e.duration_ms)}`;
+    default: return e.mode || '';
+  }
+}
+let FEEDCACHE = [];
+async function loadFeed() {
+  const data = await api('/api/admin/events?limit=160');
+  FEEDCACHE = data.events || [];
+  renderFeed();
+}
+function renderFeed() {
+  const on = new Set(Object.keys(FEED_GROUPS).filter((g) => FEED_GROUPS[g].on));
+  $('#feedctl').innerHTML = Object.entries(FEED_GROUPS).map(([g, v]) =>
+    `<span class="fchip ${v.on ? 'on' : ''}" data-g="${g}">${v.label}</span>`).join('');
+  const rows = FEEDCACHE.filter((e) => on.has(groupOf(e.type))).slice(0, 90);
+  $('#feed').innerHTML = rows.length
+    ? rows.map((e) => `<div class="fe">
+        <span class="t num">${ago(e.ts)}</span>
+        <span class="who" data-cid="${esc(e.cid)}">${esc(e.name || nameOfCid(e.cid))}</span>
+        <span class="ev ${feedClass(e)}">${esc(e.type)}</span>
+        <span class="info num">${feedInfo(e)}</span>
+        <span class="bld">${esc((e.build || '').replace('chapters · ', ''))}</span>
+      </div>`).join('')
+    : '<div class="empty">Nothing yet for these filters.</div>';
+}
+$('#feedctl').addEventListener('click', (e) => {
+  const c = e.target.closest('.fchip'); if (!c) return;
+  FEED_GROUPS[c.dataset.g].on = !FEED_GROUPS[c.dataset.g].on;
+  renderFeed();
+});
+$('#feed').addEventListener('click', (e) => { const w = e.target.closest('.who'); if (w) openDetail(w.dataset.cid); });
+
+// ── honor roll ──
+async function loadHonorRoll() {
+  const data = await fetch('/api/scores').then((r) => r.json()).catch(() => null);
+  const top = (data && data.top) || [];
+  $('#hs-sub').textContent = top.length ? 'what players see in-game' : '';
+  $('#honorroll').innerHTML = top.length
+    ? top.map((s, i) => `<div class="hsrow"><span class="r num">${i + 1}</span><span class="g num">${s.g} ★</span><span class="n">${esc(s.n)}</span><span class="num" style="color:var(--ink-3)">t${s.t}</span><span class="d num">${esc(s.d)}</span></div>`).join('')
+    : '<div class="empty">The shared honor roll is empty — no finished runs on this server yet.</div>';
+}
+
+// ── card usage ──
+async function loadCards() {
+  const data = await api('/api/admin/cards');
+  const cards = data.cards || [];
+  $('#cardruns').textContent = data.runs || 0;
+  const maxAct = Math.max(1, ...cards.map((c) => c.buys + c.plays));
+  const num = (n, cls) => (n ? `<span class="num${cls ? ' ' + cls : ''}">${n}</span>` : '<span class="z">·</span>');
+  const head = `<div class="cu-row cu-head"><span class="cu-name">Card</span><span>Bought</span><span>Played</span><span>Forged</span><span>Burned</span><span>Play/Buy</span></div>`;
+  $('#cardusage').innerHTML = cards.length
+    ? head + cards.map((c) => {
+        const act = c.buys + c.plays;
+        const ppb = c.buys ? (c.plays / c.buys).toFixed(1) : '—';
+        const bar = Math.round((100 * act) / maxAct);
+        const cold = act <= Math.max(1, maxAct * 0.05) ? ' cold' : '';
+        return `<div class="cu-row${cold}" style="--bar:${bar}%"><span class="cu-name">${esc(c.name)} <i>${esc(c.id)}</i></span>${num(c.buys)}${num(c.plays)}${num(c.forges)}${num(c.burns, 'burn')}<span class="num">${ppb}</span></div>`;
+      }).join('')
+    : '<div class="empty">No card usage logged yet — each finished chapters run reports what was bought, played, forged and burned.</div>';
+}
+
+// ── players table ──
+const COLS = [
+  ['who', 'Player', (p) => `<div class="who"><b>${esc(displayName(p))}</b><span class="id num">${shortId(p.id)}${p.cids.length > 1 ? ' +' + (p.cids.length - 1) : ''}</span></div>`, (p) => displayName(p).toLowerCase()],
+  ['where', 'Where', (p) => esc(where(p)), (p) => where(p)],
+  ['fullGames', 'Runs', (p) => `<span class="num">${p.fullGames}</span>`, (p) => p.fullGames],
+  ['bestGlory', 'Best', (p) => (p.bestGlory ? `<span class="glory num">${p.bestGlory} ★</span> ${esc(p.bestRank || '')}` : '—'), (p) => p.bestGlory],
+  ['learn', 'Learn', (p) => learnBadge(p.learn), (p) => learnSort(p.learn)],
+  ['game', 'Game', (p) => `<div>${gameBadge(p.game)}${p.game && p.game.bestTurn ? '<div style="margin-top:3px">' + actMeter(p.game.bestTurn, p.game.won) + '</div>' : ''}</div>`, (p) => gameSort(p.game)],
+  ['playtimeMs', 'Playtime', (p, max) => `<span class="num">${fmtDur(p.playtimeMs)}</span>${p.playtimeMs ? `<span class="ptbar"><i style="width:${Math.max(3, Math.round(100 * p.playtimeMs / (max || p.playtimeMs)))}%"></i></span>` : ''}`, (p) => p.playtimeMs],
+  ['sessions', 'Visits', (p) => `<span class="num">${p.sessions}</span>`, (p) => p.sessions],
+  ['lastSeen', 'Last seen', (p) => ago(p.lastSeen), (p) => new Date(p.lastSeen).getTime() || 0],
+];
+function renderTable(players) {
+  $('#thead').innerHTML = COLS.map(([key, label]) => `<span data-col="${key}" class="${SORT.col === key ? 'sorted' : ''}">${label}${SORT.col === key ? (SORT.dir < 0 ? ' ↓' : ' ↑') : ''}</span>`).join('');
+  const sortCol = COLS.find((c) => c[0] === SORT.col) || COLS[8];
+  const sorted = [...players].sort((a, b) => {
+    const va = sortCol[3](a), vb = sortCol[3](b);
+    if (va < vb) return -SORT.dir; if (va > vb) return SORT.dir; return 0;
+  });
+  const maxPlaytime = Math.max(1, ...players.map((p) => p.playtimeMs || 0));
+  $('#rows').innerHTML = sorted.length
+    ? sorted.map((p) => `<div class="trow" data-cid="${esc(p.id)}">${COLS.map(([, , cell]) => `<span>${cell(p, maxPlaytime)}</span>`).join('')}</div>`).join('')
+    : '<div class="empty">No players yet. Once someone plays on the live site, they appear here.</div>';
+  // player filter select for the difficulty panel
+  const sel = $('#balplayer'), keep = sel.value;
+  sel.innerHTML = '<option value="">All players</option>' + sorted.map((p) => `<option ${p.id === keep ? 'selected' : ''} value="${esc(p.id)}">${esc(displayName(p))}</option>`).join('');
+}
+
+// ── Compare: playstyle metrics side by side, outliers ringed (≥2σ when 4+ players) ──
+let CMPSORT = { key: 'bestTurn', dir: -1 };
+const CMP_COLS = [
+  ['name', 'Player', null],
+  ['bestTurn', 'Depth', null],
+  ['bestGlory', 'Best ★', (p) => p.bestGlory],
+  ['runs', 'Runs', (p) => p.style.runs],
+  ['buys', 'Buys/run', (p) => p.style.buys],
+  ['deck', 'Deck end', (p) => p.style.deck],
+  ['burns', 'Burns/run', (p) => p.style.burns],
+  ['forges', 'Forges/run', (p) => p.style.forges],
+  ['relics', 'Relics/run', (p) => p.style.relics],
+  ['plays', 'Plays/run', (p) => p.style.plays],
+  ['maxMult', 'Max MULT', (p) => p.style.maxMult],
+  ['playtimeMs', 'Playtime', (p) => p.playtimeMs],
+];
+function renderCompare(players) {
+  const rows = players.filter((p) => p.style);
+  const head = $('#cmphead');
+  head.innerHTML = CMP_COLS.map(([k, label]) => `<span data-k="${k}" class="${CMPSORT.key === k ? 'sorted' : ''}">${label}${CMPSORT.key === k ? (CMPSORT.dir < 0 ? ' ↓' : ' ↑') : ''}</span>`).join('');
+  if (!rows.length) { $('#cmprows').innerHTML = '<div class="empty">No tallied runs yet — each finished chapters run feeds this table.</div>'; return; }
+  // per-metric stats for bars + outlier rings
+  const stats = {};
+  for (const [k, , get] of CMP_COLS) {
+    if (!get) continue;
+    const vs = rows.map(get).map((v) => +v || 0);
+    const mean = vs.reduce((a, b) => a + b, 0) / vs.length;
+    const sd = Math.sqrt(vs.reduce((a, b) => a + (b - mean) ** 2, 0) / vs.length);
+    stats[k] = { max: Math.max(...vs, 1e-9), mean, sd };
+  }
+  const sortVal = (p) => CMPSORT.key === 'name' ? displayName(p).toLowerCase()
+    : CMPSORT.key === 'bestTurn' ? (p.game.won ? 1000 + p.game.bestTurn : p.game.bestTurn)
+    : (CMP_COLS.find((c) => c[0] === CMPSORT.key)[2](p) || 0);
+  const sorted = rows.slice().sort((a, b) => { const va = sortVal(a), vb = sortVal(b); return va < vb ? -CMPSORT.dir : va > vb ? CMPSORT.dir : 0; });
+  const cell = (k, p, fmt) => {
+    const v = +CMP_COLS.find((c) => c[0] === k)[2](p) || 0;
+    const st = stats[k];
+    const out = rows.length >= 4 && st.sd > 0 && Math.abs(v - st.mean) / st.sd >= 2;
+    return `<span class="cmp-cell${out ? ' outlier' : ''}" ${out ? `title="outlier: field mean ${st.mean.toFixed(1)}"` : ''}><b class="num">${fmt ? fmt(v) : v}</b><span class="cb"><i style="width:${Math.max(3, Math.round(100 * v / st.max))}%"></i></span></span>`;
+  };
+  $('#cmprows').innerHTML = sorted.map((p) => `<div class="cmp-row" data-cid="${esc(p.id)}">
+    <span class="who"><b>${esc(displayName(p))}</b></span>
+    <span>${gameBadge(p.game)}</span>
+    ${cell('bestGlory', p)}${cell('runs', p)}${cell('buys', p)}${cell('deck', p)}${cell('burns', p)}${cell('forges', p)}${cell('relics', p)}${cell('plays', p)}${cell('maxMult', p)}${cell('playtimeMs', p, fmtDur)}
+  </div>`).join('');
+}
+$('#cmphead').addEventListener('click', (e) => { const h = e.target.closest('[data-k]'); if (!h) return; const k = h.dataset.k; CMPSORT = { key: k, dir: CMPSORT.key === k ? -CMPSORT.dir : -1 }; renderCompare(CACHE.players); });
+$('#cmprows').addEventListener('click', (e) => { const r = e.target.closest('.cmp-row'); if (r) openDetail(r.dataset.cid); });
+
+async function load() {
+  const data = await api('/api/admin/summary');
+  CACHE = data;
+  renderStats(data.overview, data.players);
+  renderFunnels(data.players);
+  renderTable(data.players);
+  renderCompare(data.players);
+  $('#freshness').textContent = 'updated ' + new Date().toLocaleTimeString();
+  loadBalance().catch(() => {});
+  loadCards().catch(() => {});
+  loadFeed().catch(() => {});
+  loadHonorRoll().catch(() => {});
+}
+
+// ── death location: acts are 6 turns, the 6th is that act's boss ──
+const BOSS_BY_ACT = { 1: 'The Sealed Hearth', 2: 'The Starved Flue', 3: 'The Molten Vise', 4: 'The Skimming', 5: 'The Guttering', 6: 'The Hollow Forge', 7: 'The Iron Cage', 8: 'The Masterwork' };
+function deathWhere(endTurn) {
+  if (!endTurn) return '';
+  const act = Math.min(8, Math.ceil(endTurn / 6));
+  const boss = endTurn % 6 === 0 && endTurn <= 48 ? BOSS_BY_ACT[endTurn / 6] : null;
+  return boss ? `at ◆ ${boss} (Act ${act})` : `Act ${act}, build turn ${endTurn % 6} of 6`;
+}
+function deathShortfall(r) {
+  const last = r.turns[r.turns.length - 1];
+  if (!last || last.cleared !== false || !last.dem) return '';
+  return ` · short ${fmtN(last.dem - last.score)}★ (${fmtN(last.score)}/${fmtN(last.dem)})`;
+}
+// 8-act depth meter — filled cells = acts completed, half cell = died inside that act
+function actMeter(turn, won) {
+  if (!turn) return '';
+  const done = Math.min(8, Math.floor(turn / 6));
+  const inAct = turn % 6 !== 0 && done < 8;
+  return `<span class="acts${won ? ' won' : ''}" title="${won ? 'all 8 acts — Forged' : 'reached Act ' + Math.min(8, Math.ceil(turn / 6)) + ' of 8 (t' + turn + ')'}">${Array.from({ length: 8 }, (_, i) =>
+    `<i class="${won || i < done ? 'f' : inAct && i === done ? 'hf' : ''}"></i>`).join('')}</span>`;
+}
+
+// ── per-player run sparkline (score vs demand, log-normalized) ──
+// Width is a FIXED 5.5px per turn (not fit-to-box): a 3-turn stub and a 21-turn epic differ
+// in length at a glance, and any two runs in any drawer are directly comparable.
+const SPARK_PX_PER_TURN = 5.5;
+function runSpark(r) {
+  const ts = r.turns;
+  if (!ts.length) return '';
+  const W = Math.max(26, Math.min(268, Math.round(ts.length * SPARK_PX_PER_TURN))), H = 34, P = 2;
+  const ty = (v) => Math.log10(Math.max(1, v));
+  const yMax = Math.max(...ts.map((t) => Math.max(ty(t.score), ty(t.dem)))) * 1.05 || 1;
+  const X = (i) => P + (i / Math.max(1, ts.length - 1)) * (W - 2 * P);
+  const Y = (v) => H - P - (ty(v) / yMax) * (H - 2 * P);
+  const path = (k) => ts.map((t, i) => `${i ? 'L' : 'M'}${X(i).toFixed(1)},${Y(t[k]).toFixed(1)}`).join('');
+  const bosses = ts.map((t, i) => (t.boss ? `<circle cx="${X(i)}" cy="${Y(t.dem)}" r="2.4" fill="#e0492a"/>` : '')).join('');
+  return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
+    <path d="${path('dem')}" fill="none" stroke="#e0492a" stroke-width="1.6" stroke-dasharray="4 3" opacity=".9"/>
+    <path d="${path('score')}" fill="none" stroke="#2f8fe6" stroke-width="2"/>
+    ${bosses}</svg>`;
+}
+
+// ── detail drawer ──
+function closeDrawer() { $('#drawer').classList.remove('on'); $('#scrim').classList.remove('on'); }
+async function openDetail(cid) {
+  const d = await api('/api/admin/player?cid=' + encodeURIComponent(cid));
+  const p = d.summary;
+  const list = (arr, empty = '—') => (arr && arr.length ? arr.map(esc).join(' · ') : empty);
+  const locList = p.locations.filter((l) => l.city || l.country).map((l) => [l.city, l.country].filter(Boolean).join(', '));
+  $('#drawer').innerHTML = `
+    <button class="dr-close" id="dr-x">✕</button>
+    <div class="dr-name">${esc(displayName(p))}</div>
+    ${learnBadge(p.learn)} ${gameBadge(p.game)} <span class="muted num">${p.bestGlory ? p.bestGlory + ' ★ best · ' + esc(p.bestRank || '') : ''}</span>
+    <div class="dr-labelrow">
+      <input id="dr-label" placeholder="name this player…" value="${esc(p.label || '')}" maxlength="60">
+      <button class="mini" id="dr-save">Save name</button>
+    </div>
+    <div class="kv" style="margin-bottom:.4rem">
+      <span class="k">Sessions</span><span class="val num">${p.sessions} visit${p.sessions === 1 ? '' : 's'} · ${fmtDur(p.playtimeMs)} total playtime</span>
+      <span class="k">Runs</span><span class="val num">${p.fullGames} full · ${p.trials} trial${p.trials === 1 ? '' : 's'}</span>
+      <span class="k">Tutorial</span><span class="val">${p.learn && p.learn.graduated ? 'graduated (all three trials)' : p.learn && p.learn.cleared ? 'cleared Trial ' + roman(p.learn.cleared) + ' of III' : p.learn && (p.learn.started || p.learn.reached) ? 'started, nothing cleared yet' : 'never opened LEARN'}</span>
+      <span class="k">Seen</span><span class="val">first ${ago(p.firstSeen)} · last ${ago(p.lastSeen)}</span>
+    </div>
+    <div class="dr-sec"><span class="eyebrow">Run timelines · score vs demand · where they died</span><div id="dr-runs" class="muted">loading…</div></div>
+    <div class="dr-sec"><span class="eyebrow">Sessions (${(d.sessions || []).length})</span>
+      ${(d.sessions || []).length ? (() => { const maxDur = Math.max(1, ...d.sessions.map((s) => s.durationMs || 0)); return d.sessions.slice(0, 25).map((s) => `<div class="run sbar" style="--bar:${Math.max(2, Math.round(100 * (s.durationMs || 0) / maxDur))}%"><span class="when num">${new Date(s.start).toISOString().slice(5, 16).replace('T', ' ')}</span><span><b class="num">${fmtDur(s.durationMs)}</b>${s.fullRuns ? ` · ${s.fullRuns} full run${s.fullRuns > 1 ? 's' : ''}` : ''}${s.trials ? ` · ${s.trials} trial${s.trials > 1 ? 's' : ''}` : ''}${s.won ? ' · <b style="color:var(--c-verdant)">FORGED ★</b>' : s.deepestTurn ? ` · deepest t${s.deepestTurn} ` + actMeter(s.deepestTurn, s.won) : ''}${s.deaths ? ` · ${s.deaths} death${s.deaths > 1 ? 's' : ''}` : ''}${!s.fullRuns && !s.trials && !s.deepestTurn ? ' · just looked around' : ''}</span><span class="muted num">${esc((s.build || '').replace('chapters · ', ''))}</span></div>`).join(''); })() : '<div class="muted">No sessions recorded.</div>'}
+    </div>
+    <div class="dr-sec"><span class="eyebrow">Identity signals</span>
+      <div class="kv">
+        <span class="k">Names used</span><span class="val">${list(p.names)}</span>
+        <span class="k">Locations</span><span class="val">${list(locList)}</span>
+        <span class="k">IP addresses</span><span class="val">${list(p.ips)}</span>
+        <span class="k">Screens</span><span class="val">${list(p.resolutions)}</span>
+        <span class="k">Timezones</span><span class="val">${list(p.timezones)}</span>
+        <span class="k">Languages</span><span class="val">${list(p.langs)}</span>
+        <span class="k">Browsers</span><span class="val">${list(p.uas.map((u) => u.slice(0, 60)))}</span>
+        <span class="k">First seen</span><span class="val">${ago(p.firstSeen)}</span>
+        <span class="k">Last seen</span><span class="val">${ago(p.lastSeen)}</span>
+      </div>
+    </div>
+    ${p.cids.length > 1 ? `<div class="dr-sec"><span class="eyebrow">Merged records (${p.cids.length})</span><div>${p.cids.map((c) => `<span class="alias">${shortId(c)}${c !== p.id ? ` <button data-unmerge="${esc(c)}" title="split off">✕</button>` : ' (root)'}</span>`).join('')}</div></div>` : ''}
+    <div class="dr-sec"><span class="eyebrow">Finished runs (${d.runs.length})</span>
+      ${d.runs.length ? d.runs.slice(0, 40).map((r) => `<div class="run"><span class="when num">${new Date(r.ts).toISOString().slice(5, 16).replace('T', ' ')}</span><span>${r.type === 'game_over' ? 'Full run · died ' + deathWhere(r.turns) : r.type === 'trial_won' ? 'Trial ' + roman(r.stage) + ' cleared' : 'Trial ' + roman(r.stage) + ' fell'} · ${r.turns || 0} turns · ${fmtDur(r.duration_ms)}</span><span class="g num">${r.glory != null ? r.glory + ' ★' : ''}</span></div>`).join('') : '<div class="muted">No finished runs yet.</div>'}
+    </div>
+    <div class="dr-sec"><span class="eyebrow">Possibly the same person</span>
+      <div class="caveat">Matched on soft signals only — a second computer or travel will hide a real match, and a shared household network can create a false one. You decide.</div>
+      ${d.suggestions.length ? d.suggestions.map((s) => `<div class="sug"><div class="top"><b>${esc(s.displayName)}</b><span style="display:flex;gap:.5rem;align-items:center"><span class="conf ${s.confidence}">${s.confidence}</span><button class="mini" data-merge="${esc(s.id)}">Merge in</button></span></div><div class="sigs">${s.signals.map(esc).join(' · ')}</div></div>`).join('') : '<div class="muted">No candidates share signals with this player.</div>'}
+    </div>`;
+  $('#drawer').classList.add('on');
+  $('#scrim').classList.add('on');
+  $('#dr-x').onclick = closeDrawer;
+  $('#dr-save').onclick = async () => { await api('/api/admin/label', { method: 'POST', body: JSON.stringify({ cid: p.id, label: $('#dr-label').value.trim() }) }); await load(); openDetail(p.id); };
+  $('#drawer').querySelectorAll('[data-merge]').forEach((b) => (b.onclick = async () => { await api('/api/admin/merge', { method: 'POST', body: JSON.stringify({ into: p.id, cids: [b.dataset.merge] }) }); await load(); openDetail(p.id); }));
+  $('#drawer').querySelectorAll('[data-unmerge]').forEach((b) => (b.onclick = async () => { await api('/api/admin/unmerge', { method: 'POST', body: JSON.stringify({ cid: b.dataset.unmerge }) }); await load(); openDetail(p.id); }));
+  // per-player difficulty timelines — the hands/difficulty ↔ player pairing
+  api('/api/admin/balance?cid=' + encodeURIComponent(p.id)).then((bal) => {
+    const runs = (bal.runs || []);
+    $('#dr-runs').innerHTML = runs.length
+      ? runs.slice(0, 12).map((r) => {
+          const res = r.won === true ? '<span class="res won">WON</span>' : r.won === false ? `<span class="res died">DIED t${r.endTurn}</span>` : '<span class="res live">live</span>';
+          const whereLine = r.won === false ? `<br><span style="color:var(--c-ember)">${esc(deathWhere(r.endTurn))}</span><span class="num">${deathShortfall(r)}</span>` : r.won === true ? '<br><span style="color:var(--c-verdant)">the Masterwork, complete</span>' : '';
+          return `<div class="drrun"><div class="sparkbox">${runSpark(r)}<div style="margin-top:2px">${actMeter(r.endTurn || r.turns.length, r.won === true)}</div></div><div class="meta">${res} <b class="num">${r.endGlory || 0}★</b> · <span class="dur num">⏱ ${fmtDur(new Date(r.ended || r.started) - new Date(r.started))}</span> · ${esc((r.build || '').replace('chapters · ', ''))} · ${ago(r.started)} · ${r.turns.length} turns${whereLine}</div></div>`;
+        }).join('') + `<div class="muted" style="margin-top:.4rem"><span style="color:#2f8fe6">━</span> score · <span style="color:#e0492a">╍</span> demand · <span style="color:#e0492a">●</span> boss (log scale)</div>`
+      : '<div class="muted">No chapters runs recorded for this player yet.</div>';
+  }).catch(() => { $('#dr-runs').innerHTML = '<div class="muted">Could not load run data.</div>'; });
+}
+
+// ── tabs: hash-routed, no re-render on switch (data refreshes globally on the 12s tick) ──
+const TABS = ['pulse', 'difficulty', 'compare', 'cards', 'players'];
+function showTab(name) {
+  if (!TABS.includes(name)) name = 'pulse';
+  document.querySelectorAll('section[data-tab]').forEach((s) => s.classList.toggle('tab-on', s.dataset.tab === name));
+  document.querySelectorAll('.tab').forEach((t) => t.classList.toggle('on', t.dataset.tab === name));
+  if (location.hash !== '#' + name) history.replaceState(null, '', '#' + name);
+}
+$('#tabs').addEventListener('click', (e) => { const t = e.target.closest('.tab'); if (t) showTab(t.dataset.tab); });
+addEventListener('hashchange', () => showTab(location.hash.slice(1)));
+showTab(location.hash.slice(1) || 'pulse');
+
+// ── wiring ──
+$('#rows').addEventListener('click', (e) => { const row = e.target.closest('.trow'); if (row) openDetail(row.dataset.cid); });
+$('#thead').addEventListener('click', (e) => { const s = e.target.closest('[data-col]'); if (!s) return; const col = s.dataset.col; SORT = { col, dir: SORT.col === col ? -SORT.dir : -1 }; renderTable(CACHE.players); });
+$('#refresh').onclick = () => load().catch(showFail);
+$('#logout').onclick = () => { sessionStorage.removeItem(KEY_STORE); location.reload(); };
+$('#scrim').onclick = closeDrawer;
+$('#balplayer').addEventListener('change', () => loadBalance().catch(() => {}));
+$('#balbuild').addEventListener('change', renderBalance);
+$('#balmore').addEventListener('click', () => { BAL_EXPANDED = !BAL_EXPANDED; renderBalance(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDrawer(); });
+
+// auto-refresh: the live half of "live debugging" — 12s cadence, paused when the tab is hidden
+function setAuto(on) { AUTO = on; $('#autoref').classList.toggle('on', on); }
+$('#autoref').onclick = () => setAuto(!AUTO);
+setInterval(() => {
+  if (!AUTO || document.hidden || !adminKey || $('#app').hidden) return;
+  load().catch(() => {});
+}, 12000);
+setAuto(true);
+
+function showFail(err) {
+  if (err.status === 401) { sessionStorage.removeItem(KEY_STORE); adminKey = ''; showGate('That passphrase was refused.'); }
+  else if (err.status === 503) showGate('Analytics are off: SG_ADMIN_KEY is not set on the server.');
+  else showGate(err.message || 'Something went wrong.');
+}
+function showGate(msg) { $('#app').hidden = true; $('#gate').style.display = 'flex'; $('#gate-err').textContent = msg || ''; }
+async function enter() {
+  const val = $('#gate-key').value.trim();
+  if (!val) return;
+  adminKey = val;
+  try {
+    await load();
+    sessionStorage.setItem(KEY_STORE, adminKey);
+    $('#gate').style.display = 'none';
+    $('#app').hidden = false;
+  } catch (err) { showFail(err); }
+}
+$('#gate-go').onclick = enter;
+$('#gate-key').addEventListener('keydown', (e) => { if (e.key === 'Enter') enter(); });
+
+// boot: if we already hold a key, try straight in
+(async () => {
+  if (adminKey) {
+    try { await load(); $('#gate').style.display = 'none'; $('#app').hidden = false; return; } catch (err) { showFail(err); return; }
+  }
+  showGate();
+  $('#gate-key').focus();
+})();
+</script>
+</body>
+</html>

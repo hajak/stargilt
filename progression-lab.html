@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>StarGilt · Progression Lab</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path d='M50 6l12.6 28.3 30.9 3.1-23.2 20.7 6.7 30.3L50 72.6 23 88.4l6.7-30.3L6.5 37.4l30.9-3.1z' fill='%23e8b64c'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@700;900&family=Alegreya:ital,wght@0,400;0,500;0,700;1,400&family=Alegreya+Sans:wght@400;500;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#e8b64c; --gold-bright:#ffd98a; --gold-deep:#8a5a1a;
+  --ink:#0b0a12; --parchment:#f0e6d2; --dim:#b9ad92; --dim-bright:#cfc4a8;
+  --c-ember:#ff5c38; --c-tide:#41a8ff; --c-verdant:#4ade80; --c-umbra:#b06cff; --c-aurel:#ffd257;
+  --sans:'Alegreya Sans','Helvetica Neue',sans-serif;
+  --disp:'Fraunces',Georgia,serif;
+  --card:linear-gradient(170deg,#251b31,#130d1d);
+  --cardborder:1px solid rgba(232,182,76,.5);
+  --cardshadow:0 30px 90px rgba(0,0,0,.55),0 0 60px rgba(232,182,76,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%}
+body{
+  font-family:var(--sans);color:var(--parchment);
+  background:
+    radial-gradient(1300px 850px at 50% -12%, #241543 0%, rgba(36,21,67,0) 62%),
+    radial-gradient(950px 640px at 88% 112%, #2a1108 0%, rgba(42,17,8,0) 56%),
+    radial-gradient(760px 540px at 8% 104%, #0f1e30 0%, rgba(15,30,48,0) 56%),
+    #0b0a12;
+  background-attachment:fixed;-webkit-font-smoothing:antialiased;
+  padding:2rem clamp(1rem,4vw,3.2rem) 5rem;overflow-x:hidden;
+}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:2;
+  background:radial-gradient(120% 90% at 50% 40%,transparent 55%,rgba(0,0,0,.5) 100%)}
+.wrap{max-width:1220px;margin:0 auto;position:relative;z-index:3}
+.eyebrow{font-family:var(--sans);font-weight:800;letter-spacing:.28em;text-transform:uppercase;color:var(--dim-bright)}
+.wordmark{font-family:'Grenze Gotisch',serif;font-weight:900;letter-spacing:.04em;line-height:.9;
+  background:linear-gradient(175deg,#ffe9b0 8%,#e8b64c 42%,#96621c 78%,#d9a53f 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 10px rgba(232,182,76,.2))}
+
+/* ── hero ── */
+.hero{display:flex;align-items:flex-end;justify-content:space-between;gap:1.4rem;flex-wrap:wrap;margin-bottom:1.4rem}
+.hero .wordmark{font-size:2.4rem}
+.hero .eyebrow{font-size:.62rem;color:var(--gold);margin-top:5px}
+.problem{max-width:560px;font-family:'Alegreya',serif;font-size:.98rem;line-height:1.55;color:var(--dim-bright)}
+.problem b{color:var(--parchment);font-weight:700}
+.pacing{display:inline-flex;gap:.4rem;flex-wrap:wrap;margin-top:.55rem}
+.pchip{font-size:.66rem;font-weight:700;color:var(--dim-bright);padding:.16rem .55rem;border-radius:20px;
+  background:rgba(232,182,76,.09);border:1px solid rgba(232,182,76,.22)}
+.rule{height:1px;background:linear-gradient(90deg,transparent,rgba(232,182,76,.35),transparent);margin:.4rem 0 1.5rem}
+
+/* ── tabs ── */
+.tabs{display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:1.4rem}
+.tab{flex:1 1 200px;text-align:left;cursor:pointer;padding:.75rem 1rem;border-radius:13px;
+  background:linear-gradient(170deg,rgba(37,27,49,.75),rgba(19,13,29,.75));border:1px solid rgba(232,182,76,.22);
+  transition:transform .15s,border-color .18s,box-shadow .18s}
+.tab:hover{transform:translateY(-2px);border-color:var(--gold)}
+.tab.on{border-color:var(--gold);box-shadow:0 0 22px rgba(232,182,76,.18),inset 0 1px 0 rgba(255,255,255,.05);
+  background:linear-gradient(170deg,rgba(52,38,66,.9),rgba(26,18,38,.9))}
+.tab .tkey{font-family:var(--disp);font-weight:700;font-size:1.15rem;color:var(--gold-bright)}
+.tab .tname{font-family:var(--sans);font-weight:800;font-size:.9rem;color:var(--parchment);letter-spacing:.01em}
+.tab .ttag{font-size:.68rem;color:var(--dim);margin-top:2px}
+
+/* ── layout ── */
+.lab{display:grid;grid-template-columns:1.35fr .95fr;gap:1.2rem;align-items:start}
+@media(max-width:880px){.lab{grid-template-columns:1fr}}
+.stage{position:relative;border-radius:18px;background:var(--card);border:var(--cardborder);box-shadow:var(--cardshadow);
+  padding:1.5rem 1.6rem 1.7rem;min-height:430px;overflow:hidden}
+.stage-sky{position:absolute;inset:0;background:radial-gradient(700px 380px at 50% -30%,rgba(232,182,76,.10),transparent 70%);pointer-events:none}
+.rail{border-radius:16px;background:linear-gradient(170deg,rgba(37,27,49,.6),rgba(19,13,29,.6));border:1px solid rgba(232,182,76,.2);padding:1.3rem 1.4rem}
+
+/* ── mock HUD inside the stage ── */
+.hud{display:flex;align-items:center;justify-content:center;gap:1.4rem;margin-bottom:1.1rem;position:relative;z-index:1}
+.counter{display:flex;align-items:center;gap:.5rem;padding:.3rem .85rem;border-radius:999px;
+  background:rgba(10,8,16,.55);border:1px solid rgba(232,182,76,.22)}
+.counter .cic{font-size:1rem}
+.counter .cic.glory{color:#fff0b8;text-shadow:0 0 12px rgba(255,232,150,.9)}
+.counter .cic.turn{color:var(--dim-bright)}
+.counter .clab{font-size:.54rem;font-weight:800;letter-spacing:.16em;color:var(--dim);text-transform:uppercase}
+.counter .cv{font-family:var(--sans);font-weight:800;font-size:1.3rem;font-variant-numeric:tabular-nums}
+.counter .cv.glory{background:linear-gradient(180deg,#fff3cf,#e8b64c);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* demand meter (ported from #tithe) */
+.tithe{width:min(400px,100%);margin:0 auto;display:flex;flex-direction:column;gap:5px;align-items:center;position:relative;z-index:1}
+.tithe .t-label{font-family:var(--sans);font-weight:700;font-size:.66rem;letter-spacing:.2em;color:var(--dim-bright)}
+.tithe .t-label b{color:var(--gold-bright);font-weight:800}
+.tithe .t-bar{position:relative;width:100%;height:12px;border-radius:6px;overflow:hidden;background:rgba(10,8,16,.7);
+  border:1px solid rgba(232,182,76,.28);box-shadow:inset 0 1px 3px rgba(0,0,0,.6)}
+.tithe .t-fill{height:100%;width:0%;border-radius:6px;transition:width .55s cubic-bezier(.3,1,.4,1),background .4s;
+  background:linear-gradient(90deg,#6b4a24,#d99a44)}
+.tithe.safe .t-fill{background:linear-gradient(90deg,#8a5a1a,var(--gold-bright));box-shadow:0 0 12px rgba(232,182,76,.7)}
+.tithe .t-note{font-size:.7rem;color:var(--dim);min-height:1em;font-weight:700;letter-spacing:.04em}
+.tithe.safe .t-note{color:var(--gold-bright)}
+
+/* ── A · commission pip track ── */
+.pips{display:flex;align-items:center;justify-content:center;gap:.5rem;margin:1.6rem 0 .4rem;flex-wrap:wrap}
+.pip{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;
+  font-family:var(--disp);font-weight:700;font-size:.95rem;color:var(--dim);
+  background:rgba(10,8,16,.5);border:1px solid rgba(232,182,76,.18);transition:all .3s}
+.pip.done{color:#241703;background:linear-gradient(172deg,#ffe3a0,#e8b64c 60%,#c8923a);border-color:#f5d78e;box-shadow:0 0 14px rgba(232,182,76,.4)}
+.pip.now{color:var(--gold-bright);border-color:var(--gold);box-shadow:0 0 18px rgba(232,182,76,.35);animation:pippulse 1.4s ease-in-out infinite}
+.pip.final{border-style:dashed}
+.pip.final.done{border-style:solid}
+@keyframes pippulse{50%{transform:scale(1.08)}}
+.pip-cap{text-align:center;font-size:.72rem;color:var(--dim);letter-spacing:.05em;margin-top:.3rem}
+.pip-cap b{color:var(--gold-bright)}
+
+/* ── B · rank ladder ── */
+.ladder{display:flex;flex-direction:column-reverse;gap:.4rem;margin:.6rem auto 0;max-width:360px}
+.rung{display:flex;align-items:center;gap:.7rem;padding:.42rem .7rem;border-radius:9px;border:1px solid transparent;transition:all .3s}
+.rung .dot{width:11px;height:11px;border-radius:50%;background:rgba(255,255,255,.14);flex:0 0 auto;transition:all .3s}
+.rung .rn{font-family:var(--sans);font-weight:700;font-size:.86rem;color:var(--dim)}
+.rung .rat{margin-left:auto;font-size:.68rem;color:var(--dim);font-variant-numeric:tabular-nums}
+.rung.reached .dot{background:var(--gold-bright);box-shadow:0 0 10px rgba(232,182,76,.8)}
+.rung.reached .rn{color:var(--parchment)}
+.rung.now{background:rgba(232,182,76,.1);border-color:rgba(232,182,76,.4)}
+.rung.summit .rn{font-family:var(--disp);font-weight:700;font-size:1rem;color:var(--gold-bright)}
+.rung.summit.reached .rn{background:linear-gradient(175deg,#fff3cf,#e8b64c 70%);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* ── C · chapter map ── */
+.chapters{display:flex;align-items:center;justify-content:center;gap:.35rem;margin:1.5rem 0 .5rem;flex-wrap:wrap}
+.node{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;
+  color:var(--dim);background:rgba(10,8,16,.5);border:1px solid rgba(232,182,76,.2);transition:all .3s}
+.node.boss{width:30px;height:30px;border-radius:8px;color:var(--c-ember);border-color:rgba(255,92,56,.5)}
+.node.done{color:#241703;background:linear-gradient(172deg,#ffe3a0,#e8b64c 60%);border-color:#f5d78e}
+.node.boss.done{background:linear-gradient(172deg,#ff9a75,#c05a30);color:#fff}
+.node.now{border-color:var(--gold);box-shadow:0 0 14px rgba(232,182,76,.4);animation:pippulse 1.4s ease-in-out infinite}
+.chsep{width:16px;height:1px;background:rgba(232,182,76,.25)}
+.boss-banner{margin:.9rem auto 0;max-width:400px;text-align:center;padding:.7rem 1rem;border-radius:11px;
+  background:rgba(255,92,56,.09);border:1px solid rgba(255,92,56,.35);opacity:0;transform:translateY(6px);transition:.35s}
+.boss-banner.on{opacity:1;transform:none}
+.boss-banner .bn-pre{font-size:.56rem;font-weight:800;letter-spacing:.24em;color:var(--c-ember);text-transform:uppercase}
+.boss-banner .bn-name{font-family:var(--disp);font-weight:600;font-size:1.15rem;color:#ffb08a;margin:.1rem 0}
+.boss-banner .bn-mod{font-size:.78rem;color:var(--dim-bright)}
+
+/* ── D · grand bar ── */
+.grand{margin:1.8rem auto .4rem;max-width:440px;text-align:center}
+.grand .g-cap{font-family:var(--disp);font-weight:600;font-size:1.15rem;color:var(--gold-bright);margin-bottom:.6rem}
+.grand .g-bar{position:relative;height:22px;border-radius:12px;overflow:hidden;background:rgba(10,8,16,.7);border:1px solid rgba(232,182,76,.3);box-shadow:inset 0 1px 4px rgba(0,0,0,.6)}
+.grand .g-fill{height:100%;width:0%;border-radius:12px;background:linear-gradient(90deg,#8a5a1a,var(--gold-bright));box-shadow:0 0 16px rgba(232,182,76,.6);transition:width .6s cubic-bezier(.3,1,.4,1)}
+.grand .g-num{font-family:var(--sans);font-weight:800;font-size:.9rem;color:var(--parchment);margin-top:.5rem;font-variant-numeric:tabular-nums}
+.grand .g-num b{color:var(--gold-bright)}
+
+.stage-msg{text-align:center;font-family:'Alegreya',serif;font-style:italic;color:var(--dim);font-size:.9rem;margin-top:1.2rem;min-height:1.2em}
+
+/* ── controls ── */
+.controls{display:flex;gap:.7rem;justify-content:center;margin-top:1.5rem;position:relative;z-index:1}
+.btn-gold{font-family:var(--sans);font-weight:800;letter-spacing:.06em;cursor:pointer;color:#241703;
+  padding:.66rem 1.6rem;border-radius:11px;border:1px solid #f5d78e;
+  background:linear-gradient(172deg,#ffe3a0,#e8b64c 55%,#c8923a);box-shadow:inset 0 1px 0 rgba(255,248,225,.7),0 5px 18px rgba(0,0,0,.4);
+  transition:filter .2s,transform .12s}
+.btn-gold:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.btn-gold:active{transform:scale(.96)}
+.btn-gold:disabled{opacity:.4;cursor:default;filter:saturate(.5)}
+.btn-ghost{font-family:var(--sans);font-weight:700;font-size:.82rem;letter-spacing:.06em;cursor:pointer;color:var(--parchment);
+  padding:.62rem 1.1rem;border-radius:11px;background:linear-gradient(170deg,rgba(45,33,58,.9),rgba(24,17,34,.9));border:1px solid rgba(232,182,76,.26);transition:border-color .18s,color .18s}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold-bright)}
+
+/* ── side rail content ── */
+.rail h3{font-family:var(--disp);font-weight:600;font-size:1.5rem;color:var(--parchment);margin-bottom:.15rem}
+.rail .pitch{font-family:'Alegreya',serif;font-size:.98rem;line-height:1.5;color:var(--dim-bright);margin-bottom:1rem}
+.rail .metric{display:inline-block;font-size:.62rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:.16rem .55rem;border-radius:6px;margin-bottom:1rem;
+  background:rgba(65,168,255,.1);color:#8fc7ff;border:1px solid rgba(65,168,255,.3)}
+.rail .metric.survive{background:rgba(255,92,56,.1);color:#ff9a75;border-color:rgba(255,92,56,.3)}
+.rail .seclab{font-size:.58rem;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin:.9rem 0 .4rem;display:block}
+.rail ul{list-style:none;display:flex;flex-direction:column;gap:.3rem}
+.rail li{font-size:.85rem;line-height:1.4;color:var(--dim-bright);padding-left:1.1rem;position:relative}
+.rail li.pro::before{content:"+";position:absolute;left:0;color:var(--c-verdant);font-weight:800}
+.rail li.con::before{content:"–";position:absolute;left:0;color:var(--c-ember);font-weight:800}
+.rail .wiring{margin-top:.5rem;font-family:'Alegreya',serif;font-size:.82rem;line-height:1.45;color:var(--dim)}
+.rail .wiring code{font-family:ui-monospace,Menlo,monospace;font-size:.76rem;color:var(--gold-bright);background:rgba(232,182,76,.08);padding:.05rem .3rem;border-radius:4px}
+.rail .effort{margin-top:.7rem;font-size:.72rem;color:var(--dim)}
+.rail .effort b{color:var(--parchment)}
+
+/* ── closing recommendation ── */
+.reco{margin-top:1.6rem;border-radius:16px;background:linear-gradient(170deg,rgba(37,27,49,.55),rgba(19,13,29,.55));border:1px solid rgba(232,182,76,.2);padding:1.3rem 1.5rem}
+.reco .seclab{font-size:.58rem;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+.reco p{font-family:'Alegreya',serif;font-size:.96rem;line-height:1.6;color:var(--dim-bright);margin-top:.4rem}
+.reco b{color:var(--parchment);font-weight:700}
+
+/* ── victory overlay (ported from #rankup / #gameover) ── */
+#vwin{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(circle at 50% 46%,rgba(22,13,4,.93),rgba(3,2,6,.99));opacity:0;pointer-events:none;transition:opacity .5s}
+#vwin.on{opacity:1;pointer-events:auto}
+#vrays{position:absolute;width:1000px;height:1000px;border-radius:50%;
+  background:repeating-conic-gradient(rgba(232,182,76,.14) 0deg 6deg, transparent 6deg 18deg);
+  -webkit-mask-image:radial-gradient(circle,#000 0%,transparent 62%);mask-image:radial-gradient(circle,#000 0%,transparent 62%);
+  animation:spin 26s linear infinite}
+.vcard{position:relative;text-align:center;padding:2.6rem 3.4rem;transform:scale(.8);transition:transform .55s cubic-bezier(.3,1.5,.4,1)}
+#vwin.on .vcard{transform:scale(1)}
+.vcard .v-pre{font-family:var(--sans);font-weight:700;font-size:.72rem;letter-spacing:.5em;color:var(--gold);padding-left:.5em}
+.vcard h2{font-family:'Grenze Gotisch',serif;font-weight:900;font-size:clamp(2.4rem,6vw,4rem);line-height:1.05;margin:.5rem 0 .9rem;
+  background:linear-gradient(175deg,#fff3cf 5%,#e8b64c 45%,#96621c 80%,#ffd98a);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 4px 20px rgba(232,182,76,.4))}
+.vcard .v-sub{font-family:'Alegreya',serif;font-size:1.05rem;line-height:1.7;color:var(--dim-bright);max-width:440px;margin:0 auto}
+.vcard .v-sub b{color:var(--parchment)}
+.vcard .v-endless{margin-top:1.3rem;display:inline-flex;gap:.6rem}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes slam{0%{transform:translate(-50%,-50%) scale(2.4);opacity:0}18%{opacity:1}60%{transform:translate(-50%,-50%) scale(1)}100%{transform:translate(-50%,-50%) scale(1);opacity:0}}
+.slamtext{position:fixed;top:38%;left:50%;transform:translate(-50%,-50%);font-family:'Grenze Gotisch',serif;font-weight:900;
+  text-align:center;pointer-events:none;z-index:60;animation:slam 1.6s cubic-bezier(.2,1,.3,1) forwards;filter:drop-shadow(0 3px 16px rgba(0,0,0,.6))}
+@keyframes washout{0%{opacity:0}20%{opacity:1}100%{opacity:0}}
+.flashwash{position:fixed;inset:0;pointer-events:none;z-index:50;animation:washout .7s ease forwards}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:55}
+.foot{margin-top:2rem;text-align:center;font-size:.72rem;color:var(--dim);opacity:.7}
+</style>
+</head>
+<body>
+<canvas id="fx"></canvas>
+<div class="wrap">
+  <div class="hero">
+    <div>
+      <div class="wordmark">STARGILT</div>
+      <div class="eyebrow">Progression Lab · win-condition prototypes</div>
+    </div>
+    <div class="problem">
+      Today the run is <b>endless</b>: the Forge's demand climbs every turn until you can't pay it. There's no <b>"you won"</b> — only how far you got. Balatro has Ante 8: a knowable summit. Here are four ways to give StarGilt a finish line — <b>click each and feel it</b>.
+      <div class="pacing">
+        <span class="pchip">dies turn ~9–14</span><span class="pchip">~120–350 ★ lifetime</span><span class="pchip">rank Apprentice→Broker</span>
+      </div>
+    </div>
+  </div>
+  <div class="rule"></div>
+
+  <div class="tabs" id="tabs"></div>
+
+  <div class="lab">
+    <div class="stage" id="stage"><div class="stage-sky"></div></div>
+    <div class="rail" id="rail"></div>
+  </div>
+
+  <div class="reco">
+    <span class="seclab">A recommendation, to overrule by feel</span>
+    <p>Ship <b>D · The Grand Commission</b> first if you want a finish line this week — it's one threshold and one bar, mirroring the trials' proven goal model. For the fullest Balatro feel, build <b>A · The Final Contract</b> as the core and fold in <b>C's boss twists</b> for variety — that's the most dramatic result. <b>B · Rank Ascension</b> is the strongest identity play: the game is literally named for its summit. All four keep an <b>Endless mode</b> after the win so the honor-roll chase survives.</p>
+  </div>
+  <div class="foot">Prototype only — no game logic changed. Each panel reuses StarGilt's real theme, meter, and victory ceremony.</div>
+</div>
+
+<div id="vwin"><div id="vrays"></div><div class="vcard">
+  <div class="v-pre"></div><h2></h2><div class="v-sub"></div>
+  <div class="v-endless"><button class="btn-ghost" id="v-endless">⏵ Enter the Eternal Forge (endless)</button><button class="btn-ghost" id="v-close">Close</button></div>
+</div></div>
+
+<script>
+'use strict';
+const $=s=>document.querySelector(s);
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+
+/* ═══════ lightweight FX kit (ported feel from index.html) ═══════ */
+const cvs=$('#fx'),ctx=cvs.getContext('2d');
+let parts=[];
+function sizeCanvas(){cvs.width=innerWidth;cvs.height=innerHeight}
+sizeCanvas();addEventListener('resize',sizeCanvas);
+function burst(x,y,color,n=48,speed=8){
+  for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,s=speed*(.3+Math.random());
+    parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-1.4,life:1,color,r:1.5+Math.random()*2.5})}
+}
+(function loop(){ctx.clearRect(0,0,cvs.width,cvs.height);
+  parts=parts.filter(p=>p.life>0);
+  for(const p of parts){p.vy+=.11;p.x+=p.vx;p.y+=p.vy;p.life-=.016;
+    ctx.globalAlpha=Math.max(0,p.life);ctx.fillStyle=p.color;
+    ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,7);ctx.fill()}
+  ctx.globalAlpha=1;requestAnimationFrame(loop)})();
+function slamText(html,{color='#ffd98a',size=3.2}={}){
+  const el=document.createElement('div');el.className='slamtext';el.innerHTML=html;
+  el.style.color=color;el.style.fontSize=size+'rem';document.body.appendChild(el);
+  setTimeout(()=>el.remove(),1700);
+}
+function flashWash(color='rgba(232,182,76,.35)'){
+  const el=document.createElement('div');el.className='flashwash';
+  el.style.background=`radial-gradient(circle at 50% 45%,${color},transparent 70%)`;
+  document.body.appendChild(el);setTimeout(()=>el.remove(),750);
+}
+function shake(p=8){document.querySelector('.wrap').animate(
+  [{transform:'translate(0,0)'},{transform:`translate(${p}px,${-p*.6}px)`},{transform:`translate(${-p}px,${p*.4}px)`},{transform:'translate(0,0)'}],
+  {duration:360,easing:'ease-out'})}
+
+/* tiny WebAudio — lit on first gesture, like the game */
+const AX=(()=>{let ac=null;const ensure=()=>{if(!ac){try{ac=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(ac&&ac.state==='suspended')ac.resume();return ac};
+  function tone(f,{type='sine',dur=.4,g=.12,when=0,f2=null}={}){const c=ensure();if(!c)return;const t=c.currentTime+when;
+    const o=c.createOscillator(),ga=c.createGain();o.type=type;o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+dur);
+    ga.gain.setValueAtTime(.0001,t);ga.gain.exponentialRampToValueAtTime(g,t+.02);ga.gain.exponentialRampToValueAtTime(.0001,t+dur);
+    o.connect(ga).connect(c.destination);o.start(t);o.stop(t+dur+.05)}
+  return{ensure,
+    shimmer(){const b=659.25;[0,2,4,7,9,11].forEach((s,i)=>tone(b*Math.pow(2,s/12),{type:'sine',dur:.5,g:.06,when:i*.06}))},
+    power(){tone(110,{type:'sawtooth',dur:.7,g:.12});tone(110.6,{type:'sawtooth',dur:.7,g:.1});tone(220,{type:'square',dur:.7,g:.05})},
+    boom(){tone(82,{type:'sine',dur:.8,g:.16,f2:28})},
+    tick(){tone(523,{type:'triangle',dur:.12,g:.05})}}
+})();
+addEventListener('pointerdown',()=>AX.ensure(),{once:true});
+
+/* the shared victory ceremony every strategy fires */
+function ceremony(pre,title,sub){
+  AX.power();AX.shimmer();shake(9);
+  flashWash('rgba(232,182,76,.4)');
+  burst(innerWidth/2,innerHeight*.42,'#ffd98a',80,9);
+  burst(innerWidth/2,innerHeight*.42,'#cfa9ff',36,7);
+  // the card IS the moment (mirrors the game's trialVictory) — no duplicate slam title over it
+  setTimeout(()=>{
+    const v=$('#vwin');
+    v.querySelector('.v-pre').textContent=pre;
+    v.querySelector('h2').textContent=title;
+    v.querySelector('.v-sub').innerHTML=sub;
+    v.classList.add('on');
+  },360);
+}
+$('#v-close').onclick=()=>$('#vwin').classList.remove('on');
+$('#v-endless').onclick=()=>{$('#vwin').classList.remove('on');slamText('THE FORGE NEVER SLEEPS',{color:'#ffd98a',size:1.9})};
+
+/* ═══════ strategy definitions ═══════ */
+const STRATS={
+  A:{key:'A',name:'The Final Contract',tag:'fixed summit · Ante-8 analog',metric:'survive the summit',metricCls:'survive',
+    pitch:'A run is a fixed ladder of eight Commissions, shown up front. The eighth — <i>The Masterwork</i> — is the win. The demand you must beat is knowable from turn one.',
+    pros:['Clearest arc — a real final-boss climax','Knowable summit from the first turn','The most Balatro-faithful shape'],
+    cons:['Eight demands must be hand-tuned','Shifts the core question from "how long" to "can I clear it"'],
+    wiring:'Replace the runaway curve with a fixed <code>COMMISSIONS[]</code> schedule; win when the 8th is met. Reuses <code>trialVictory</code> ceremony.',
+    effort:'Medium'},
+  B:{key:'B',name:'Rank Ascension',tag:'the title ladder is the game',metric:'cumulative ★',metricCls:'',
+    pitch:'The rank ladder <i>becomes</i> the goal, retuned to a reachable summit — the top title is <b>STAR-GILT</b> itself. Gild your name among the stars to win.',
+    pros:['Reuses the rank system + rank-up ceremony','Milestones the whole way up','Deeply on-theme — the game is named for its summit'],
+    cons:['A cumulative-★ goal dressed as ranks','Needs thresholds retuned (compress 30,000 → ~640)','Many small climaxes, not one big one'],
+    wiring:'Make the top <code>RANKS</code> entry terminal; win when <code>state.rank</code> hits max. Reuses <code>rankUpOverlay</code>.',
+    effort:'Low–Medium'},
+  C:{key:'C',name:'Chapters + Boss Commissions',tag:'antes with boss blinds',metric:'survive the summit',metricCls:'survive',
+    pitch:'Turns group into chapters; each ends in a <i>Boss Commission</i> with a twist — doubled dross, no boons, halved focus. Clear the final boss to win.',
+    pros:['Most drama and replay texture','Memorable, named boss beats','The fullest Balatro structure'],
+    cons:['Most to build — a boss-modifier system + map','Largest design surface to balance'],
+    wiring:'Layer a chapter counter + boss-turn modifiers on the turn loop; final boss = win.',
+    effort:'High'},
+  D:{key:'D',name:'The Grand Commission',tag:'single cumulative target · MVP',metric:'cumulative ★',metricCls:'',
+    pitch:'One big, named goal: raise a total of <b>400 ★</b> for the patron\'s masterwork before you fall. One always-visible bar toward the finish.',
+    pros:['Smallest change — one threshold, one bar','Immediately legible: "I need X total"','Leaves the demand loop and its tension intact'],
+    cons:['Least dramatic — a number, not a summit','Close to Rank Ascension without the flavor'],
+    wiring:'One line beside the judgment: <code>if(!inTrial()&&state.glory>=GRAND_GOAL) return runVictory();</code> plus the bar.',
+    effort:'Low (MVP)'},
+};
+const ORDER=['A','B','C','D'];
+let active='A';
+
+/* ─── per-strategy scene state + renderers ─── */
+const A_DEMANDS=[6,12,20,30,42,56,75,100];
+const A_NAMES=['Kindling','First Light','The Bellows','Rising Heat','The White Forge','Starfall','The Gilded Vow','The Masterwork'];
+let aState;
+function aReset(){aState={i:0,glory:0}}
+function renderA(){
+  const s=aState,total=A_DEMANDS.length,idx=Math.min(s.i,total-1),demand=A_DEMANDS[idx];
+  return `<div class="hud">
+    <div class="counter"><span class="cic turn">§</span><span class="clab">Commission</span><span class="cv">${s.i+1}/${total}</span></div>
+    <div class="counter"><span class="cic glory">★</span><span class="clab">Glory</span><span class="cv glory">${s.glory}</span></div>
+  </div>
+  <div class="pips">${A_DEMANDS.map((d,k)=>`<div class="pip ${k<s.i?'done':''} ${k===s.i?'now':''} ${k===total-1?'final':''} ${k===total-1&&s.i>=total?'done':''}">${roman(k+1)}</div>`).join('')}</div>
+  <div class="pip-cap">Now: <b>${A_NAMES[idx]}</b> — the Forge demands <b>${demand} ★</b></div>
+  <div class="tithe" id="a-meter"><div class="t-label">THE FORGE DEMANDS <b>${demand} ★</b></div>
+    <div class="t-bar"><div class="t-fill"></div></div>
+    <div class="t-note">meet it to claim Commission ${roman(s.i+1)}</div></div>
+  <div class="stage-msg">Eight commissions, a fixed climb. The eighth is victory.</div>
+  <div class="controls"><button class="btn-gold" id="a-go">⏵ Meet Commission ${roman(s.i+1)}</button><button class="btn-ghost" id="a-reset">Reset</button></div>`;
+}
+function wireA(){
+  $('#a-go').onclick=()=>{
+    const s=aState,demand=A_DEMANDS[s.i],m=$('#a-meter');
+    AX.tick();m.classList.add('safe');m.querySelector('.t-fill').style.width='100%';
+    m.querySelector('.t-note').textContent='TITHE MET ✓';
+    s.glory+=demand;s.i++;
+    setTimeout(()=>{
+      if(s.i>=A_DEMANDS.length){
+        renderStage();
+        ceremony('THE MASTERWORK IS DELIVERED','You Are Forged',
+          `Eight commissions met — the patron signs your work into legend.<br>You raised <b>${s.glory} ★</b>. <b>Master Smith.</b><br><br>The Trials taught you; the Contract crowned you.`);
+      }else renderStage();
+    },560);
+  };
+  $('#a-reset').onclick=()=>{aReset();renderStage()};
+}
+
+const B_RANKS=[{n:'Cinder Initiate',at:0},{n:'Gilded Apprentice',at:60},{n:'Emberwright',at:150},{n:'Arcane Broker',at:280},{n:'Baron of Embers',at:440},{n:'STAR-GILT',at:640}];
+let bState;
+function bReset(){bState={glory:0,rank:0}}
+function renderB(){
+  const s=bState,top=B_RANKS.length-1,next=B_RANKS[s.rank+1];
+  const prev=B_RANKS[s.rank].at,fill=next?clamp((s.glory-prev)/(next.at-prev),0,1)*100:100;
+  return `<div class="hud">
+    <div class="counter"><span class="cic glory">★</span><span class="clab">Glory</span><span class="cv glory">${s.glory}</span></div>
+    <div class="counter"><span class="cic turn">◈</span><span class="clab">Title</span><span class="cv" style="font-size:.95rem">${B_RANKS[s.rank].n}</span></div>
+  </div>
+  <div class="ladder">${B_RANKS.map((r,k)=>`<div class="rung ${k<=s.rank?'reached':''} ${k===s.rank?'now':''} ${k===top?'summit':''}"><span class="dot"></span><span class="rn">${r.n}</span><span class="rat">${r.at} ★</span></div>`).join('')}</div>
+  <div class="tithe" id="b-meter" style="margin-top:1rem"><div class="t-label">TO ${next?next.n.toUpperCase():'THE SUMMIT'}</div>
+    <div class="t-bar"><div class="t-fill" style="width:${fill}%;background:linear-gradient(90deg,#8a5a1a,var(--gold-bright))"></div></div>
+    <div class="t-note">${next?`${next.at-s.glory} ★ to ascend`:'the summit is yours'}</div></div>
+  <div class="controls"><button class="btn-gold" id="b-go">⏵ Raise ★ (play a turn)</button><button class="btn-ghost" id="b-reset">Reset</button></div>`;
+}
+function wireB(){
+  $('#b-go').onclick=()=>{
+    const s=bState;s.glory+=45+Math.round(s.rank*18); // a developing engine earns more each title
+    AX.tick();
+    const before=s.rank;
+    while(s.rank+1<B_RANKS.length&&s.glory>=B_RANKS[s.rank+1].at)s.rank++;
+    renderStage();
+    if(s.rank>before){
+      if(s.rank===B_RANKS.length-1){
+        ceremony('THE STARS ARE GILDED','Star-Gilt',
+          `Your name is written in gold among the stars — the highest title the Forge can grant.<br>You reached the summit at <b>${s.glory} ★</b>.`);
+      }else{
+        AX.shimmer();AX.boom();burst(innerWidth/2,innerHeight*.4,'#ffd98a',50,8);burst(innerWidth/2,innerHeight*.4,'#cfa9ff',26,6);
+        slamText(B_RANKS[s.rank].n,{color:'#ffd98a',size:2.2});
+      }
+    }
+  };
+  $('#b-reset').onclick=()=>{bReset();renderStage()};
+}
+
+const C_CHAP=[
+  {label:'I',nodes:['s','s','boss'],boss:{name:'The Ashen Fast',mod:'Dross demands doubled this turn'}},
+  {label:'II',nodes:['s','s','boss'],boss:{name:'The Cold Anvil',mod:'No boons offered this chapter'}},
+  {label:'III',nodes:['s','s','boss'],boss:{name:'The Locked Vault',mod:'Focus halved — spend it wisely'}},
+  {label:'IV',nodes:['s','s','fboss'],boss:{name:'The Masterwork',mod:'The final demand — no mercy'}},
+];
+let cState;
+const C_FLAT=[];C_CHAP.forEach((ch,ci)=>ch.nodes.forEach((t,ni)=>C_FLAT.push({t,ci,ni,ch})));
+function cReset(){cState={i:0}}
+function renderC(){
+  const s=cState,cur=C_FLAT[Math.min(s.i,C_FLAT.length-1)],atBoss=cur&&(cur.t==='boss'||cur.t==='fboss');
+  let map='';C_CHAP.forEach((ch,ci)=>{
+    if(ci>0)map+='<span class="chsep"></span>';
+    ch.nodes.forEach((t,ni)=>{const idx=C_FLAT.findIndex(f=>f.ci===ci&&f.ni===ni);
+      const boss=t!=='s';map+=`<div class="node ${boss?'boss':''} ${idx<s.i?'done':''} ${idx===s.i?'now':''}">${boss?(t==='fboss'?'★':'◆'):'●'}</div>`});
+  });
+  return `<div class="hud">
+    <div class="counter"><span class="cic turn">§</span><span class="clab">Chapter</span><span class="cv">${cur?cur.ch.label:'—'} / IV</span></div>
+    <div class="counter"><span class="cic glory">★</span><span class="clab">Turn</span><span class="cv">${Math.min(s.i+1,C_FLAT.length)}</span></div>
+  </div>
+  <div class="chapters">${map}</div>
+  <div class="boss-banner ${atBoss?'on':''}">${atBoss?`<div class="bn-pre">${cur.t==='fboss'?'FINAL BOSS COMMISSION':'BOSS COMMISSION'}</div><div class="bn-name">${cur.ch.boss.name}</div><div class="bn-mod">${cur.ch.boss.mod}</div>`:''}</div>
+  <div class="stage-msg">${atBoss?'A twist demand caps the chapter — beat it to advance.':'Small commissions build toward each chapter\'s boss.'}</div>
+  <div class="controls"><button class="btn-gold" id="c-go">⏵ ${atBoss?'Face the Boss':'Advance the chapter'}</button><button class="btn-ghost" id="c-reset">Reset</button></div>`;
+}
+function wireC(){
+  $('#c-go').onclick=()=>{
+    const s=cState,cur=C_FLAT[s.i];AX.tick();
+    if(cur&&cur.t==='fboss'){
+      s.i++;renderStage();
+      ceremony('THE FINAL BOSS FALLS','The Forge Is Yours',
+        `Four chapters, four bosses, the Masterwork struck.<br>You conquered <b>The Ashen Fast</b>, <b>The Cold Anvil</b>, <b>The Locked Vault</b> — and the patron himself.`);
+      return;
+    }
+    if(cur&&cur.t==='boss'){AX.boom();burst(innerWidth/2,innerHeight*.42,'#ff9a75',36,7);shake(6)}
+    s.i=Math.min(s.i+1,C_FLAT.length-1);renderStage();
+  };
+  $('#c-reset').onclick=()=>{cReset();renderStage()};
+}
+
+const D_GOAL=400;
+let dState;
+function dReset(){dState={glory:0,turn:0}}
+function renderD(){
+  const s=dState,pct=clamp(s.glory/D_GOAL*100,0,100);
+  return `<div class="hud">
+    <div class="counter"><span class="cic glory">★</span><span class="clab">Glory</span><span class="cv glory">${s.glory}</span></div>
+    <div class="counter"><span class="cic turn">§</span><span class="clab">Turn</span><span class="cv">${s.turn}</span></div>
+  </div>
+  <div class="grand">
+    <div class="g-cap">THE GRAND COMMISSION</div>
+    <div class="g-bar"><div class="g-fill" style="width:${pct}%"></div></div>
+    <div class="g-num"><b>${s.glory}</b> / ${D_GOAL} ★ raised for the patron's masterwork</div>
+  </div>
+  <div class="stage-msg">Keep paying each turn's demand — but now you're building toward something.</div>
+  <div class="controls"><button class="btn-gold" id="d-go">⏵ Raise ★ (play a turn)</button><button class="btn-ghost" id="d-reset">Reset</button></div>`;
+}
+function wireD(){
+  $('#d-go').onclick=()=>{
+    const s=dState;s.turn++;s.glory+=38+Math.round(s.turn*9);AX.tick();
+    const won=s.glory>=D_GOAL;renderStage();
+    if(won)ceremony('THE MASTERWORK IS RAISED','A Cathedral of Stars',
+      `You raised <b>${s.glory} ★</b> for the Grand Commission — the patron's masterwork stands complete.<br>Every run now has a finish line worth chasing.`);
+  };
+  $('#d-reset').onclick=()=>{dReset();renderStage()};
+}
+
+const RENDER={A:renderA,B:renderB,C:renderC,D:renderD};
+const WIRE={A:wireA,B:wireB,C:wireC,D:wireD};
+const RESET={A:aReset,B:bReset,C:cReset,D:dReset};
+function roman(n){return['','I','II','III','IV','V','VI','VII','VIII'][n]||n}
+
+function renderStage(){
+  const st=$('#stage');
+  st.innerHTML='<div class="stage-sky"></div>'+RENDER[active]();
+  WIRE[active]();
+}
+function renderRail(){
+  const s=STRATS[active];
+  $('#rail').innerHTML=`
+    <h3>${s.key} · ${s.name}</h3>
+    <span class="metric ${s.metricCls}">${s.metric}</span>
+    <div class="pitch">${s.pitch}</div>
+    <span class="seclab">Strengths</span><ul>${s.pros.map(p=>`<li class="pro">${p}</li>`).join('')}</ul>
+    <span class="seclab">Costs</span><ul>${s.cons.map(c=>`<li class="con">${c}</li>`).join('')}</ul>
+    <span class="seclab">How it wires in</span><div class="wiring">${s.wiring}</div>
+    <div class="effort">Build effort: <b>${s.effort}</b></div>`;
+}
+function renderTabs(){
+  $('#tabs').innerHTML=ORDER.map(k=>{const s=STRATS[k];
+    return `<div class="tab ${k===active?'on':''}" data-k="${k}"><span class="tkey">${k}</span> <span class="tname">${s.name}</span><div class="ttag">${s.tag}</div></div>`}).join('');
+  $('#tabs').querySelectorAll('.tab').forEach(t=>t.onclick=()=>{active=t.dataset.k;selectAll()});
+}
+function selectAll(){renderTabs();renderRail();renderStage()}
+
+ORDER.forEach(k=>RESET[k]());
+selectAll();
+</script>
+</body>
+</html>
