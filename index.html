@@ -1424,7 +1424,8 @@ body.boss-turn #tithe .t-label{color:var(--boss-c,#ff7a52)}
       <p class="sm-tag">FEED THE FORGE</p>
       <div class="sm-rule"></div>
       <nav class="sm-nav">
-        <button id="sm-play" class="sm-item primary"><span class="sm-key">PLAY</span></button>
+        <button id="sm-continue" class="sm-item primary" hidden><span class="sm-key">CONTINUE</span><span class="sm-note" id="sm-continue-note">resume your run</span></button>
+        <button id="sm-play" class="sm-item primary"><span class="sm-key">PLAY</span><span class="sm-note" id="sm-play-note" hidden>a new run</span></button>
         <button id="sm-learn" class="sm-item"><span class="sm-key">LEARN</span><span class="sm-note">the optional tutorial</span></button>
         <button id="sm-scores" class="sm-item"><span class="sm-key">HIGHSCORE</span></button>
         <button id="sm-quit" class="sm-item ghost"><span class="sm-key">QUIT</span></button>
@@ -1473,7 +1474,7 @@ body.boss-turn #tithe .t-label{color:var(--boss-c,#ff7a52)}
 <script>
 'use strict';
 /* ═══════════════════ utils ═══════════════════ */
-const BUILD='chapters · v0.8.4'; // v0.8.4 (playtest pass): FREE Act-1 first-miss mercy — the Forge forgives an apprentice once (prod data: Boss 1 killed 44% of Erik's runs, once by 2★, while barely touching Hampus); does NOT count as clearing. BUGFIX: opening market ignored afterBoss (Twin Pyre seeded turn 1) — pickReverie now filters both gates. POLISH: game-over backdrop opaque (was competing with the bright board), MULT cap reads 'cap 15' not '/15' (slash misread as a fraction), start menu PLAY primary+first above LEARN (optional tutorial). SECURITY: static-file guard requires ROOT+sep (sibling-prefix dir couldn't leak, now can't at all). // v0.8.3: BURN needs a CONFIRM — the picked card zooms to centre wearing a big BURN button (+★ shown), CANCEL keeps the prompt armed, SKIP BURN spares everything; coach follows in ('BURN IT'). Fixes mis-click incinerations from a crowded hand. Relic mounts (rack buys + master drafts) now ride the ch_run card tally (cards.relics) for the admin Compare tab. // v0.8.2: card-corner wedges fixed — the .foot/.nameplate scrims and the .cardo hot-glow shadow painted SQUARE corners past the 12px cardface radius (face can't clip: badges must overflow); all three now carry the matching radius. // v0.8.1: removed the stranded 'PLAYED ×N' pill (v0.3 tight-stack relic left floating in empty space after the v0.7.2 cluster move; COMBO ×N already shows the chain). v0.8.0 BALANCE (v0.7.0 overshot — too easy): the six ungated mythics now gate properly — leviathan/abyss deep (rank 2), dragon/incarnate/mirrortwin deep+afterBoss:2 (t12+), THE GILDED FRACTAL (the ×1.5 xMult exploder that landed in Act 1-2) deep+afterBoss:3 (t18+). DEMAND_BASE 10.4→11.7 (half the v0.7 cut restored, −10% vs original). NEW Dross-for-power T1 wares (strong + 1❖ to play, each play silts a Dross): Pyre Bloom (c4, 4★), Silt Dredger (c5, 3★ +draw2), Ashgilt Idol (c5, 3★ +2⬤). NEW mid burn-engine The Twin Pyre (c5 cantrip, +1❖, burn 1, afterBoss:1) — Altar → Twin Pyre → Great Kiln. v0.7.2: the played-card cluster occludes less — anchor 45%→55% (sits low on the board) and rows are 8 wide (was 5), so a 15-card chain is 2 short rows instead of a 3-row wall across the centre. v0.7.1: § debug is keyboard-only — removed the corner tap element (no clickable trace on screen). v0.7.0 BALANCE: MULT_CAP 7→15 (the ×7 ceiling could not answer the late-boss curve), DEMAND_BASE 13→10.4 (flat −20%, playtest verdict), and three SCALING star engines so base ★ can grow with the run — Ashfall Reliquary (rare, +1★/card burned this run), Crown of Hours (mythic, +1★×turn number), Anvil of the Green World (mythic, +1★/card played); new syn kinds starPerBurn/starPerTurn in starsFor(). Admin: Forge Console redesign (funnels, demand-vs-score chart, clear-rate bars, live feed, per-player run timelines via /api/admin/balance?cid= + /api/admin/events). v0.6.9: (1) pile-view recede fixed — dim/pop now keyed to the card actually under the pointer via JS classes (.receding/.hot), not container :hover; resting the mouse between cards (or a forge re-render under a still pointer) no longer washes out every card with nothing popped. (2) § secret debug — press § or click the faint corner § → copyable JSON dump of the exact game state (build, run, piles, score, overlays, ch-* storage, recent errors via an early error ring buffer) for bug reports. (3) admin: "Furthest" split into Learn (tutorial funnel: skipped/started/Trial N/Graduated) and Game (real-run depth: just looked/started/Act N·turn/Forged ★) so tutorial adoption is visible. v0.6.8: SHARED honor roll — run scores post to /api/score (cid+per-run rid; a win that rolls into an Endless death keeps ONE slot at its peak) and the HIGHSCORE panel + game-over board show the global top 10 from /api/scores, own rows highlighted via a server-computed `me` flag (raw cids never leave the server). localStorage board unchanged as the offline/test fallback; net is gated by Telemetry.off so :5713/file:// stay silent. v0.6.7 (test-player fixes): (1) a Boon is a free reward — a stray backdrop click no longer discards it; only a card or DECLINE dismisses. (2) the end-turn MULT reveal no longer overshoots the cap then snaps down (showed ×58=13456 → ×14=3262); the meter now climbs only to the true capped total, AND the ×7 MULT cap is made legible — a persistent "/7 max" on the MULT meter that turns gold "MAX" at the cap, a "★ MULT MAXED · ×7" callout the instant you hit it, and the keystone (× bucket) shown as its own ⚡×N chip. v0.6.6 (pile view): hovering a card now recedes its neighbours (opacity .38) so their gold forge buttons / count badges stop peeking past the enlarged card's corners (the "yellow corner"), and the popped card wears a tighter gold lift-shadow (negative spread) with a softer count-badge drop — fixes the black-box/yellow-corner hover-zoom artifacts. v0.6.5 (pile view): hover-zoom no longer clips an edge card (grid overflow visible while the deck fits, real scroll box only on genuine overflow); cards vertically centred when the deck fits; removed the redundant forge-preview eye button; dropped the dark card-name scrim that read as a black frame across the top of the enlarged pile-view cards. v0.6.4: PLAY is open from the first visit — removed the Learn-before-Play lock (LEARN is now an optional tutorial). v0.6.3: server-side "Mellon" password gate for the private playtest (removed the misbuilt invite button). v0.6.2: full-screen pile view, Ledger buff, card-usage telemetry, Learn gate + deep sweep
+const BUILD='chapters · v0.8.5'; // v0.8.5: RUN PERSISTENCE — a run autosaves to localStorage (ch-sg-save) at each turn boundary; the start menu shows CONTINUE (resume · Act N, turn T, NNN★) when a save exists for this device's player, and PLAY drops to 'a new run'. Restores deck/discard/relics(+shattered)/market/commissions/counters; forged cards (coin_f) rebuilt via defFromId. Cleared on death + RESTART; kept on QUIT-to-menu (leave & resume). TALLY SPEED: the end-turn ceremony auto-scales ~2.2× faster from Act 3 on (Acts 1-2 keep the full show), fixing the long-chain drag; click-to-rush still works. // v0.8.4 (playtest pass): FREE Act-1 first-miss mercy — the Forge forgives an apprentice once (prod data: Boss 1 killed 44% of Erik's runs, once by 2★, while barely touching Hampus); does NOT count as clearing. BUGFIX: opening market ignored afterBoss (Twin Pyre seeded turn 1) — pickReverie now filters both gates. POLISH: game-over backdrop opaque (was competing with the bright board), MULT cap reads 'cap 15' not '/15' (slash misread as a fraction), start menu PLAY primary+first above LEARN (optional tutorial). SECURITY: static-file guard requires ROOT+sep (sibling-prefix dir couldn't leak, now can't at all). // v0.8.3: BURN needs a CONFIRM — the picked card zooms to centre wearing a big BURN button (+★ shown), CANCEL keeps the prompt armed, SKIP BURN spares everything; coach follows in ('BURN IT'). Fixes mis-click incinerations from a crowded hand. Relic mounts (rack buys + master drafts) now ride the ch_run card tally (cards.relics) for the admin Compare tab. // v0.8.2: card-corner wedges fixed — the .foot/.nameplate scrims and the .cardo hot-glow shadow painted SQUARE corners past the 12px cardface radius (face can't clip: badges must overflow); all three now carry the matching radius. // v0.8.1: removed the stranded 'PLAYED ×N' pill (v0.3 tight-stack relic left floating in empty space after the v0.7.2 cluster move; COMBO ×N already shows the chain). v0.8.0 BALANCE (v0.7.0 overshot — too easy): the six ungated mythics now gate properly — leviathan/abyss deep (rank 2), dragon/incarnate/mirrortwin deep+afterBoss:2 (t12+), THE GILDED FRACTAL (the ×1.5 xMult exploder that landed in Act 1-2) deep+afterBoss:3 (t18+). DEMAND_BASE 10.4→11.7 (half the v0.7 cut restored, −10% vs original). NEW Dross-for-power T1 wares (strong + 1❖ to play, each play silts a Dross): Pyre Bloom (c4, 4★), Silt Dredger (c5, 3★ +draw2), Ashgilt Idol (c5, 3★ +2⬤). NEW mid burn-engine The Twin Pyre (c5 cantrip, +1❖, burn 1, afterBoss:1) — Altar → Twin Pyre → Great Kiln. v0.7.2: the played-card cluster occludes less — anchor 45%→55% (sits low on the board) and rows are 8 wide (was 5), so a 15-card chain is 2 short rows instead of a 3-row wall across the centre. v0.7.1: § debug is keyboard-only — removed the corner tap element (no clickable trace on screen). v0.7.0 BALANCE: MULT_CAP 7→15 (the ×7 ceiling could not answer the late-boss curve), DEMAND_BASE 13→10.4 (flat −20%, playtest verdict), and three SCALING star engines so base ★ can grow with the run — Ashfall Reliquary (rare, +1★/card burned this run), Crown of Hours (mythic, +1★×turn number), Anvil of the Green World (mythic, +1★/card played); new syn kinds starPerBurn/starPerTurn in starsFor(). Admin: Forge Console redesign (funnels, demand-vs-score chart, clear-rate bars, live feed, per-player run timelines via /api/admin/balance?cid= + /api/admin/events). v0.6.9: (1) pile-view recede fixed — dim/pop now keyed to the card actually under the pointer via JS classes (.receding/.hot), not container :hover; resting the mouse between cards (or a forge re-render under a still pointer) no longer washes out every card with nothing popped. (2) § secret debug — press § or click the faint corner § → copyable JSON dump of the exact game state (build, run, piles, score, overlays, ch-* storage, recent errors via an early error ring buffer) for bug reports. (3) admin: "Furthest" split into Learn (tutorial funnel: skipped/started/Trial N/Graduated) and Game (real-run depth: just looked/started/Act N·turn/Forged ★) so tutorial adoption is visible. v0.6.8: SHARED honor roll — run scores post to /api/score (cid+per-run rid; a win that rolls into an Endless death keeps ONE slot at its peak) and the HIGHSCORE panel + game-over board show the global top 10 from /api/scores, own rows highlighted via a server-computed `me` flag (raw cids never leave the server). localStorage board unchanged as the offline/test fallback; net is gated by Telemetry.off so :5713/file:// stay silent. v0.6.7 (test-player fixes): (1) a Boon is a free reward — a stray backdrop click no longer discards it; only a card or DECLINE dismisses. (2) the end-turn MULT reveal no longer overshoots the cap then snaps down (showed ×58=13456 → ×14=3262); the meter now climbs only to the true capped total, AND the ×7 MULT cap is made legible — a persistent "/7 max" on the MULT meter that turns gold "MAX" at the cap, a "★ MULT MAXED · ×7" callout the instant you hit it, and the keystone (× bucket) shown as its own ⚡×N chip. v0.6.6 (pile view): hovering a card now recedes its neighbours (opacity .38) so their gold forge buttons / count badges stop peeking past the enlarged card's corners (the "yellow corner"), and the popped card wears a tighter gold lift-shadow (negative spread) with a softer count-badge drop — fixes the black-box/yellow-corner hover-zoom artifacts. v0.6.5 (pile view): hover-zoom no longer clips an edge card (grid overflow visible while the deck fits, real scroll box only on genuine overflow); cards vertically centred when the deck fits; removed the redundant forge-preview eye button; dropped the dark card-name scrim that read as a black frame across the top of the enlarged pile-view cards. v0.6.4: PLAY is open from the first visit — removed the Learn-before-Play lock (LEARN is now an optional tutorial). v0.6.3: server-side "Mellon" password gate for the private playtest (removed the misbuilt invite button). v0.6.2: full-screen pile view, Ledger buff, card-usage telemetry, Learn gate + deep sweep
 const $=s=>document.querySelector(s);
 /* ── error ring buffer (feeds the § debug dump) — installed first so nothing escapes it ── */
 window.__sgErrLog=[];
@@ -2216,6 +2217,21 @@ const RARITY_JUICE={common:1,uncommon:1.5,rare:2.4,mythic:4,master:7,slag:.5};
 /* ═══════════════════ card element ═══════════════════ */
 let cardUid=0;
 function makeInstance(def){return{uid:'c'+(cardUid++),def}}
+// v0.8.5: resolve a def-id back to its def, INCLUDING forged cards (coin_f, coin_f_f) which aren't in DB —
+// walk the base root + one forgedDefOf per '_f' (memoised into FORGED). Null on unknown id so a save from an
+// older build with a since-removed card degrades gracefully (that card is dropped) instead of crashing restore.
+function defFromId(id){
+  if(!id)return null;
+  if(DB[id])return DB[id];
+  if(typeof FORGED!=='undefined'&&FORGED[id])return FORGED[id];
+  const m=String(id).match(/^(.*?)((?:_f)+)$/);
+  if(m&&DB[m[1]]&&typeof forgedDefOf==='function'){
+    let d=DB[m[1]];const tiers=m[2].length/2;
+    for(let i=0;i<tiers;i++)d=forgedDefOf(d);
+    return d;
+  }
+  return null;
+}
 function gainsHTML(g,def){
   const chips=[];
   if(def){
@@ -4376,7 +4392,12 @@ async function endTurn(){
   const rush={on:false};
   const rushOn=()=>{rush.on=true};
   addEventListener('pointerdown',rushOn);
-  const tw=ms=>wait(rush.on?Math.min(ms,40):ms);
+  // v0.8.5: auto speed-up from Act 3 — the full ceremony plays for Acts 1-2 (learning + first-time awe),
+  // then every delay scales ~2.2× faster once chains grow long and the show is familiar. Click-to-rush still
+  // caps to 40ms on top. Acts 1-2 unchanged; the per-card floor keeps a readable minimum. (Playtest: long
+  // late chains ran the per-card reveal loop 10-15× every turn.)
+  const actScale=actOf(state.turn)>=3?0.45:1;
+  const tw=ms=>wait(rush.on?Math.min(ms,40):Math.round(ms*actScale));
   const skip=state.skipToBoss; state.skipToBoss=false; // v0.4 #14: "Face the Boss" abandons the remaining build turns — no tally, straight to the sweep + boss
 
   if(!skip){
@@ -4664,6 +4685,7 @@ async function endTurn(){
     }
   });
   updateCombo();
+  saveRun(); // v0.8.5: snapshot the fresh turn (hand empty, deck/discard/market settled) so a browser close can resume here
   await dealCards(Math.max(1,5+benchSum('handDraw')+((state.twist&&state.twist.drawBonus)||0))); // The Long Kiln + boss draw gift/choke (floored)
   if(state.twist&&state.twist.drossSeed)for(let k=0;k<state.twist.drossSeed;k++){ // The Ashen Fast deals you the very clog it rewards
     const e=putInHand(makeInstance(DB.dross),'#deckpile');
@@ -4686,6 +4708,47 @@ $('#endturn').addEventListener('click',endTurn);
 /* ═══════════════════ game over ═══════════════════ */
 /* ── the honor roll: top runs, kept in localStorage ── */
 function loadScores(){try{return JSON.parse(localStorage.getItem('ch-af-scores')||'[]')}catch(e){return[]}}
+/* ═══════════════════ run persistence — resume a run across a browser close (v0.8.5) ═══════════════════
+   Saved at each turn boundary (state clean: hand/played empty). localStorage only; the honor-roll server
+   never sees it. Trials never save. A save shows CONTINUE on the start menu; death/new-run clears it. */
+const SAVE_KEY='ch-sg-save';
+let wantRestore=false; // set by the CONTINUE menu button; consumed in boot()
+function loadSave(){try{const s=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');return s&&s.v===1?s:null}catch(e){return null}}
+function clearRun(){try{localStorage.removeItem(SAVE_KEY)}catch(e){}}
+function saveRun(){
+  if(typeof chapterMode!=='function'||!chapterMode())return; // only the real chapters run persists
+  if(state.gameOver||state.turn<2)return;                    // nothing worth resuming before turn 2
+  try{
+    const ids=arr=>arr.map(x=>(x.inst?x.inst.def:x.def).id);  // handles instances AND {inst} entries
+    const save={v:1,build:BUILD,ts:Date.now(),name:(typeof playerName==='function'?playerName():''),
+      turn:state.turn,gold:state.gold,glory:state.glory,rank:state.rank,
+      focus:state.focus,focusPerTurn:state.focusPerTurn,buys:state.buys,buysPerTurn:state.buysPerTurn,
+      bonusStars:state.bonusStars,synFires:state.synFires,combo:state.combo,tithe:state.tithe,
+      burned:state.burned,boonsClaimed:state.boonsClaimed,bossesCleared:state.bossesCleared,
+      usedTwists:state.usedTwists,endless:state.endless,pendingVictory:state.pendingVictory,act1Mercy:state.act1Mercy,
+      twist:state.twist||null,
+      deck:ids(state.deck),discard:ids(state.discard),
+      relics:state.relics.map(r=>({id:r.def.id,shattered:!!r.shattered})),
+      commissions:state.commissions.slice(),
+      market:state.market.map(s=>({id:s.def&&s.def.id,remaining:s.remaining,rack:!!s.rack})).filter(s=>s.id)};
+    localStorage.setItem(SAVE_KEY,JSON.stringify(save));
+  }catch(e){/* a save failure must never break the game */}
+}
+// Rebuild state from a save. Called in boot() after initMarket(), before the opening hand deals.
+function restoreRun(save){
+  const inst=id=>{const d=defFromId(id);return d?makeInstance(d):null};
+  state.deck=(save.deck||[]).map(inst).filter(Boolean);
+  state.discard=(save.discard||[]).map(inst).filter(Boolean);
+  state.hand=[];state.played=[];
+  state.relics=(save.relics||[]).map(r=>{const d=defFromId(r.id);if(!d)return null;const i=makeInstance(d);if(r.shattered)i.shattered=true;return i}).filter(Boolean);
+  state.commissions=(save.commissions||[]).slice();
+  for(const k of ['turn','gold','glory','rank','focus','focusPerTurn','buys','buysPerTurn','bonusStars','synFires','combo','tithe','burned','boonsClaimed','bossesCleared','endless','pendingVictory','act1Mercy'])
+    if(save[k]!==undefined)state[k]=save[k];
+  state.usedTwists=save.usedTwists||[];
+  state.twist=save.twist||null;
+  state.market=(save.market||[]).map(s=>{const d=defFromId(s.id);return d?{def:d,remaining:s.remaining,slotEl:null,cardEl:null,rack:!!s.rack}:null}).filter(Boolean);
+  state.kingdom=state.market.filter(s=>!s.rack).map(s=>s.def);
+}
 const escHTML=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); // names go into innerHTML — escape them
 // ── the SHARED honor roll: every player's runs, via the same server that takes telemetry ──
 // Both helpers resolve null on ANY failure (offline, :5713 python harness, file://) so the
@@ -4790,6 +4853,7 @@ async function runVictory(){
 }
 async function gameOverSequence(turnGlory){
   state.gameOver=true;
+  clearRun(); // v0.8.5: the run is over — no CONTINUE for a dead run
   if(chapterMode())Balance.end(false); // difficulty log: the run ended in death
   $('#endturn').textContent='END TURN';
   Coach.clear();Coach.active=false;
@@ -4992,6 +5056,20 @@ function openStartMenu(){
   $('#startmenu').classList.add('on'); // PLAY is open from the first visit; LEARN is an optional tutorial
 }
 function initStartMenu(){
+  // v0.8.5: CONTINUE — offered only when a valid save exists for THIS player (a shared machine shouldn't
+  // hand your run to someone with a different name). When shown it's the primary action; PLAY drops to "a new run".
+  const save=(typeof loadSave==='function')?loadSave():null;
+  // Match against the DEVICE's last-known name (localStorage), not the per-tab session name — a reopened tab
+  // has no session name yet, but the saved run belongs to whoever last played on this machine.
+  let deviceName='';try{deviceName=localStorage.getItem('ch-sg-name')||''}catch(e){}
+  if(save&&!inTrial()&&(!save.name||!deviceName||save.name===deviceName)){
+    const cont=$('#sm-continue'),act=Math.min(ACTS,Math.ceil(save.turn/TURNS_PER_ACT));
+    $('#sm-continue-note').textContent=`resume · Act ${act}, turn ${save.turn} · ${save.glory}★`;
+    cont.hidden=false;
+    $('#sm-play').classList.remove('primary');
+    $('#sm-play-note').hidden=false;
+    cont.addEventListener('click',()=>{AudioFX.click();wantRestore=true;resolveStartMenu()}); // boot in-page, restore hook fires
+  }
   $('#sm-learn').addEventListener('click',()=>{
     AudioFX.click();
     if(inTrial())resolveStartMenu();        // already primed for a trial → just reveal it
@@ -5081,8 +5159,8 @@ function initGameMenu(){
     if(ch!=='music')el.addEventListener('change',()=>AudioFX.tone({f:660,type:'triangle',dur:.12,g:.1}));
   });
   $('#gm-silence').addEventListener('click',()=>{AudioFX.setMuted(!AudioFX.muted);syncMenuSound()});
-  holdConfirm($('#gm-restart'),900,()=>{try{sessionStorage.setItem('ch-af-restart','1')}catch(e){}location.reload()});
-  holdConfirm($('#gm-quit'),900,()=>location.reload()); // no af-restart → cold load → back to the start menu
+  holdConfirm($('#gm-restart'),900,()=>{clearRun();try{sessionStorage.setItem('ch-af-restart','1')}catch(e){}location.reload()}); // v0.8.5: RESTART abandons this run — clear its save
+  holdConfirm($('#gm-quit'),900,()=>location.reload()); // no af-restart → cold load → back to the start menu (the save survives, so CONTINUE is offered)
   gm.addEventListener('pointerdown',e=>{if(e.target===gm)closeGameMenu()}); // click the scrim to dismiss
 }
 // hold-to-confirm: the fill sweeps 0→100% over ms; releasing early cancels. Deliberately NOT via pressable() (which fires on pointerdown).
@@ -5121,6 +5199,7 @@ async function boot(){
   clearBossState();renderChapterMap();renderTwistBanner(); // paint the Act track from turn 1
   initMarket();
   initStartMenu();initGameMenu();
+  const resumeSave=(typeof loadSave==='function')?loadSave():null; // a saved run enables the CONTINUE menu item
   // create the resolver in the SAME tick the menu becomes interactive, so an early click on PLAY/LEARN
   // isn't a silent no-op during the ~1s font/reveal wait
   let smChoice=null;
@@ -5155,8 +5234,22 @@ async function boot(){
   }
   Telemetry.track('game_start',{mode:inTrial()?'trial':'full',stage:inTrial()?TRIAL.stage:0});
   await wait(350);
-  await revealReverie();
-  await dealCards(5);
+  // v0.8.5: resume a saved run — rebuild the board from ch-sg-save instead of the fresh start deck/market.
+  if(wantRestore&&resumeSave){
+    restoreRun(resumeSave);
+    updatePiles();updateRankbar();renderBench();
+    clearBossState();renderChapterMap();renderTwistBanner();
+    if(state.twist)enterBossState(state.twist); // a boss turn resumes with the Aspect's HUD lit
+    setCounter('gold',state.gold);setCounter('glory',state.glory);setCounter('turn',state.turn);
+    setCounter('focus',state.focus);setCounter('buys',state.buys);
+    $('#rankname').textContent=RANKS[state.rank].name;
+    await revealReverie();
+    await dealCards(Math.max(1,5+benchSum('handDraw')+((state.twist&&state.twist.drawBonus)||0)));
+    slamText('THE FORGE REMEMBERS YOU',{color:'#ffd98a',size:2.0});
+  }else{
+    await revealReverie();
+    await dealCards(5);
+  }
   updateAfford();
   state.busy=false;
   $('#endturn').disabled=false;

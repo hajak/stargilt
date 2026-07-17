@@ -804,3 +804,27 @@ fresh-start on go-live (keep ch- keys, telemetry back ON); Meet-Boss-Now reward 
       ever built (ch_turn), playtime. Sortable; inline bars per metric; ember ring on any cell ≥2σ from the field
       (needs 4+ tallied players). Client now tallies relic mounts (rack buys + master drafts → cards.relics).
       admintest → 32 asserts.
+
+## Round 40 — v0.8.4: playtest pass (2026-07-17)
+Method: autoplayer bot drove the real UI (play/buy/boss/burn flows) for 9 runs; screenshots of every
+screen; then prod analytics queried for the two tagged players' actual boss-death patterns.
+Finding: TWO different walls — Boss 1 kills newcomers (Erik missed it 7/16 faced = 44%, once 2★ short;
+Marcel died t5 and never returned) while Hampus sails Boss 1 (1/7) and dies at Boss 2 (3/6, all t12).
+Late-boss tuning deferred: almost all human data is pre-v0.8 (cap-7 era); need v0.8 clear-rate data.
+- [x] (1) FREE Act-1 first-miss mercy — "the Forge forgives an apprentice once", Act 1 only, does NOT count
+      as clearing a boss. state.act1Mercy; placed before the Emberheart-charm branch. Softens the newcomer
+      floor without touching Hampus's mid-game.
+- [x] (2) BUGFIX: opening market ignored afterBoss — pickReverie filtered only !deep, so Twin Pyre (afterBoss:1)
+      seeded turn 1. Now filters both gates.
+- [x] (3) POLISH: game-over backdrop opaque (.9/.98, was .6/.94 — bright board competed with the stats/honor roll);
+      MULT cap reads "CAP 15" not "/15" (slash misread as ×n fifteenths); start menu PLAY primary+first, LEARN
+      second with "the optional tutorial" note.
+- [x] (4) SECURITY (commit review): static-file guard now requires ROOT+path.sep (a sibling dir sharing ROOT's
+      name prefix could satisfy the old bare startsWith).
+- [x] (5) NON-ISSUES confirmed by playing: "NEW STEEL" float is card-anchored (correct); Bazaar rail anvil is
+      sticky-bottom with a fade + responsive compression (already handled). Left unchanged.
+- Tests: v084test (7: menu order/primary, market gate, cap text, Act-1 mercy once-only), full regression
+  (burn 8, v080 12, v069 14, scores 46). git repo initialized; v0.8.3 + v0.8.4 committed.
+- DEFERRED to user (parked, not built): (a) free-Act-1-mercy is a judgment call — pull it if it feels wrong;
+  (b) run persistence + CONTINUE (state is session-only, a mid-run close loses 30-60 min); (c) tally speed-up
+  for 10+ card late chains.
