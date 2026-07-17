@@ -882,6 +882,28 @@ The two parked playtest items.
       and shake() transforms #app → a fixed element re-anchors to the transformed ancestor (containing-block flip),
       snapping the piles each shake. Fixed: position:absolute + direct children of #app (they ride the shake).
       pilejumptest.mjs (5) + full regression green; deployed.
-- [ ] DOPAMINE & JUICE OVERHAUL — designed via a 6-agent research workflow + adversarial critique; spec in
+- [x] DOPAMINE & JUICE OVERHAUL — designed via a 6-agent research workflow + adversarial critique; spec in
       tasks/dopamine-plan.md (approved: whole system, bold-tiered, evolving music; critique bugs B1-B4 folded in).
-      HANDOVER.md written. User switching models to build it. NOT STARTED.
+      HANDOVER.md written. → BUILT in Round 45 (v0.10.0).
+
+## Round 45 — v0.10.0: the Dopamine & Juice overhaul + honor-roll tabs + Analytics (2026-07-17)
+- [x] §0 Heat spine: Heat.run/surge/timeScale on its own self-sleeping RAF (B1); reset() at new-turn /
+      boss-clear (×.4 dip for the draft) / rank-up; Endless = 6-turn saw-tooth (B4); trial pins .05.
+- [x] §1 evolving music: onHeat filter sweeps (LFO-safe), density gates, BPM 104→146 by act (~3/s ramp),
+      lead-arp layer (hysteresis .6/.55), Phrygian boss ALT tables swapped BY REFERENCE at the bar seam,
+      quantized bossclear stinger, duckNow locked out during fadeOut, muted scheduler idles (§6.6).
+- [x] §2 scaled FX: mag/over canonical scalars gate categorical tiers (B3); freeze() hit-stop (rush-aware,
+      no-trial); trauma shake (summed sines + rotation + dip channel; tally sites retuned); particle cap 300
+      + timeScale physics; continuous feast → THE FORGE GORGES; boss/rank ceremonies escalate by depth.
+- [x] §3 cards land heavier: cardWeight = rarity × tier × glory; landsquash (--sq, common imperceptible);
+      anticipation lift/hold by weight; per-rarity bass registers; buy/forge heft routed.
+- [x] §4 big-win tiers: reserved chant (transposed); bestTurnGlory per-turn peak (B2, persisted in save);
+      Tier-4 record-shatter goldbloom (finishScores→{best,shattered}); column of fire behind .ts-x;
+      victory hard-stop (blackout+silence then fanfare); Firsts one-time flourishes (boss/mythic/record).
+- [x] §5 death feel: filters slam shut, deathgray drain, silence-then-verdict; a best outshines the death.
+- [x] §6 restraint: reduced-motion full gating (border-pulse shake, ×.3 bursts, calm music); SCREEN FX
+      slider (AudioFX.juice → Heat.fxScale, ch-af-vol blob); coach protection (no freeze, juice ≤.35).
+- [x] HIGHSCORE tabs: THE WORLD / MY RUNS (local ch-af-scores — race yourself).
+- [x] ANALYTICS main-menu panel: 6 stat tiles + most-worked wares + last-12-runs bars, own data only.
+- Tests: v0100test.mjs 27/27; full regression green (v090 13, v085 14, v084 7, burn 8, v080 12, v069 14,
+      pilejump 5 — mid-shake assertion updated for rotation, scores 46, admin 32). Deployed + prod-verified.
