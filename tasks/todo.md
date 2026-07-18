@@ -907,3 +907,24 @@ The two parked playtest items.
 - [x] ANALYTICS main-menu panel: 6 stat tiles + most-worked wares + last-12-runs bars, own data only.
 - Tests: v0100test.mjs 27/27; full regression green (v090 13, v085 14, v084 7, burn 8, v080 12, v069 14,
       pilejump 5 — mid-shake assertion updated for rotation, scores 46, admin 32). Deployed + prod-verified.
+
+
+## Round 46 — v0.11.0: nine playtest fixes + Endless removed + THE VICTORY DEBRIEF (2026-07-18)
+- [x] (1) VIEW YOUR CARDS on Boon/Master-Relic overlays — read-only pile view above a suspended reward
+      (pvReadonly; pileview z 165→172; Esc closes pileview first, reward survives).
+- [x] (2) Piles top 76→96px, clear of END TURN.
+- [x] (3) burnMode: pile-view card-body zoom carries the BURN button (shared zoom(), same guard as .burnbtn).
+- [x] (4) Boon/mrdraft backdrops opaque (.78/.82) + blur(7/8px) — board readthrough gone.
+- [x] (5) Phantom CLOSE: #inspect z170→175 (was buried under #mrdraft z170 by DOM order) + SKIP CLAIM
+      button (mrResolve, click-only).
+- [x] (6) Admin: LIVE age-gated (STALE_MS 10min → ABANDONED tN); non-ended rows show Σturns[].score + seen-ago.
+- [x] (7) Admin WATCH: ch_board per-turn snapshot (self-contained chips <8KB) + /api/admin/board?cid= +
+      #spectate panel (12s poll, no animation).
+- [x] (8) Mult nerf: CHAIN .18/ECHO .10/TRIBAL .20 shared constants (compute+reveal parity), card m −17-25%,
+      relicMult −20%, emberBloom −20%, multDouble +2.5; DEMAND_LATE_RATE 1.13→1.12 (t48 97.3k→74.5k).
+- [x] (9) Bazaar restocks after every boss clear; SOLD slots read "new wares after the boss".
+- [x] ENDLESS REMOVED: t48 kill ends the game (no sweep/turn-49/redeal); endless saves retired in loadSave().
+- [x] THE VICTORY DEBRIEF: #debrief dossier — run-curve SVG, Eight Trials ledger (CLOSEST SHAVE), Engine
+      Autopsy (maxCombo tracker), deck histogram, bench roll-call, MASTERWORK COMPLETE stamp; game_won event.
+- Tests: v0110test 21/21; battery 223 green (pilejump sway tolerance 8→22px for the lower piles under rotation).
+      Deployed + prod-verified.
