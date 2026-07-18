@@ -1,19 +1,19 @@
-# Handover — 2026-07-17 (post-v0.10.0)
+# Handover — 2026-07-18 (post-v0.11.0)
 
-Shift-change for the StarGilt deckbuilder. **The Dopamine & Juice overhaul is BUILT, verified, and live** — `chapters · v0.10.0` on https://www.stargilt.com (deploy: `railway up --detach --service stargilt`).
+Shift-change for the StarGilt deckbuilder. **LIVE: `chapters · v0.11.0`** on https://www.stargilt.com.
 
-## What Was Done (this session)
-The full `tasks/dopamine-plan.md` implementation (all 6 sections, critique bugs B1–B4 respected), plus two user additions folded in mid-build:
+## What Was Done (latest session — v0.11.0)
+Nine playtest fixes + one design pivot, all verified (v0110test 21/21, battery 223 asserts) and prod-confirmed:
+- **VIEW YOUR CARDS** during Boon/Master-Relic rewards (read-only pile view above the suspended overlay; `pvReadonly`).
+- Piles moved down (96px); **burn button on pile-view card-body zoom**; opaque+blurred reward backdrops.
+- **Phantom CLOSE solved**: `#inspect` was z-buried under `#mrdraft` (both 170, DOM order) → inspect z175. + **SKIP CLAIM** (`mrResolve`, click-only).
+- **Admin**: LIVE is now age-gated (10 min → ABANDONED tN); live rows show Σ per-turn score (was 0★). **WATCH** spectate: `ch_board` per-turn snapshot beacon → `/api/admin/board?cid=` → `#spectate` panel (12s poll, no animation).
+- **Mult nerf** (~15-18% mid-game): CHAIN_RATE .18 / ECHO_RATE .10 / TRIBAL_RATE .20 shared constants — **compute + reveal must never desync**; card m / relicMult / emberBloom shaved ~20%; `DEMAND_LATE_RATE` 1.13→1.12 refunds the late game (t48 74,550).
+- **Bazaar restocks after every boss** (was rank-up-only; max rank ~Act 3-4 froze the shop); SOLD slots say "new wares after the boss".
+- **ENDLESS REMOVED** (design decision): the t48 Masterwork kill ENDS the game — hard-stop → slam → `runVictory()` WITHOUT resolving the turn (no sweep/turn-49/redeal); old endless saves retired in `loadSave()`.
+- **THE VICTORY DEBRIEF** (`#debrief`, forge-intelligence dossier): run-curve SVG (log-Y, boss diamonds), Eight Trials ledger (THE CLOSEST SHAVE), Engine Autopsy (peak turn / `state.maxCombo` / base×mult verdict), deck histogram + most-worked wares, bench roll-call, MASTERWORK COMPLETE stamp. `runVictory` snapshots `Balance.rows/cards` BEFORE `Balance.end()` — **order is load-bearing**. `#gameover` is death/trial-only now. New `game_won` telemetry.
 
-- **§0 Heat spine** — global `Heat` {run, surge, timeScale, fxScale} on its own self-sleeping RAF (B1). `Heat.reset()` wired at new-turn / boss-clear (×.4 dip for the draft beat) / rank-up; Endless breathes per 6-turn saw-tooth (B4); trials pin .05.
-- **§1 evolving music** — `Music.onHeat` filter sweeps (LFO-safe), density gates, BPM 104→146 by act (~3 BPM/s via Heat's RAF), lead-arp layer with .6/.55 hysteresis, **Phrygian boss ALT chord tables swapped by REFERENCE at the bar seam** (`Music.CUR`; `CH` never mutated; reverts when `state.twist` clears), quantized `stinger('bossclear')`, `duckNow` locked out during `fadeOut` (`_fading`), muted → scheduler idles.
-- **§2 scaled FX** — canonical scalars `mag`/`over` gate categorical tiers at the multiply-reveal (B3); `freeze()` hit-stop routed through the caller's `tw` (rush/act-speed aware, skipped in trials); **trauma-model `shake()`** (trauma², summed sines, ~2.5° rotation, `dip()` directional channel — same `shake(power)` signature at all ~30 sites; tally sites retuned ×3-4); particle pool capped 300; particle/shake physics × `Heat.timeScale`; continuous feast → **THE FORGE GORGES**.
-- **§3 cards land heavier** — `cardWeight = RARITY_JUICE × (1+tier·.4) × (1+min(glory,8)·.06)`; `.landsquash` via `--sq` (common imperceptible); anticipation lift/hold by weight; per-rarity bass registers; buy/forge heft.
-- **§4 big-win tiers** — reserved `AudioFX.chant(variant)` (apex only, transposed); `state.bestTurnGlory` per-turn peak (B2 — `recordScore()` is still end-of-run only; bestTurnGlory rides the save blob); **Tier-4 record-shatter** goldbloom via `finishScores() → {best, shattered}`; column of fire BEHIND `.ts-x`; **victory hard-stop** (music cuts → 420ms blackout+silence → Masterwork slam + fanfare); `Firsts` one-time flourishes (ch-sg-firsts).
-- **§5 death feel** — filters slam shut, `deathgray` drain, crash → true silence → 49Hz verdict; a new best removes the gray.
-- **§6 restraint** — reduced-motion gates the whole layer (shake→border pulse, freeze→0, bursts ×.3, music stays calm — color/sound/number channels preserved); **SCREEN FX slider** in SOUND SETTINGS (`AudioFX.juice` → `Heat.fxScale`, ch-af-vol blob); coach protection (`inTrial()`: no freeze, juice ≤.35, Heat .05).
-- **HIGHSCORE tabs** — THE WORLD / MY RUNS (local ch-af-scores; race yourself).
-- **ANALYTICS** main-menu panel — 6 stat tiles, most-worked wares, last-12-runs bars; `ch-bal-log` + `ch-af-scores` **only** (own data, nothing leaves the machine).
+Previous session (v0.10.0): the full Dopamine & Juice overhaul — Heat spine, evolving music, trauma shake, cardWeight, big-win tiers, death feel, restraint; honor-roll tabs + player ANALYTICS. See CONTEXT.md.
 
 ## What Worked / What Didn't
 - **Build-order discipline held**: Heat spine first, verified headless (13-assert smoke) before each next pass — every pass got its own targeted headless check before moving on.
