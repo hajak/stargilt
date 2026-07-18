@@ -250,6 +250,21 @@ async function handleAdmin(req, res, pathname, url) {
     }
     return sendJSON(res, 200, { events: out });
   }
+  // ── spectate: the newest board snapshot (ch_board) for a player/person. Its own route because
+  //    /api/admin/events whitelists extra fields and would strip the board payload. ──
+  if (req.method === 'GET' && pathname === '/api/admin/board') {
+    const wantCid = url.searchParams.get('cid');
+    if (!wantCid) return sendJSON(res, 400, { error: 'cid required' });
+    const events = await store.allEvents();
+    const canon = buildCanon(await store.getLabels());
+    const wantPerson = personOf(wantCid, canon);
+    for (let i = events.length - 1; i >= 0; i--) {
+      const e = events[i];
+      if (e.type === 'ch_board' && personOf(e.cid, canon) === wantPerson)
+        return sendJSON(res, 200, { ts: e.ts, cid: e.cid, name: e.name, board: e.extra || {} });
+    }
+    return sendJSON(res, 404, { error: 'no board snapshot yet' });
+  }
   // ── difficulty monitoring: the chapters balance track (ch_turn / ch_run), grouped into runs ──
   if (req.method === 'GET' && pathname === '/api/admin/balance') {
     const events = await store.allEvents();

@@ -117,7 +117,31 @@ select.ctl:focus{border-color:var(--gold)}
 .res{font-weight:800;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;padding:.1rem .48rem;border-radius:6px}
 .res.won{background:rgba(47,174,95,.16);color:var(--c-verdant);border:1px solid rgba(47,174,95,.4)}
 .res.died{background:rgba(224,73,42,.14);color:var(--c-ember);border:1px solid rgba(224,73,42,.4)}
-.res.live{background:rgba(255,255,255,.05);color:var(--ink-3);border:1px solid rgba(255,255,255,.1)}
+.res.live{background:rgba(47,143,230,.14);color:var(--c-tide,#2f8fe6);border:1px solid rgba(47,143,230,.4)}
+.res.gone{background:rgba(255,255,255,.04);color:var(--ink-3);border:1px solid rgba(255,255,255,.08)}
+.watchbtn{font:800 .6rem/1 inherit;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;
+  color:#2f8fe6;background:rgba(47,143,230,.1);border:1px solid rgba(47,143,230,.4);border-radius:6px;padding:.18rem .55rem}
+.watchbtn:hover{background:rgba(47,143,230,.2)}
+#spectate{position:fixed;inset:0;z-index:400;display:none;align-items:flex-start;justify-content:center;
+  background:rgba(4,2,8,.8);overflow-y:auto;padding:4vh 2vw}
+#spectate.on{display:flex}
+.spec-card{width:min(880px,96vw);background:var(--panel,#130d1d);border:1px solid rgba(232,182,76,.3);
+  border-radius:14px;padding:1.4rem 1.6rem;box-shadow:0 30px 90px rgba(0,0,0,.7)}
+.spec-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.9rem;
+  border-bottom:1px solid rgba(232,182,76,.2);padding-bottom:.7rem}
+.spec-head b{font-size:1rem}
+.spec-head .muted{font-size:.72rem}
+#spec-close{cursor:pointer;background:none;border:1px solid rgba(255,255,255,.2);color:var(--ink-2,#cfc4a8);
+  border-radius:6px;padding:.3rem .7rem;font-weight:800}
+.spec-hud{display:flex;gap:1.2rem;flex-wrap:wrap;font-weight:800;font-size:.9rem;margin-bottom:.8rem}
+.spec-hud span{color:var(--ink-3)}
+.spec-sec{font-weight:800;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold,#b8880f);margin:.9rem 0 .4rem}
+.spec-chips{display:flex;flex-wrap:wrap;gap:.35rem}
+.spec-chip{font-size:.72rem;font-weight:700;border-radius:6px;padding:.28rem .55rem;border:1px solid rgba(255,255,255,.14);
+  background:rgba(255,255,255,.04);border-left:3px solid var(--cc,#888)}
+.spec-chip small{opacity:.6;font-weight:600;margin-left:.35em}
+.spec-chip.sold{opacity:.4;border-left-color:transparent}
+.spec-chip.spent{opacity:.45;text-decoration:line-through}
 .balcells{display:flex;flex-wrap:wrap;gap:3px}
 .balcell{min-width:50px;padding:.24rem .3rem;border-radius:6px;text-align:center;border:1px solid transparent;line-height:1.25}
 .balcell .m{font-weight:800;font-size:.75rem}
@@ -404,6 +428,7 @@ let adminKey = sessionStorage.getItem(KEY_STORE) || '';
 let SORT = { col: 'lastSeen', dir: -1 };
 let CACHE = null;      // last summary
 let BALCACHE = null;   // last balance payload for the current filter
+const STALE_MS = 10 * 60 * 1000; // v0.11: a "live" run with no beacon for 10 min is ABANDONED (slow late turns can exceed the Pulse 5-min gate)
 let BAL_EXPANDED = false; // difficulty run strips: capped at 8 until "show all"
 let AUTO = true;       // auto-refresh on by default (the "live" in live debugging)
 
@@ -650,15 +675,20 @@ function renderBalance() {
   more.textContent = BAL_EXPANDED ? '▲ show fewer' : `▼ show all ${runs.length} runs`;
   $('#balruns').innerHTML = shown.length
     ? shown.map((r) => {
+        // v0.11: won===null only means "no end beacon" — an abandoned tab never sends one. Age decides.
+        const ageMs = Date.now() - new Date(r.ended || r.started);
+        const liveGlory = r.turns.reduce((s, t) => s + (t.score || 0), 0); // per-turn scores sum to the run's true glory
+        const lastT = r.turns.length ? r.turns[r.turns.length - 1].t : 0;
         const res = r.won === true ? '<span class="res won">WON</span>'
           : r.won === false ? `<span class="res died">DIED t${r.endTurn}</span>`
-          : '<span class="res live">in progress</span>';
+          : ageMs > STALE_MS ? `<span class="res gone">abandoned t${lastT}</span>`
+          : `<span class="res live">LIVE</span> <button class="watchbtn" data-watch="${esc(r.cid)}">watch</button>`;
         const who = nameOfCid(r.cid);
         const cells = r.turns.map((t) => {
           const m = t.dem > 0 ? t.score / t.dem : 0;
           return `<div class="balcell ${cls(m)}${t.boss ? ' boss' : ''}" title="turn ${t.t}${t.boss ? ' · BOSS' : ''} · base ${t.base} × mult ${t.mult} = ${t.score} vs demand ${t.dem}"><div class="m num">${t.boss ? '◆' : ''}${m.toFixed(1)}×</div><div class="ds num">${fmtN(t.dem)}→${fmtN(t.score)}</div></div>`;
         }).join('');
-        return `<div class="balrun"><div class="rh">${res} <b>${esc(who)}</b> <span class="dur num">⏱ ${fmtDur(new Date(r.ended || r.started) - new Date(r.started))}</span> <span class="muted">${esc((r.build || '').replace('chapters · ', ''))}</span> <span class="muted num">${ago(r.started)} · ${r.turns.length} turns · ${r.endGlory || 0}★</span></div><div class="balcells">${cells}</div></div>`;
+        return `<div class="balrun"><div class="rh">${res} <b>${esc(who)}</b> <span class="dur num">⏱ ${fmtDur(new Date(r.ended || r.started) - new Date(r.started))}</span> <span class="muted">${esc((r.build || '').replace('chapters · ', ''))}</span> <span class="muted num">${ago(r.started)} · ${r.turns.length} turns · ${r.won === null ? liveGlory : (r.endGlory || 0)}★${r.won === null ? ` · seen ${ago(r.ended)}` : ''}</span></div><div class="balcells">${cells}</div></div>`;
       }).join('')
     : '<div class="empty">No runs logged for this filter yet. Each chapters turn played on the live server lands here.</div>';
 }
@@ -667,8 +697,8 @@ function renderBalance() {
 const FEED_GROUPS = {
   session: { label: 'sessions', on: true, types: ['session_start', 'session_end', 'name_set'] },
   learn: { label: 'learn', on: true, types: ['trial_won', 'trial_death', 'graduated'] },
-  run: { label: 'runs', on: true, types: ['game_start', 'game_over', 'ch_run', 'ch_cards'] },
-  turn: { label: 'every turn', on: false, types: ['ch_turn'] },
+  run: { label: 'runs', on: true, types: ['game_start', 'game_over', 'game_won', 'ch_run', 'ch_cards'] },
+  turn: { label: 'every turn', on: false, types: ['ch_turn', 'ch_board'] },
 };
 const groupOf = (t) => Object.keys(FEED_GROUPS).find((g) => FEED_GROUPS[g].types.includes(t)) || 'run';
 function feedClass(e) {
@@ -942,9 +972,11 @@ async function openDetail(cid) {
     const runs = (bal.runs || []);
     $('#dr-runs').innerHTML = runs.length
       ? runs.slice(0, 12).map((r) => {
-          const res = r.won === true ? '<span class="res won">WON</span>' : r.won === false ? `<span class="res died">DIED t${r.endTurn}</span>` : '<span class="res live">live</span>';
+          const dAge = Date.now() - new Date(r.ended || r.started);
+          const dLive = r.turns.reduce((s, t) => s + (t.score || 0), 0);
+          const res = r.won === true ? '<span class="res won">WON</span>' : r.won === false ? `<span class="res died">DIED t${r.endTurn}</span>` : dAge > STALE_MS ? `<span class="res gone">abandoned</span>` : '<span class="res live">LIVE</span>';
           const whereLine = r.won === false ? `<br><span style="color:var(--c-ember)">${esc(deathWhere(r.endTurn))}</span><span class="num">${deathShortfall(r)}</span>` : r.won === true ? '<br><span style="color:var(--c-verdant)">the Masterwork, complete</span>' : '';
-          return `<div class="drrun"><div class="sparkbox">${runSpark(r)}<div style="margin-top:2px">${actMeter(r.endTurn || r.turns.length, r.won === true)}</div></div><div class="meta">${res} <b class="num">${r.endGlory || 0}★</b> · <span class="dur num">⏱ ${fmtDur(new Date(r.ended || r.started) - new Date(r.started))}</span> · ${esc((r.build || '').replace('chapters · ', ''))} · ${ago(r.started)} · ${r.turns.length} turns${whereLine}</div></div>`;
+          return `<div class="drrun"><div class="sparkbox">${runSpark(r)}<div style="margin-top:2px">${actMeter(r.endTurn || r.turns.length, r.won === true)}</div></div><div class="meta">${res} <b class="num">${r.won === null ? dLive : (r.endGlory || 0)}★</b> · <span class="dur num">⏱ ${fmtDur(new Date(r.ended || r.started) - new Date(r.started))}</span> · ${esc((r.build || '').replace('chapters · ', ''))} · ${ago(r.started)} · ${r.turns.length} turns${whereLine}</div></div>`;
         }).join('') + `<div class="muted" style="margin-top:.4rem"><span style="color:#2f8fe6">━</span> score · <span style="color:#e0492a">╍</span> demand · <span style="color:#e0492a">●</span> boss (log scale)</div>`
       : '<div class="muted">No chapters runs recorded for this player yet.</div>';
   }).catch(() => { $('#dr-runs').innerHTML = '<div class="muted">Could not load run data.</div>'; });
@@ -1010,6 +1042,59 @@ $('#gate-key').addEventListener('keydown', (e) => { if (e.key === 'Enter') enter
   showGate();
   $('#gate-key').focus();
 })();
+
+/* ── v0.11 SPECTATE: watch a live board, zero animation — re-rendered from the newest ch_board snapshot ── */
+let SPEC_CID = null, SPEC_TIMER = 0;
+const CCOLORS = { ember: '#e0492a', tide: '#2f8fe6', verdant: '#2fae5f', umbra: '#9a55e8', aurel: '#b8880f', ash: '#8f8570' };
+function specChip(c) {
+  const cc = CCOLORS[c.c] || '#888';
+  return `<span class="spec-chip" style="--cc:${cc}">${esc(c.n || c.i || '—')}<small>${c.k ? c.k + '⬤' : ''}${c.g ? ' ' + c.g + '★' : ''}${c.f ? ' ⁂' + c.f : ''}</small></span>`;
+}
+async function loadSpectate() {
+  if (!SPEC_CID) return;
+  let d;
+  try { d = await api('/api/admin/board?cid=' + encodeURIComponent(SPEC_CID)); }
+  catch (e) { $('#spec-body').innerHTML = '<div class="empty">No board snapshot yet — the first one lands at the player\'s next end-of-turn.</div>'; return; }
+  const b = d.board || {};
+  $('#spec-who').textContent = nameOfCid(d.cid);
+  $('#spec-ago').textContent = 'as of ' + ago(d.ts) + (b.boss ? ' · ◆ BOSS: ' + (b.twist || '') : '');
+  const chips = (a) => (a && a.length ? a.map(specChip).join('') : '<span class="muted">—</span>');
+  $('#spec-body').innerHTML =
+    `<div class="spec-hud"><span>t</span><b class="num">${b.t || '—'}</b><span>act</span><b class="num">${b.act || '—'}</b>` +
+    `<span>★</span><b class="num">${fmtN(b.glory || 0)}</b><span>⬤</span><b class="num">${b.gold || 0}</b>` +
+    `<span>❖</span><b class="num">${b.focus || 0}</b><span>⚒</span><b class="num">${b.buys || 0}</b>` +
+    `<span>cap</span><b class="num">×${b.cap || '—'}</b><span>combo</span><b class="num">×${b.combo || 0}</b>` +
+    `<span>rank</span><b>${esc(b.rank || '—')}</b></div>` +
+    `<div class="spec-hud"><span>the Forge asked</span><b class="num">${fmtN(b.tithe || 0)}★</b><span>the turn paid</span><b class="num">${fmtN(b.score || 0)}★</b></div>` +
+    `<div class="spec-sec">Played (${(b.played || []).length})</div><div class="spec-chips">${chips(b.played)}</div>` +
+    `<div class="spec-sec">Hand (${(b.hand || []).length}) · deck ${b.deckN ?? '—'} · discard ${b.discN ?? '—'}</div><div class="spec-chips">${chips(b.hand)}</div>` +
+    `<div class="spec-sec">The Bazaar</div><div class="spec-chips">${(b.market || []).map((m) => m.i
+      ? `<span class="spec-chip" style="--cc:${CCOLORS[m.c] || '#888'}">${esc(m.n)}<small>${m.k}⬤ ×${m.rem}${m.rack ? ' · relic' : ''}</small></span>`
+      : '<span class="spec-chip sold">SOLD</span>').join('') || '<span class="muted">—</span>'}</div>` +
+    `<div class="spec-sec">Bench (${(b.relics || []).length})</div><div class="spec-chips">${(b.relics || []).map((r) =>
+      `<span class="spec-chip${r.sh ? ' spent' : ''}" style="--cc:${CCOLORS[r.c] || '#888'}">${esc(r.n)}</span>`).join('') || '<span class="muted">—</span>'}</div>`;
+}
+function openSpectate(cid) {
+  SPEC_CID = cid;
+  $('#spectate').classList.add('on');
+  $('#spec-body').innerHTML = '<div class="empty">Fetching the board…</div>';
+  loadSpectate();
+  clearInterval(SPEC_TIMER);
+  SPEC_TIMER = setInterval(loadSpectate, 12000); // its own poll — dies with the panel
+}
+function closeSpectate() { SPEC_CID = null; clearInterval(SPEC_TIMER); $('#spectate').classList.remove('on'); }
+document.addEventListener('click', (e) => {
+  const w = e.target.closest('.watchbtn');
+  if (w) { e.stopPropagation(); openSpectate(w.dataset.watch); }
+});
+document.addEventListener('click', (e) => { // the panel's DOM sits after this script — delegate, never bind at parse
+  if (e.target.id === 'spec-close') return closeSpectate();
+  if (e.target.id === 'spectate') return closeSpectate();
+});
 </script>
+<div id="spectate"><div class="spec-card">
+  <div class="spec-head"><span><b id="spec-who">—</b> <span class="muted" id="spec-ago"></span></span><button id="spec-close">✕ close</button></div>
+  <div id="spec-body"></div>
+</div></div>
 </body>
 </html>

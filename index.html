@@ -11,6 +11,7 @@
 <style>
 :root{
   --gold:#e8b64c; --gold-bright:#ffd98a; --gold-deep:#8a5a1a;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
   --ink:#0b0a12; --parchment:#f0e6d2; --dim:#b9ad92; --dim-bright:#cfc4a8;
   --c-ember:#ff5c38; --c-tide:#41a8ff; --c-verdant:#4ade80; --c-umbra:#b06cff; --c-aurel:#ffd257;
   --sans:'Alegreya Sans','Helvetica Neue',sans-serif;
@@ -197,8 +198,9 @@ canvas.fxcanvas{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:n
   padding:0 8px;font-size:.68rem}
 @media (max-height:820px){.rtile{min-height:44px;padding:4px 8px}.rtile .ticon{width:28px;height:28px}}
 .mslot .empty{position:absolute;inset:0;border-radius:10px;border:1px dashed rgba(232,182,76,.25);
-  display:flex;align-items:center;justify-content:center;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.2rem;
   font-family:var(--sans);font-weight:700;font-size:.66rem;letter-spacing:.2em;color:rgba(232,182,76,.7)}
+.mslot .empty small{font-size:.5rem;font-weight:600;letter-spacing:.08em;color:rgba(185,173,146,.55);text-transform:none}
 /* relic cluster: parked beside the hand, small — the inspector does the reading */
 /* v0.3 #18: benched relics are compact ICON BADGES in a wrapping grid (was a tall column that collided with played
    cards at high glory). Hover/tap any badge → the full relic card via the inspector. */
@@ -293,7 +295,7 @@ canvas.fxcanvas{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:n
 #endturn.danger:hover{filter:brightness(1.15)}
 
 /* ── card inspector (click to zoom) ────────────────── */
-#inspect{position:fixed;inset:0;z-index:170;display:flex;flex-direction:column;align-items:center;justify-content:safe center;
+#inspect{position:fixed;inset:0;z-index:175;display:flex;flex-direction:column;align-items:center;justify-content:safe center;
   gap:1.1rem;background:rgba(5,3,10,.8);opacity:0;pointer-events:none;transition:opacity .22s;overflow-y:auto;padding:1.5rem 1rem}
 #inspect.on{opacity:1;pointer-events:auto}
 #inspect.annotate{background:transparent}
@@ -369,7 +371,7 @@ canvas.fxcanvas{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:n
   background:radial-gradient(circle at 35% 30%,#ffe9b0,#d9a53f 70%)}
 
 /* ── pile viewer (deck visibility) ─────────────────── */
-#pileview{position:fixed;inset:0;z-index:165;display:flex;align-items:center;justify-content:center;
+#pileview{position:fixed;inset:0;z-index:172;display:flex;align-items:center;justify-content:center;
   background:rgba(5,3,10,.82);opacity:0;pointer-events:none;transition:opacity .22s}
 #pileview.on{opacity:1;pointer-events:auto}
 #pv-panel{display:flex;flex-direction:column;align-items:center;gap:.65rem;width:96vw;height:94vh;
@@ -447,7 +449,8 @@ canvas.fxcanvas{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:n
 
 /* ── the boon (feast draft) ────────────────────────── */
 #boon{position:fixed;inset:0;z-index:166;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:.5rem;background:radial-gradient(circle at 50% 42%,rgba(60,40,8,.5),rgba(5,3,10,.9));
+  gap:.5rem;background:radial-gradient(circle at 50% 42%,rgba(60,40,8,.78),rgba(5,3,10,.96));
+  backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px); /* v0.11: the board must not compete with the reward */
   opacity:0;pointer-events:none;transition:opacity .35s}
 #boon.on{opacity:1;pointer-events:auto}
 #boon .boon-pre{font-family:var(--sans);font-weight:700;font-size:.72rem;letter-spacing:.5em;color:var(--dim-bright);padding-left:.5em}
@@ -462,14 +465,18 @@ canvas.fxcanvas{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:n
 body:has(#boon.on) #cardlayer,body:has(#boon.on) #combobadge{opacity:.22;transition:opacity .35s}
 #boon.on .boon-title{animation:boonpop .5s cubic-bezier(.3,1.6,.4,1)}
 @keyframes boonpop{0%{transform:scale(.6);opacity:0}100%{transform:scale(1);opacity:1}}
-#boon-skip{margin-top:1.4rem;font-family:var(--sans);font-weight:700;font-size:.72rem;letter-spacing:.14em;
+#boon-skip,#mr-skip,.ov-view{margin-top:1.4rem;font-family:var(--sans);font-weight:700;font-size:.72rem;letter-spacing:.14em;
   color:var(--dim);background:none;border:1px solid rgba(185,173,146,.35);border-radius:8px;
   padding:.55rem 1.3rem;cursor:pointer;transition:all .2s}
-#boon-skip:hover{color:var(--parchment);border-color:var(--dim)}
+#boon-skip:hover,#mr-skip:hover,.ov-view:hover{color:var(--parchment);border-color:var(--dim)}
+.ov-view{margin-top:1.1rem;margin-bottom:-.5rem} /* v0.11: read your deck before you choose — opens the pile view above the reward */
+#mr-skip{margin-top:.6rem}
+#pileview.readonly #pv-hint{visibility:hidden} /* no forging mid-ceremony — don't advertise it */
 
 /* ── the Master Relic draft (boss reward) ──────────── */
 #mrdraft{position:fixed;inset:0;z-index:170;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:.5rem;background:radial-gradient(circle at 50% 42%,rgba(72,48,10,.66),rgba(4,2,8,.96));
+  gap:.5rem;background:radial-gradient(circle at 50% 42%,rgba(72,48,10,.82),rgba(4,2,8,.98));
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px); /* v0.11: same — testers tried to read the board through it */
   opacity:0;pointer-events:none;transition:opacity .4s}
 #mrdraft.on{opacity:1;pointer-events:auto}
 #mrdraft .mr-pre{font-family:var(--sans);font-weight:800;font-size:.72rem;letter-spacing:.5em;color:var(--gold-bright);padding-left:.5em}
@@ -595,7 +602,7 @@ body:has(#mrdraft.on) #cardlayer,body:has(#mrdraft.on) #combobadge{opacity:.16;t
    v0.9.1: position:absolute (NOT fixed) and now direct children of #app — a fixed element re-anchors to a
    transformed ancestor, and shake() transforms #app, which made the piles jump. As absolute #app children
    they ride the shake with the board. anchor()/screenXY() read live rects, so fly-to-pile anims still follow. */
-.pile{position:absolute;top:76px;width:78px;height:108px;z-index:22}
+.pile{position:absolute;top:96px;width:78px;height:108px;z-index:22}
 #discardpile{right:clamp(20px,4vw,84px)}
 #deckpile{right:clamp(112px,calc(4vw + 92px),176px)}
 .pileslot{position:absolute;inset:0;border-radius:9px;border:1px solid rgba(232,182,76,.18);
@@ -1064,6 +1071,85 @@ body.boss-turn #tithe .t-label{color:var(--boss-c,#ff7a52)}
   .landsquash .card3d{animation:none}
   .ts-x.ablaze::before{animation:none} /* the flame column stays, statically lit */
 }
+/* ═══════════════ v0.11 THE VICTORY DEBRIEF — forge intelligence dossier ═══════════════
+   The game ends at the Masterwork. This full-screen dossier replaces the old win overlay:
+   dark intelligence-briefing register — mono tabular figures, thin gold rules, uppercase
+   micro-labels; the display font appears ONLY on the title and the stamped seal. */
+#debrief{position:fixed;inset:0;z-index:265;overflow-y:auto;
+  background:radial-gradient(circle at 50% 30%,rgba(44,30,6,.55),rgba(4,2,7,.985));
+  opacity:0;pointer-events:none;transition:opacity .7s}
+#debrief.on{opacity:1;pointer-events:auto}
+.db-doc{position:relative;width:min(1100px,94vw);margin:4vh auto 6vh;padding:2.2rem 2.6rem 2rem;
+  background:rgba(19,13,29,.94);border:1px solid rgba(232,182,76,.28);border-radius:14px;
+  box-shadow:0 30px 90px rgba(0,0,0,.7),0 0 60px rgba(232,182,76,.08)}
+.db-doc::before{content:'';position:absolute;left:0;right:0;top:0;height:0;border-top:3px double rgba(232,182,76,.5);border-radius:14px 14px 0 0}
+.db-mast{position:relative;padding-bottom:1.2rem;margin-bottom:1.4rem;border-bottom:1px solid rgba(232,182,76,.22)}
+.db-class{display:block;font:800 .58rem/1 var(--sans);letter-spacing:.34em;color:var(--dim);margin-bottom:.9rem}
+.db-no{position:absolute;right:0;top:0;font:700 .62rem/1 var(--mono);letter-spacing:.14em;color:var(--dim)}
+.db-title{font-family:var(--disp);font-weight:600;font-size:2.1rem;color:var(--gold-bright);letter-spacing:.01em}
+.db-sub{display:block;margin-top:.5rem;font:700 .62rem/1 var(--sans);letter-spacing:.26em;color:var(--dim-bright)}
+.db-seal{position:absolute;right:.4rem;top:2rem;transform:rotate(-8deg) scale(1.7);opacity:0;
+  font-family:var(--disp);font-weight:700;font-size:.92rem;line-height:1.15;color:#ffd257;text-align:center;
+  border:3px solid #ffd257;border-radius:8px;padding:.4em .7em;letter-spacing:.09em;mix-blend-mode:screen;pointer-events:none}
+.db-seal.stamped{transition:transform .28s cubic-bezier(.2,1.6,.4,1),opacity .22s;transform:rotate(-8deg) scale(1);opacity:.92}
+.db-mod{margin-bottom:1.5rem;opacity:0;transform:translateY(8px);transition:opacity .45s,transform .45s}
+.db-mod.in{opacity:1;transform:none}
+.db-h{font:800 .64rem/1 var(--sans);letter-spacing:.32em;color:var(--gold);
+  border-bottom:1px solid rgba(232,182,76,.22);padding-bottom:.5rem;margin-bottom:.9rem}
+.db-hero{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.6rem}
+.db-tile{border:1px solid rgba(232,182,76,.18);border-radius:10px;padding:.85rem .8rem;background:rgba(232,182,76,.04)}
+.db-num{font:700 1.7rem/1.1 var(--mono);font-variant-numeric:tabular-nums;color:var(--gold-bright)}
+.db-lab{margin-top:.35rem;font:700 .56rem/1.3 var(--sans);letter-spacing:.2em;color:var(--dim);text-transform:uppercase}
+#db-curve svg{width:100%;height:auto;display:block}
+.db-legend{margin-top:.4rem;font:600 .56rem/1 var(--sans);letter-spacing:.18em;color:var(--dim)}
+.db-act{display:grid;grid-template-columns:2.2rem 1fr auto auto auto;gap:1rem;align-items:baseline;
+  font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:.8rem;color:var(--parchment);
+  padding:.42rem .4rem;border-bottom:1px dashed rgba(232,182,76,.12)}
+.db-act .rn{color:var(--gold);font-weight:700}
+.db-act .bn{font-family:var(--sans);font-weight:700;letter-spacing:.03em}
+.db-act .bn i{font-style:normal;color:var(--dim);font-weight:600;font-size:.72rem;margin-left:.5em}
+.db-act .neg{color:#ff8a5c}
+.db-act .tag{font:700 .54rem/1 var(--sans);letter-spacing:.16em;color:#ff8a5c;border:1px solid rgba(255,138,92,.4);border-radius:4px;padding:.14em .4em}
+.db-act.shave{background:rgba(255,138,92,.07);border-left:2px solid #ff8a5c;border-bottom-style:solid}
+.db-act.shave .tag{color:var(--gold-bright);border-color:rgba(255,217,138,.5)}
+.db-engine{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.6rem;margin-bottom:.8rem}
+.db-verdict{font:700 .8rem/1.5 var(--sans);letter-spacing:.06em;color:var(--parchment)}
+.db-verdict b{color:var(--gold-bright);letter-spacing:.14em}
+.db-bar{display:flex;height:10px;border-radius:5px;overflow:hidden;margin:.55rem 0 .3rem;border:1px solid rgba(232,182,76,.25)}
+.db-bar i{display:block;height:100%}
+.db-bar .seg-base{background:linear-gradient(90deg,#8a5a1a,#e8b64c)}
+.db-bar .seg-mult{background:linear-gradient(90deg,#c05a30,#ff8a5c)}
+.db-barlab{display:flex;justify-content:space-between;font:600 .56rem/1 var(--sans);letter-spacing:.14em;color:var(--dim)}
+.db-deckgrid{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem}
+.db-hist{display:flex;flex-direction:column;gap:.35rem}
+.db-hrow{display:grid;grid-template-columns:6.5rem 1fr 2.4rem;gap:.6rem;align-items:center;
+  font:600 .64rem/1 var(--sans);letter-spacing:.12em;color:var(--dim-bright);text-transform:uppercase}
+.db-hrow i{display:block;height:8px;border-radius:4px;background:linear-gradient(90deg,rgba(232,182,76,.75),rgba(232,182,76,.25));min-width:2px}
+.db-hrow b{font-family:var(--mono);color:var(--gold-bright);text-align:right}
+.db-wares{display:flex;flex-direction:column;gap:.4rem}
+.db-ware{display:flex;justify-content:space-between;align-items:baseline;gap:.6rem;background:rgba(255,255,255,.03);
+  border-radius:8px;padding:.42rem .6rem;font:600 .74rem/1.2 var(--sans);color:var(--parchment)}
+.db-ware b{color:var(--gold-bright)}
+.db-ware span{font-size:.54rem;letter-spacing:.16em;color:var(--dim);text-transform:uppercase;white-space:nowrap}
+.db-bench{display:flex;flex-wrap:wrap;gap:.45rem}
+.db-relic{font:700 .68rem/1 var(--sans);letter-spacing:.05em;color:var(--parchment);
+  border:1px solid rgba(232,182,76,.3);border-radius:999px;padding:.4em .85em;background:rgba(232,182,76,.06)}
+.db-relic.master{border-color:rgba(255,210,87,.6);color:var(--gold-bright)}
+.db-relic.spent{opacity:.45;text-decoration:line-through}
+.db-relic small{font-weight:600;font-size:.5rem;letter-spacing:.14em;color:#ff8a5c;margin-left:.5em;text-decoration:none}
+.db-actions{display:flex;gap:.8rem;justify-content:center;padding-top:.4rem;margin-bottom:0}
+#db-newrun{font:800 .82rem/1 var(--sans);letter-spacing:.12em;color:#241703;cursor:pointer;border:none;border-radius:10px;
+  padding:.8rem 2.2rem;background:linear-gradient(180deg,#ffd98a,#e8b64c);box-shadow:0 6px 24px rgba(232,182,76,.35)}
+#db-newrun:hover{filter:brightness(1.08)}
+#db-scores{font:700 .72rem/1 var(--sans);letter-spacing:.12em;color:var(--dim);background:none;cursor:pointer;
+  border:1px solid rgba(185,173,146,.35);border-radius:10px;padding:.8rem 1.6rem;transition:all .2s}
+#db-scores:hover{color:var(--parchment);border-color:var(--dim)}
+.db-embers{position:fixed;inset:0;mix-blend-mode:screen;pointer-events:none}
+@media (prefers-reduced-motion: reduce){
+  .db-mod{transition:none;transform:none;opacity:1}
+  .db-seal{transition:none}
+  .db-embers{display:none}
+}
 
 /* ── tutorial / grimoire ──────────────────────────── */
 #tutor{position:fixed;inset:0;z-index:190;pointer-events:none;opacity:0;transition:opacity .45s}
@@ -1072,7 +1158,7 @@ body.boss-turn #tithe .t-label{color:var(--boss-c,#ff7a52)}
 /* children like .cardo set pointer-events:auto, which punches through a pointer-events:none
    ancestor — closed overlays must hard-disable everything inside them */
 #inspect:not(.on) *,#pileview:not(.on) *,#boon:not(.on) *,#mrdraft:not(.on) *,#tutor:not(.on) *,
-#startmenu:not(.on) *,#gamemenu:not(.on) *,#hiscore:not(.on) *,#pstats:not(.on) *,#farewell:not(.on) *,#nameentry:not(.on) *{pointer-events:none !important}
+#startmenu:not(.on) *,#gamemenu:not(.on) *,#hiscore:not(.on) *,#pstats:not(.on) *,#debrief:not(.on) *,#farewell:not(.on) *,#nameentry:not(.on) *{pointer-events:none !important}
 #tuthole{position:absolute;border-radius:14px;border:1px solid rgba(232,182,76,.65);
   box-shadow:0 0 0 9999px rgba(5,3,10,.74);
   transition:left .5s cubic-bezier(.3,1.2,.4,1), top .5s cubic-bezier(.3,1.2,.4,1),
@@ -1445,6 +1531,7 @@ body.boss-turn #tithe .t-label{color:var(--boss-c,#ff7a52)}
     <h2 class="boon-title">Claim a Boon</h2>
     <div class="boon-sub" id="boon-sub"></div>
     <div id="boon-row"></div>
+    <button id="boon-view" class="ov-view">VIEW YOUR CARDS</button>
     <button id="boon-skip">DECLINE — KEEP IT LEAN</button>
   </div>
   <div id="mrdraft">
@@ -1452,6 +1539,8 @@ body.boss-turn #tithe .t-label{color:var(--boss-c,#ff7a52)}
     <h2 class="mr-title">Claim a Master Relic</h2>
     <div class="mr-sub" id="mr-sub"></div>
     <div id="mr-row"></div>
+    <button id="mr-view" class="ov-view">VIEW YOUR CARDS</button>
+    <button id="mr-skip">SKIP CLAIM</button>
   </div>
   <div id="trialintro"><div class="ti-card">
     <div class="ti-pre">THE APPRENTICESHIP</div>
@@ -1467,6 +1556,35 @@ body.boss-turn #tithe .t-label{color:var(--boss-c,#ff7a52)}
     <div id="go-scores"></div>
     <button id="again">NEW RUN</button>
   </div></div>
+  <div id="debrief">
+    <div class="sm-embers db-embers" aria-hidden="true">
+      <b style="left:20%;width:3px;height:3px;--ed:10s;--edel:0s;--edx:24px;--eo:.6"></b>
+      <b style="left:36%;width:2.5px;height:2.5px;--ed:12s;--edel:2.2s;--edx:-30px;--eo:.5;--ec:#ffe6b0"></b>
+      <b style="left:52%;width:4px;height:4px;--ed:9s;--edel:1.1s;--edx:36px;--eo:.55"></b>
+      <b style="left:66%;width:2px;height:2px;--ed:11.5s;--edel:3.4s;--edx:-20px;--eo:.5"></b>
+      <b style="left:80%;width:3px;height:3px;--ed:10.5s;--edel:4.6s;--edx:28px;--eo:.55;--ec:#ff8a4a"></b>
+    </div>
+    <div class="db-doc">
+      <header class="db-mast">
+        <span class="db-class">STARGILT · FORGE INTELLIGENCE · EYES OF THE GUILD ONLY</span>
+        <span class="db-no" id="db-no">DOSSIER No. —</span>
+        <h2 class="db-title">You Are Forged — Master Smith</h2>
+        <span class="db-sub" id="db-sub"></span>
+        <div class="db-seal" id="db-seal">MASTERWORK<br>COMPLETE</div>
+      </header>
+      <section class="db-mod db-hero" id="db-hero"></section>
+      <section class="db-mod"><h3 class="db-h">THE RUN CURVE · SCORE v DEMAND</h3><div id="db-curve"></div>
+        <div class="db-legend">— YOUR SCORE&ensp;·&ensp;– – THE FORGE'S DEMAND&ensp;·&ensp;◆ BOSS&ensp;·&ensp;◇ FORGIVEN</div></section>
+      <section class="db-mod"><h3 class="db-h">THE EIGHT TRIALS</h3><div id="db-acts"></div></section>
+      <section class="db-mod"><h3 class="db-h">ENGINE AUTOPSY</h3><div id="db-engine-wrap"></div></section>
+      <section class="db-mod"><h3 class="db-h">THE DECK, AS IT STOOD</h3><div id="db-deck"></div></section>
+      <section class="db-mod"><h3 class="db-h" id="db-bench-h">THE BENCH</h3><div id="db-bench" class="db-bench"></div></section>
+      <footer class="db-mod db-actions">
+        <button id="db-newrun">NEW RUN</button>
+        <button id="db-scores">VIEW HONOR ROLL</button>
+      </footer>
+    </div>
+  </div>
   <div id="tutor">
     <div id="tuthole"></div>
     <div id="tutpanel">
@@ -1569,7 +1687,7 @@ body.boss-turn #tithe .t-label{color:var(--boss-c,#ff7a52)}
 <script>
 'use strict';
 /* ═══════════════════ utils ═══════════════════ */
-const BUILD='chapters · v0.10.0'; // v0.10.0 THE DOPAMINE & JUICE OVERHAUL (tasks/dopamine-plan.md, all 6 sections + critique fixes B1-B4): §0 HEAT SPINE — a global Heat signal (run: slow 0-1 recomputed at turn/boss/rank milestones; surge: fast, spiked by big turns; timeScale: hit-stop) with its OWN self-sleeping RAF (B1: no always-on loop existed); Endless breathes per 6-turn cycle instead of pinning at max (B4). §1 EVOLVING MUSIC — Music.onHeat opens the pad/bass filters (500→4000Hz) with the run, density gates scale (hats .5+.42r, stabs .35+.4r, noodle .04+.14r), BPM ramps 104→146 by act (~3/min via Heat's RAF), a lead-arp layer gates on above Heat .6 (hysteresis .6/.55), BOSS MODE swaps the chord tables to a Phrygian-dark ALT set by REFERENCE at the bar seam (never mutates CH) and reverts exactly on bossDefeat, quantized stingers (boss-clear triad swell) land on the next bar, duckNow is locked out during fadeOut (a stinger can't cancel a farewell), muted = scheduler idles (§6.6). §2 SCALED FX — the multiply-reveal is magnitude-aware via canonical scalars mag=log10(final)/5 and over=final/tithe (B3: apex tiers gate on BOTH — easy early dumps can't fake greatness); hit-stop freeze() before the boom (rush-aware, routed through tw); slamText overshoot + chromatic aberration (tier-3, short-eqn only); feast is CONTINUOUS (TITHE PAID→FEEDS→FEASTS→THE FORGE GORGES); shake() rewritten to a TRAUMA model (trauma², summed-sine sway + up to ~2.5° roll, dip() channel for directional thumps) keeping the old power scale at all ~30 call sites; particle pool hard-capped at 300; boss-clear/rank-up escalate by act/rank. §3 CARDS LAND HEAVIER — weight=RARITY_JUICE×(1+tier·.4)×(1+min(glory,8)·.06) (a forged rare out-lands a vanilla mythic); landing squash keyframe (common imperceptible); anticipation lift/hold scale with weight; per-rarity bass registers (mythic/master sub-sines, forged metal rings deeper); buy/forge stop being rarity-flat. §4 BIG-WIN TIERS (categorical) — tier-3 apex: slow-mo + chroma + the reserved CHANT (transposed by turn so it never becomes a ringtone) + A NEW PEAK via state.bestTurnGlory (B2: recordScore() mutates localStorage, never called per turn); tier-4 record-shatter (glory>old best×1.5): gold desaturate-and-rebloom, reserved; personal best is a first-class interrupt on death AND victory screens; column of fire BEHIND the mult glyph (digit stays legible); final-boss kill = HARD-STOP (music cuts, 400ms blackout-and-silence, THEN the fanfare); first-encounter novelty flags (first boss/mythic/record) in ch-sg-firsts. §5 DEATH FEEL — filters slam shut, colour drains (deathgray), the crash decays into true silence, then the verdict sub-tone; a new best outshines the death. §6 RESTRAINT — baseline demoted throughout (routine turns whisper); prefers-reduced-motion gates the WHOLE layer (shake→border pulse, freeze→0, particles ×.3, music starts calm stays calm — colour/sound/number channels preserved); SCREEN FX slider in the sound menu (Heat.fxScale, persisted in ch-af-vol); coach protection — inTrial() pins Heat low, forbids freeze, caps juice ≤.35. PLUS: honor roll gets THE WORLD / MY RUNS tabs (race yourself); ANALYTICS on the main menu — the player's OWN ledger from ch-bal-log/ch-af-scores (runs, wins, streaks, best run/turn, deepest turn, most played/bought/forged/burned wares, last-12-runs bars) — local data only, nothing leaves the machine. // v0.9.1 BUGFIX: deck/discard piles jumped when playing a card — v0.9.0 made them position:fixed inside #app, and shake() transforms #app, so a fixed element re-anchors to #app's box (spec: a transformed ancestor becomes the containing block for fixed descendants), snapping the piles to a different spot each shake. Fixed: piles are now position:absolute + direct children of #app, so they ride the shake with the board. // v0.9.0 (6-item pass): (1) Deck+Discard moved to the upper-right HUD (fixed, below END TURN) so a big hand fan no longer occludes them. (2) Pile view gains tabs — ALL / DRAW / DISCARD / PLAYED. (3) ENTER ends the turn (guarded vs typing/overlays/disabled). (4) LATE-GAME MATH: demand tapers past the Act-3 boss (knee t19, rate 1.28→1.13) so the geometric curve stops outrunning a capped score — t48 4.1M→97k (was mathematically impossible, now ~676 base★); the MULT cap now RISES +3 per boss cleared (15→36) via effMultCap(), and two optional stacking cap relics (Furnace Regulator +4 T2, Unbound Forge +8 T3) let a MULT build push higher without being mandatory. (5) Menu 'back' links restyled from dotted-underline text (old-HTML look) to gold ghost pills. (6) Playtime now counts ACTIVE (foreground) time only — the clock pauses on tab-hidden, so idle open-tab time no longer inflates it; admin relabelled 'Active time'. // v0.8.6: FIX CONTINUE — the resume rebuilt the market DATA but not the market DOM, so the Bazaar showed phantom un-clickable cards (turn/glory/deck/hand resumed fine). initMarket's DOM loop extracted into buildMarketDOM(); the boot() restore block now calls it after restoreRun() so the resumed Bazaar is real. (v0.8.5's test kept sessionStorage across reload → never hit the real reopen path where askName fires; test corrected.) // v0.8.5: RUN PERSISTENCE — a run autosaves to localStorage (ch-sg-save) at each turn boundary; the start menu shows CONTINUE (resume · Act N, turn T, NNN★) when a save exists for this device's player, and PLAY drops to 'a new run'. Restores deck/discard/relics(+shattered)/market/commissions/counters; forged cards (coin_f) rebuilt via defFromId. Cleared on death + RESTART; kept on QUIT-to-menu (leave & resume). TALLY SPEED: the end-turn ceremony auto-scales ~2.2× faster from Act 3 on (Acts 1-2 keep the full show), fixing the long-chain drag; click-to-rush still works. // v0.8.4 (playtest pass): FREE Act-1 first-miss mercy — the Forge forgives an apprentice once (prod data: Boss 1 killed 44% of Erik's runs, once by 2★, while barely touching Hampus); does NOT count as clearing. BUGFIX: opening market ignored afterBoss (Twin Pyre seeded turn 1) — pickReverie now filters both gates. POLISH: game-over backdrop opaque (was competing with the bright board), MULT cap reads 'cap 15' not '/15' (slash misread as a fraction), start menu PLAY primary+first above LEARN (optional tutorial). SECURITY: static-file guard requires ROOT+sep (sibling-prefix dir couldn't leak, now can't at all). // v0.8.3: BURN needs a CONFIRM — the picked card zooms to centre wearing a big BURN button (+★ shown), CANCEL keeps the prompt armed, SKIP BURN spares everything; coach follows in ('BURN IT'). Fixes mis-click incinerations from a crowded hand. Relic mounts (rack buys + master drafts) now ride the ch_run card tally (cards.relics) for the admin Compare tab. // v0.8.2: card-corner wedges fixed — the .foot/.nameplate scrims and the .cardo hot-glow shadow painted SQUARE corners past the 12px cardface radius (face can't clip: badges must overflow); all three now carry the matching radius. // v0.8.1: removed the stranded 'PLAYED ×N' pill (v0.3 tight-stack relic left floating in empty space after the v0.7.2 cluster move; COMBO ×N already shows the chain). v0.8.0 BALANCE (v0.7.0 overshot — too easy): the six ungated mythics now gate properly — leviathan/abyss deep (rank 2), dragon/incarnate/mirrortwin deep+afterBoss:2 (t12+), THE GILDED FRACTAL (the ×1.5 xMult exploder that landed in Act 1-2) deep+afterBoss:3 (t18+). DEMAND_BASE 10.4→11.7 (half the v0.7 cut restored, −10% vs original). NEW Dross-for-power T1 wares (strong + 1❖ to play, each play silts a Dross): Pyre Bloom (c4, 4★), Silt Dredger (c5, 3★ +draw2), Ashgilt Idol (c5, 3★ +2⬤). NEW mid burn-engine The Twin Pyre (c5 cantrip, +1❖, burn 1, afterBoss:1) — Altar → Twin Pyre → Great Kiln. v0.7.2: the played-card cluster occludes less — anchor 45%→55% (sits low on the board) and rows are 8 wide (was 5), so a 15-card chain is 2 short rows instead of a 3-row wall across the centre. v0.7.1: § debug is keyboard-only — removed the corner tap element (no clickable trace on screen). v0.7.0 BALANCE: MULT_CAP 7→15 (the ×7 ceiling could not answer the late-boss curve), DEMAND_BASE 13→10.4 (flat −20%, playtest verdict), and three SCALING star engines so base ★ can grow with the run — Ashfall Reliquary (rare, +1★/card burned this run), Crown of Hours (mythic, +1★×turn number), Anvil of the Green World (mythic, +1★/card played); new syn kinds starPerBurn/starPerTurn in starsFor(). Admin: Forge Console redesign (funnels, demand-vs-score chart, clear-rate bars, live feed, per-player run timelines via /api/admin/balance?cid= + /api/admin/events). v0.6.9: (1) pile-view recede fixed — dim/pop now keyed to the card actually under the pointer via JS classes (.receding/.hot), not container :hover; resting the mouse between cards (or a forge re-render under a still pointer) no longer washes out every card with nothing popped. (2) § secret debug — press § or click the faint corner § → copyable JSON dump of the exact game state (build, run, piles, score, overlays, ch-* storage, recent errors via an early error ring buffer) for bug reports. (3) admin: "Furthest" split into Learn (tutorial funnel: skipped/started/Trial N/Graduated) and Game (real-run depth: just looked/started/Act N·turn/Forged ★) so tutorial adoption is visible. v0.6.8: SHARED honor roll — run scores post to /api/score (cid+per-run rid; a win that rolls into an Endless death keeps ONE slot at its peak) and the HIGHSCORE panel + game-over board show the global top 10 from /api/scores, own rows highlighted via a server-computed `me` flag (raw cids never leave the server). localStorage board unchanged as the offline/test fallback; net is gated by Telemetry.off so :5713/file:// stay silent. v0.6.7 (test-player fixes): (1) a Boon is a free reward — a stray backdrop click no longer discards it; only a card or DECLINE dismisses. (2) the end-turn MULT reveal no longer overshoots the cap then snaps down (showed ×58=13456 → ×14=3262); the meter now climbs only to the true capped total, AND the ×7 MULT cap is made legible — a persistent "/7 max" on the MULT meter that turns gold "MAX" at the cap, a "★ MULT MAXED · ×7" callout the instant you hit it, and the keystone (× bucket) shown as its own ⚡×N chip. v0.6.6 (pile view): hovering a card now recedes its neighbours (opacity .38) so their gold forge buttons / count badges stop peeking past the enlarged card's corners (the "yellow corner"), and the popped card wears a tighter gold lift-shadow (negative spread) with a softer count-badge drop — fixes the black-box/yellow-corner hover-zoom artifacts. v0.6.5 (pile view): hover-zoom no longer clips an edge card (grid overflow visible while the deck fits, real scroll box only on genuine overflow); cards vertically centred when the deck fits; removed the redundant forge-preview eye button; dropped the dark card-name scrim that read as a black frame across the top of the enlarged pile-view cards. v0.6.4: PLAY is open from the first visit — removed the Learn-before-Play lock (LEARN is now an optional tutorial). v0.6.3: server-side "Mellon" password gate for the private playtest (removed the misbuilt invite button). v0.6.2: full-screen pile view, Ledger buff, card-usage telemetry, Learn gate + deep sweep
+const BUILD='chapters · v0.11.0'; // v0.11.0 NINE PLAYTEST FIXES + ENDLESS REMOVED + THE VICTORY DEBRIEF. (1) VIEW YOUR CARDS on the Boon + Master-Relic overlays — the pile view opens READ-ONLY above a suspended reward (pvReadonly: no forge/burn rows; Esc closes it first, the reward survives; #pileview z 165→172). (2) Deck/discard piles moved down (top 76→96px) clear of END TURN. (3) burnMode: clicking a pile-view card BODY now zooms WITH the burn button (shared zoom() honors pvReadonly/burnMode/forge — was forge-only, the burn-less-zoom bug). (4) Boon/mrdraft backdrops opaque + blurred (alpha .5/.66→.78/.82 + backdrop-filter) — testers tried to read the board through them. (5) The phantom CLOSE: #inspect (z170, earlier in DOM) rendered BURIED under #mrdraft (also z170) — a right-click relic zoom showed only its CLOSE through the translucent backdrop and clicks landed on the draft; #inspect → z175. Plus an explicit SKIP CLAIM button (mrResolve; click-only, deliberately not Escape). (6-7 admin) LIVE≠abandoned: won===null now checks recency (STALE_MS 10min → gray ABANDONED tN badge) and live rows show Σturns[].score (was endGlory=0★); WATCH button on fresh-LIVE rows → spectate panel fed by a new per-turn ch_board beacon (self-contained card chips ≤8KB, boardSnap()) + GET /api/admin/board?cid= (own route — the events route whitelists extra); 12s poll, zero animation. (8) MULT NERF for tension: CHAIN_RATE .2→.18, ECHO_RATE .12→.10, TRIBAL_RATE .25→.20 (constants shared by computeScore AND the reveal — no desync), multDouble +3→+2.5, card m shaved ~17-25% (Verdant Bloom .15, Grove Warden .10, Compound .25, Prism .20, Catalyst .15, Second Sun 1.2), relicMult −20% (reliquary .15/monument .25/trophy .25/aethercrown .4/furnaceheart .65/crowns .8/1.2/2), emberBloom .12/.25/.4; COMPENSATION: DEMAND_LATE_RATE 1.13→1.12 (t48 97,333→74,550) — net: t9-18 ~15-18% harder (the ask), t36+ neutral; Acts 1-2 nearly untouched (mercy intact). (9) THE BAZAAR RESTOCKS: every boss clear runs evolveMarket (+evolveRack if a shelf emptied) — max rank hits ~Act 3-4 and the old rank-up-only restock left the late game permanently SOLD; SOLD slots now read 'new wares after the boss'. ENDLESS REMOVED (design: beating the Masterwork ENDS the game): state.endless/pendingVictory/endlessDemand/ENDLESS_GROWTH/Heat saw-tooth deleted; the t48 kill plays the hard-stop + slam, silently syncs final rank, and fires runVictory() WITHOUT resolving the turn (no sweep/turn-49/redeal/save); pre-v0.11 endless saves retired in loadSave (their score is already on the roll). THE VICTORY DEBRIEF (#debrief z265, dossier register: mono tabular figures, micro-labels, display font only on title+seal): captures Balance.rows/cards BEFORE Balance.end wipes them; modules — hero tiles (glory count-up, rank, active time, honor-roll placement upgraded async), THE RUN CURVE (hand-rolled log-Y SVG, boss diamonds filled/hollow=forgiven, act numerals), THE EIGHT TRIALS ledger (asked/paid/margin, THE CLOSEST SHAVE), ENGINE AUTOPSY (peak turn, longest chain via new state.maxCombo, final base×mult, log-share bar + MULT ENGINE/TWIN-HAMMERED/STAR-WROUGHT verdict), THE DECK AS IT STOOD (rarity/⁂ histogram + most played/bought/forged/burned), THE BENCH (SPENT strikethrough), NEW RUN + VIEW HONOR ROLL; MASTERWORK COMPLETE seal stamps in with one sub-thud; new game_won telemetry event; #gameover is death/trial-only now. // v0.10.0 THE DOPAMINE & JUICE OVERHAUL (tasks/dopamine-plan.md, all 6 sections + critique fixes B1-B4): §0 HEAT SPINE — a global Heat signal (run: slow 0-1 recomputed at turn/boss/rank milestones; surge: fast, spiked by big turns; timeScale: hit-stop) with its OWN self-sleeping RAF (B1: no always-on loop existed); Endless breathes per 6-turn cycle instead of pinning at max (B4). §1 EVOLVING MUSIC — Music.onHeat opens the pad/bass filters (500→4000Hz) with the run, density gates scale (hats .5+.42r, stabs .35+.4r, noodle .04+.14r), BPM ramps 104→146 by act (~3/min via Heat's RAF), a lead-arp layer gates on above Heat .6 (hysteresis .6/.55), BOSS MODE swaps the chord tables to a Phrygian-dark ALT set by REFERENCE at the bar seam (never mutates CH) and reverts exactly on bossDefeat, quantized stingers (boss-clear triad swell) land on the next bar, duckNow is locked out during fadeOut (a stinger can't cancel a farewell), muted = scheduler idles (§6.6). §2 SCALED FX — the multiply-reveal is magnitude-aware via canonical scalars mag=log10(final)/5 and over=final/tithe (B3: apex tiers gate on BOTH — easy early dumps can't fake greatness); hit-stop freeze() before the boom (rush-aware, routed through tw); slamText overshoot + chromatic aberration (tier-3, short-eqn only); feast is CONTINUOUS (TITHE PAID→FEEDS→FEASTS→THE FORGE GORGES); shake() rewritten to a TRAUMA model (trauma², summed-sine sway + up to ~2.5° roll, dip() channel for directional thumps) keeping the old power scale at all ~30 call sites; particle pool hard-capped at 300; boss-clear/rank-up escalate by act/rank. §3 CARDS LAND HEAVIER — weight=RARITY_JUICE×(1+tier·.4)×(1+min(glory,8)·.06) (a forged rare out-lands a vanilla mythic); landing squash keyframe (common imperceptible); anticipation lift/hold scale with weight; per-rarity bass registers (mythic/master sub-sines, forged metal rings deeper); buy/forge stop being rarity-flat. §4 BIG-WIN TIERS (categorical) — tier-3 apex: slow-mo + chroma + the reserved CHANT (transposed by turn so it never becomes a ringtone) + A NEW PEAK via state.bestTurnGlory (B2: recordScore() mutates localStorage, never called per turn); tier-4 record-shatter (glory>old best×1.5): gold desaturate-and-rebloom, reserved; personal best is a first-class interrupt on death AND victory screens; column of fire BEHIND the mult glyph (digit stays legible); final-boss kill = HARD-STOP (music cuts, 400ms blackout-and-silence, THEN the fanfare); first-encounter novelty flags (first boss/mythic/record) in ch-sg-firsts. §5 DEATH FEEL — filters slam shut, colour drains (deathgray), the crash decays into true silence, then the verdict sub-tone; a new best outshines the death. §6 RESTRAINT — baseline demoted throughout (routine turns whisper); prefers-reduced-motion gates the WHOLE layer (shake→border pulse, freeze→0, particles ×.3, music starts calm stays calm — colour/sound/number channels preserved); SCREEN FX slider in the sound menu (Heat.fxScale, persisted in ch-af-vol); coach protection — inTrial() pins Heat low, forbids freeze, caps juice ≤.35. PLUS: honor roll gets THE WORLD / MY RUNS tabs (race yourself); ANALYTICS on the main menu — the player's OWN ledger from ch-bal-log/ch-af-scores (runs, wins, streaks, best run/turn, deepest turn, most played/bought/forged/burned wares, last-12-runs bars) — local data only, nothing leaves the machine. // v0.9.1 BUGFIX: deck/discard piles jumped when playing a card — v0.9.0 made them position:fixed inside #app, and shake() transforms #app, so a fixed element re-anchors to #app's box (spec: a transformed ancestor becomes the containing block for fixed descendants), snapping the piles to a different spot each shake. Fixed: piles are now position:absolute + direct children of #app, so they ride the shake with the board. // v0.9.0 (6-item pass): (1) Deck+Discard moved to the upper-right HUD (fixed, below END TURN) so a big hand fan no longer occludes them. (2) Pile view gains tabs — ALL / DRAW / DISCARD / PLAYED. (3) ENTER ends the turn (guarded vs typing/overlays/disabled). (4) LATE-GAME MATH: demand tapers past the Act-3 boss (knee t19, rate 1.28→1.13) so the geometric curve stops outrunning a capped score — t48 4.1M→97k (was mathematically impossible, now ~676 base★); the MULT cap now RISES +3 per boss cleared (15→36) via effMultCap(), and two optional stacking cap relics (Furnace Regulator +4 T2, Unbound Forge +8 T3) let a MULT build push higher without being mandatory. (5) Menu 'back' links restyled from dotted-underline text (old-HTML look) to gold ghost pills. (6) Playtime now counts ACTIVE (foreground) time only — the clock pauses on tab-hidden, so idle open-tab time no longer inflates it; admin relabelled 'Active time'. // v0.8.6: FIX CONTINUE — the resume rebuilt the market DATA but not the market DOM, so the Bazaar showed phantom un-clickable cards (turn/glory/deck/hand resumed fine). initMarket's DOM loop extracted into buildMarketDOM(); the boot() restore block now calls it after restoreRun() so the resumed Bazaar is real. (v0.8.5's test kept sessionStorage across reload → never hit the real reopen path where askName fires; test corrected.) // v0.8.5: RUN PERSISTENCE — a run autosaves to localStorage (ch-sg-save) at each turn boundary; the start menu shows CONTINUE (resume · Act N, turn T, NNN★) when a save exists for this device's player, and PLAY drops to 'a new run'. Restores deck/discard/relics(+shattered)/market/commissions/counters; forged cards (coin_f) rebuilt via defFromId. Cleared on death + RESTART; kept on QUIT-to-menu (leave & resume). TALLY SPEED: the end-turn ceremony auto-scales ~2.2× faster from Act 3 on (Acts 1-2 keep the full show), fixing the long-chain drag; click-to-rush still works. // v0.8.4 (playtest pass): FREE Act-1 first-miss mercy — the Forge forgives an apprentice once (prod data: Boss 1 killed 44% of Erik's runs, once by 2★, while barely touching Hampus); does NOT count as clearing. BUGFIX: opening market ignored afterBoss (Twin Pyre seeded turn 1) — pickReverie now filters both gates. POLISH: game-over backdrop opaque (was competing with the bright board), MULT cap reads 'cap 15' not '/15' (slash misread as a fraction), start menu PLAY primary+first above LEARN (optional tutorial). SECURITY: static-file guard requires ROOT+sep (sibling-prefix dir couldn't leak, now can't at all). // v0.8.3: BURN needs a CONFIRM — the picked card zooms to centre wearing a big BURN button (+★ shown), CANCEL keeps the prompt armed, SKIP BURN spares everything; coach follows in ('BURN IT'). Fixes mis-click incinerations from a crowded hand. Relic mounts (rack buys + master drafts) now ride the ch_run card tally (cards.relics) for the admin Compare tab. // v0.8.2: card-corner wedges fixed — the .foot/.nameplate scrims and the .cardo hot-glow shadow painted SQUARE corners past the 12px cardface radius (face can't clip: badges must overflow); all three now carry the matching radius. // v0.8.1: removed the stranded 'PLAYED ×N' pill (v0.3 tight-stack relic left floating in empty space after the v0.7.2 cluster move; COMBO ×N already shows the chain). v0.8.0 BALANCE (v0.7.0 overshot — too easy): the six ungated mythics now gate properly — leviathan/abyss deep (rank 2), dragon/incarnate/mirrortwin deep+afterBoss:2 (t12+), THE GILDED FRACTAL (the ×1.5 xMult exploder that landed in Act 1-2) deep+afterBoss:3 (t18+). DEMAND_BASE 10.4→11.7 (half the v0.7 cut restored, −10% vs original). NEW Dross-for-power T1 wares (strong + 1❖ to play, each play silts a Dross): Pyre Bloom (c4, 4★), Silt Dredger (c5, 3★ +draw2), Ashgilt Idol (c5, 3★ +2⬤). NEW mid burn-engine The Twin Pyre (c5 cantrip, +1❖, burn 1, afterBoss:1) — Altar → Twin Pyre → Great Kiln. v0.7.2: the played-card cluster occludes less — anchor 45%→55% (sits low on the board) and rows are 8 wide (was 5), so a 15-card chain is 2 short rows instead of a 3-row wall across the centre. v0.7.1: § debug is keyboard-only — removed the corner tap element (no clickable trace on screen). v0.7.0 BALANCE: MULT_CAP 7→15 (the ×7 ceiling could not answer the late-boss curve), DEMAND_BASE 13→10.4 (flat −20%, playtest verdict), and three SCALING star engines so base ★ can grow with the run — Ashfall Reliquary (rare, +1★/card burned this run), Crown of Hours (mythic, +1★×turn number), Anvil of the Green World (mythic, +1★/card played); new syn kinds starPerBurn/starPerTurn in starsFor(). Admin: Forge Console redesign (funnels, demand-vs-score chart, clear-rate bars, live feed, per-player run timelines via /api/admin/balance?cid= + /api/admin/events). v0.6.9: (1) pile-view recede fixed — dim/pop now keyed to the card actually under the pointer via JS classes (.receding/.hot), not container :hover; resting the mouse between cards (or a forge re-render under a still pointer) no longer washes out every card with nothing popped. (2) § secret debug — press § or click the faint corner § → copyable JSON dump of the exact game state (build, run, piles, score, overlays, ch-* storage, recent errors via an early error ring buffer) for bug reports. (3) admin: "Furthest" split into Learn (tutorial funnel: skipped/started/Trial N/Graduated) and Game (real-run depth: just looked/started/Act N·turn/Forged ★) so tutorial adoption is visible. v0.6.8: SHARED honor roll — run scores post to /api/score (cid+per-run rid; a win that rolls into an Endless death keeps ONE slot at its peak) and the HIGHSCORE panel + game-over board show the global top 10 from /api/scores, own rows highlighted via a server-computed `me` flag (raw cids never leave the server). localStorage board unchanged as the offline/test fallback; net is gated by Telemetry.off so :5713/file:// stay silent. v0.6.7 (test-player fixes): (1) a Boon is a free reward — a stray backdrop click no longer discards it; only a card or DECLINE dismisses. (2) the end-turn MULT reveal no longer overshoots the cap then snaps down (showed ×58=13456 → ×14=3262); the meter now climbs only to the true capped total, AND the ×7 MULT cap is made legible — a persistent "/7 max" on the MULT meter that turns gold "MAX" at the cap, a "★ MULT MAXED · ×7" callout the instant you hit it, and the keystone (× bucket) shown as its own ⚡×N chip. v0.6.6 (pile view): hovering a card now recedes its neighbours (opacity .38) so their gold forge buttons / count badges stop peeking past the enlarged card's corners (the "yellow corner"), and the popped card wears a tighter gold lift-shadow (negative spread) with a softer count-badge drop — fixes the black-box/yellow-corner hover-zoom artifacts. v0.6.5 (pile view): hover-zoom no longer clips an edge card (grid overflow visible while the deck fits, real scroll box only on genuine overflow); cards vertically centred when the deck fits; removed the redundant forge-preview eye button; dropped the dark card-name scrim that read as a black frame across the top of the enlarged pile-view cards. v0.6.4: PLAY is open from the first visit — removed the Learn-before-Play lock (LEARN is now an optional tutorial). v0.6.3: server-side "Mellon" password gate for the private playtest (removed the misbuilt invite button). v0.6.2: full-screen pile view, Ledger buff, card-usage telemetry, Learn gate + deep sweep
 const $=s=>document.querySelector(s);
 /* ── error ring buffer (feeds the § debug dump) — installed first so nothing escapes it ── */
 window.__sgErrLog=[];
@@ -1645,6 +1763,8 @@ const Balance=(()=>{
     reset(){rows=[];runStart=Date.now();cards=freshCards();},
     // called at each tally: {t, act, boss, dem, score, base, mult, cleared}
     turn(row){ rows.push(row); beacon('ch_turn',row); },
+    // v0.11 spectate: one compact board snapshot per turn — the admin WATCH panel reads the newest
+    board(snap){ beacon('ch_board',snap); },
     // tally one card action (kind ∈ buys|plays|forges|burns) — only in the real run, never in the trials
     card(kind,def){
       if(!def||!def.id||!cards[kind])return;
@@ -2179,7 +2299,7 @@ function slamText(html,{color='#ffd98a',size=3.4,punch=0}={}){
 
 /* ═══════════════════ HEAT — the run's intensity spine (v0.10 dopamine overhaul) ═══════════════════
    One scalar every feedback channel reads, so music, FX and card-weight escalate TOGETHER:
-   · run   — slow 0..1, recomputed at milestones (turn/boss/rank/endless) → drives the MUSIC + ambient
+   · run   — slow 0..1, recomputed at milestones (turn/boss/rank) → drives the MUSIC + ambient
    · surge — fast 0..1, spiked by big turns, decays ~1.4/s → available to FX
    · timeScale — 1 normal; <1 during hit-stop/slow-mo (apex only; every wait multiplies by it)
    Owns its OWN self-sleeping RAF: nothing else in this file runs a persistent loop (shakeLoop and the
@@ -2191,17 +2311,11 @@ const Heat={
   fxScale:AudioFX.juice, // player "SCREEN FX" knob (0..1, persisted with the volume blob) — scales every juice output
   _raf:0,_last:0,
   set(run){this.run=REDUCED_MOTION?Math.min(run,.25):clamp01(run);if(Music.onHeat)Music.onHeat(this.run)},
-  // Recompute from game state. In Endless the cumulative counters are all maxed, so heat breathes
-  // per 6-turn cycle instead of pinning at 1 forever (critique B4).
+  // Recompute from game state — acts, bosses, rank and a live boss twist all feed the spine.
   reset(){
     if(typeof inTrial==='function'&&inTrial())return this.set(.05); // §6.5 the coach teaches over a calm band
-    if(state.endless){
-      const local=((state.turn-1)%6)/5; // saw-tooth every 6 turns — each Endless cycle climbs anew
-      this.set(.45+.35*local);
-    }else{
-      this.set(.10*(actOf(state.turn)-1)/7+.14*Math.min(state.bossesCleared,8)/8
-        +.10*state.rank/9+(state.twist?.30:0));
-    }
+    this.set(.10*(actOf(state.turn)-1)/7+.14*Math.min(state.bossesCleared,8)/8
+      +.10*state.rank/9+(state.twist?.30:0));
   },
   spike(v){this.surge=Math.min(1,this.surge+v*this.fxScale);this._ensure()},
   _ensure(){if(!this._raf){this._last=performance.now();this._raf=requestAnimationFrame(t=>this._tick(t))}},
@@ -2334,7 +2448,7 @@ const DB={
   tidewhisper:{id:'tidewhisper',cantrip:true,name:'Tide Whisper',color:'tide',rarity:'common',type:'Spell',sub:'Cantrip',cost:2,glory:1,gains:{draw:1},sigil:'wave',flavor:'The sea repeats what drowned men know.',
     syn:{kind:'types',type:'Spell',need:2,gain:{stars:2}}},
   tithe:{id:'tithe',name:'Verdant Bloom',color:'verdant',rarity:'common',type:'Spell',sub:'Rite',cost:2,glory:1,gains:{},sigil:'leaf',flavor:'Small growth compounds — first the seed, then the whole season.',
-    syn:{kind:'addMultPerColor',color:'verdant',m:.2}},
+    syn:{kind:'addMultPerColor',color:'verdant',m:.15}},
   gravekey:{id:'gravekey',name:'Gravekey Imp',color:'umbra',rarity:'common',type:'Creature',sub:'Imp',cost:3,power:2,glory:2,gains:{focus:2},sigil:'skull',flavor:'The dead never tire — and they lend you their hands.',
     syn:{kind:'kin',color:'umbra',gain:{focus:1}}},
   idol:{id:'idol',name:'Gilded Idol',color:'aurel',rarity:'common',type:'Artifact',sub:'Icon',cost:3,glory:2,gains:{gold:1},sigil:'crown',flavor:'Worship, minted.',
@@ -2374,7 +2488,7 @@ const DB={
   caravan:{id:'caravan',name:'Aurel Caravan',color:'aurel',rarity:'common',type:'Artifact',sub:'Convoy',cost:4,glory:1,gains:{gold:2,buy:1},sigil:'coin',flavor:'It arrives heavy and leaves heavier.'},
   stormbazaar:{id:'stormbazaar',name:'Storm Bazaar',color:'tide',rarity:'uncommon',type:'Spell',sub:'Market',cost:5,glory:1,cantrip:true,gains:{draw:1,gold:1,buy:1},sigil:'wave',flavor:'Everything is for sale, including the weather.'},
   grovewarden:{id:'grovewarden',name:'Grove Warden',color:'verdant',rarity:'common',type:'Creature',sub:'Warden',cost:3,power:2,glory:2,gains:{},sigil:'tree',flavor:'It counts every link in your chain, and blesses each.',
-    syn:{kind:'addMultPerCombo',m:.12}},
+    syn:{kind:'addMultPerCombo',m:.1}},
   altar:{id:'altar',name:'The Ashen Altar',color:'ember',rarity:'common',type:'Spell',sub:'Rite',cost:3,glory:1,cantrip:true,gains:{},trash:{max:1},sigil:'flame',flavor:'What burns, purifies. What remains, ascends.'},
   // v0.6.1 #3: a late burn-engine (Bazaar stocks it only after Boss 2) — burns a card AND draws + fuels, so thinning your deck pays
   kiln:{id:'kiln',name:'The Great Kiln',color:'ember',rarity:'rare',type:'Spell',sub:'Rite',cost:7,glory:3,cantrip:true,gains:{draw:2,focus:1},trash:{max:1},deep:true,afterBoss:2,sigil:'flame',flavor:'Feed it the dead weight; it gives back room, light, and heat.'},
@@ -2388,47 +2502,47 @@ const DB={
   ashgilt:{id:'ashgilt',name:'Ashgilt Idol',color:'aurel',rarity:'uncommon',type:'Artifact',sub:'Icon',cost:5,glory:3,focusCost:1,gains:{gold:2},gainSlag:1,sigil:'coin',flavor:'Gold leaf over cinder. Do not look beneath.'},
   zealot:{id:'zealot',name:'Pyre-Marked Zealot',color:'ember',rarity:'uncommon',type:'Creature',sub:'Cultist',cost:4,power:3,glory:4,gains:{focus:1},sigil:'bolt',flavor:'His devotion burns bright and clean.',
     syn:{kind:'kin',color:'ember',gain:{stars:1}}}, // v0.4: no draw; an ember body that pays ★ for kin
-  reliquary:{id:'reliquary',name:'Ashen Reliquary',color:'umbra',rarity:'common',type:'Relic',sub:'Remembrance',cost:6,glory:0,relicMult:.2,dead:true,gains:{},sigil:'moon',flavor:'Heavy with the names of the honored dead.'},
-  monument:{id:'monument',name:'Sunreave Monument',color:'aurel',rarity:'uncommon',type:'Relic',sub:'Remembrance',cost:9,glory:0,relicMult:.3,dead:true,gains:{},sigil:'crown',flavor:'It commemorates a victory not yet won.'},
-  aethercrown:{id:'aethercrown',name:'The Aethercrown',color:'aurel',rarity:'rare',type:'Relic',sub:'Remembrance',cost:12,glory:0,relicMult:.5,dead:true,gains:{},sigil:'star',flavor:'Too holy to wield. Too heavy to wear.'},
+  reliquary:{id:'reliquary',name:'Ashen Reliquary',color:'umbra',rarity:'common',type:'Relic',sub:'Remembrance',cost:6,glory:0,relicMult:.15,dead:true,gains:{},sigil:'moon',flavor:'Heavy with the names of the honored dead.'},
+  monument:{id:'monument',name:'Sunreave Monument',color:'aurel',rarity:'uncommon',type:'Relic',sub:'Remembrance',cost:9,glory:0,relicMult:.25,dead:true,gains:{},sigil:'crown',flavor:'It commemorates a victory not yet won.'},
+  aethercrown:{id:'aethercrown',name:'The Aethercrown',color:'aurel',rarity:'rare',type:'Relic',sub:'Remembrance',cost:12,glory:0,relicMult:.4,dead:true,gains:{},sigil:'star',flavor:'Too holy to wield. Too heavy to wear.'},
   embersigil:{id:'embersigil',name:'Ember Sigil',color:'ember',rarity:'common',type:'Relic',sub:'Brand',cost:8,glory:0,dead:true,handFocus:1,gains:{},sigil:'bolt',flavor:'It remembers your will so you need not.'},
   valeledger:{id:'valeledger',name:'Ledger of the Vale',color:'aurel',rarity:'common',type:'Relic',sub:'Tome',cost:6,glory:0,dead:true,handGold:3,gains:{},sigil:'coin',flavor:'It balances itself, in your favor.'},
   brokerswrit:{id:'brokerswrit',name:"Broker's Writ",color:'umbra',rarity:'uncommon',type:'Relic',sub:'Contract',cost:9,glory:0,dead:true,handBuy:1,handGold:2,gains:{},sigil:'moon',flavor:'The small print is generous, for once.'}, // sweep: added +2 gold — a bare extra buy is dead without gold to spend
   lodestone:{id:'lodestone',name:'The Lodestone',color:'tide',rarity:'uncommon',type:'Relic',sub:'Curio',cost:8,glory:0,dead:true,buysToHand:true,gains:{},sigil:'vortex',flavor:'What you want finds your fingers.'},
   everember:{id:'everember',name:'Everember',color:'ember',rarity:'common',type:'Relic',sub:'Coal',cost:7,glory:0,handStars:3,dead:true,gains:{},sigil:'flame',flavor:'It has never gone out. It never will.'}, // v0.6.1 #4: +3 BASE ★ (×MULT) instead of +3 flat — a flat bonus is worthless once demand is in the hundreds
-  trophy:{id:'trophy',name:'Trophy of the First Flame',color:'aurel',rarity:'uncommon',type:'Relic',sub:'Prize',cost:8,glory:0,relicMult:.3,dead:true,gains:{},sigil:'crown',flavor:'Proof that someone, once, won.'}, // sweep: was glory:4 (flat, dead late) → +.3× MULT/turn, the aurel multiplier identity
+  trophy:{id:'trophy',name:'Trophy of the First Flame',color:'aurel',rarity:'uncommon',type:'Relic',sub:'Prize',cost:8,glory:0,relicMult:.25,dead:true,gains:{},sigil:'crown',flavor:'Proof that someone, once, won.'}, // sweep: was glory:4 (flat, dead late) → +.3× MULT/turn, the aurel multiplier identity
   chainbrand:{id:'chainbrand',name:'Chainbrand',color:'umbra',rarity:'rare',type:'Relic',sub:'Brand',cost:8,glory:0,dead:true,handCombo:1,gains:{},sigil:'skull',flavor:'Two links that were never forged, yet never break.'},
   // v0.3: the Emberheart Charm — bought insurance that CRUMBLES to forgive one missed tithe (replaces the free heart). mercyCharge, stackable.
   emberheart:{id:'emberheart',name:'Emberheart Charm',color:'ember',rarity:'uncommon',type:'Relic',sub:'Ward',cost:7,glory:0,dead:true,mercyCharge:true,gains:{},sigil:'flame',flavor:'It beats once more for you — then goes still.'},
   // v0.3: buyable draw relic (#11b) — draw was locked in Master relics only.
   tidelens:{id:'tidelens',name:"Tidecaller's Lens",color:'tide',rarity:'uncommon',type:'Relic',sub:'Curio',cost:8,glory:0,dead:true,handDraw:1,gains:{},sigil:'wave',flavor:'It shows the next card before you draw it.'},
   // v0.3: stronger high-cost buyable relics so the Bazaar keeps pulling late (#13/#17) — the rack topped out at +1× MULT.
-  furnaceheart:{id:'furnaceheart',name:'The Furnace Heart',color:'ember',rarity:'rare',type:'Relic',sub:'Core',cost:15,glory:0,dead:true,relicMult:.8,gains:{},sigil:'flame',flavor:'The Forge keeps its own heart in a jar of light.'},
+  furnaceheart:{id:'furnaceheart',name:'The Furnace Heart',color:'ember',rarity:'rare',type:'Relic',sub:'Core',cost:15,glory:0,dead:true,relicMult:.65,gains:{},sigil:'flame',flavor:'The Forge keeps its own heart in a jar of light.'},
   bellowsengine:{id:'bellowsengine',name:'The Bellows Engine',color:'umbra',rarity:'rare',type:'Relic',sub:'Engine',cost:13,glory:0,dead:true,handFocus:1,handDraw:1,gains:{},sigil:'bolt',flavor:'It breathes for the fire so you can build.'},
   // ── Master Relics: the boss-draft tier. cost:0 — never bought, only awarded. Engine amplifiers, one per boss. ──
-  ashencrown:{id:'ashencrown',name:'The Ashen Crown',color:'aurel',rarity:'master',type:'Relic',sub:'Regalia',cost:0,glory:0,relicMult:1,dead:true,gains:{},sigil:'crown',flavor:'Forged from every name the Forge remembers.'},
+  ashencrown:{id:'ashencrown',name:'The Ashen Crown',color:'aurel',rarity:'master',type:'Relic',sub:'Regalia',cost:0,glory:0,relicMult:.8,dead:true,gains:{},sigil:'crown',flavor:'Forged from every name the Forge remembers.'},
   chaineternal:{id:'chaineternal',name:'Chain Eternal',color:'umbra',rarity:'master',type:'Relic',sub:'Brand',cost:0,glory:0,handCombo:2,dead:true,gains:{},sigil:'skull',flavor:'A chain with no first link and no last.'},
   bellows:{id:'bellows',name:'The Eternal Bellows',color:'ember',rarity:'master',type:'Relic',sub:'Engine',cost:0,glory:0,handFocus:2,dead:true,gains:{},sigil:'flame',flavor:'It breathes so you need not.'},
   moltenledger:{id:'moltenledger',name:'The Molten Ledger',color:'aurel',rarity:'master',type:'Relic',sub:'Tome',cost:0,glory:0,handBuy:1,handGold:3,dead:true,gains:{},sigil:'coin',flavor:'Every column runs in your favor.'}, // sweep: gold 2→3 so the master stays ahead of the buffed brokerswrit; favour→favor
   firstflame:{id:'firstflame',name:'The First Flame',color:'ember',rarity:'master',type:'Relic',sub:'Coal',cost:0,glory:0,handStars:5,dead:true,gains:{},sigil:'flame',flavor:'The ember from which all forges were lit.'}, // sweep: was glory:12 (flat, dead late) → +5 BASE ★/turn like its Coal kin, riding the full MULT
   longkiln:{id:'longkiln',name:'The Long Kiln',color:'tide',rarity:'master',type:'Relic',sub:'Engine',cost:0,glory:0,handDraw:1,handStars:1,dead:true,gains:{},sigil:'vortex',flavor:'It bakes a longer hand with every dawn.'}, // sweep: +1 ★ rider so this boss reward beats the buyable tidelens (draw:1)
-  starforge:{id:'starforge',name:'Starforge',color:'ember',rarity:'master',type:'Relic',sub:'Engine',cost:0,glory:0,emberBloom:.15,dead:true,gains:{},sigil:'star',flavor:'Each spark you cast feeds the greater fire.'},
+  starforge:{id:'starforge',name:'Starforge',color:'ember',rarity:'master',type:'Relic',sub:'Engine',cost:0,glory:0,emberBloom:.12,dead:true,gains:{},sigil:'star',flavor:'Each spark you cast feeds the greater fire.'},
   keystone:{id:'keystone',name:'The Keystone',color:'aurel',rarity:'master',type:'Relic',sub:'Regalia',cost:0,glory:0,xMult:1.5,dead:true,gains:{},sigil:'crown',flavor:'Set it, and everything multiplies.'},
   // ── Master Relics, expanded for a 12-act run: Tier I foundations, Tier II amplifiers, Tier III capstones. ──
   // Linear relics STACK (their fields sum/feed the additive+base buckets); the three xMult capstones are unique.
   ashfallheart:{id:'ashfallheart',name:'Ashfall Heart',color:'ember',rarity:'master',type:'Relic',sub:'Coal',cost:0,glory:0,handStars:3,dead:true,gains:{},sigil:'flame',flavor:'A coal that beats. Every turn it gives a little more of itself.'},
-  greatercrown:{id:'greatercrown',name:'The Greater Crown',color:'aurel',rarity:'master',type:'Relic',sub:'Regalia',cost:0,glory:0,relicMult:1.5,dead:true,gains:{},sigil:'crown',flavor:'Heavier than the last, and it never stops climbing.'},
+  greatercrown:{id:'greatercrown',name:'The Greater Crown',color:'aurel',rarity:'master',type:'Relic',sub:'Regalia',cost:0,glory:0,relicMult:1.2,dead:true,gains:{},sigil:'crown',flavor:'Heavier than the last, and it never stops climbing.'},
   twinchain:{id:'twinchain',name:'Twinchain',color:'umbra',rarity:'master',type:'Relic',sub:'Brand',cost:0,glory:0,handCombo:3,dead:true,gains:{},sigil:'skull',flavor:'Two chains, forged as one, pulling ever tighter.'},
   roaringbellows:{id:'roaringbellows',name:'The Roaring Bellows',color:'ember',rarity:'master',type:'Relic',sub:'Engine',cost:0,glory:0,handFocus:3,dead:true,gains:{},sigil:'flame',flavor:'It does not breathe. It roars.'},
   deepkiln:{id:'deepkiln',name:'The Deep Kiln',color:'tide',rarity:'master',type:'Relic',sub:'Engine',cost:0,glory:0,handDraw:2,dead:true,gains:{},sigil:'vortex',flavor:'It bakes two hands where the Long Kiln baked one.'},
-  emberstormcore:{id:'emberstormcore',name:'Emberstorm Core',color:'ember',rarity:'master',type:'Relic',sub:'Engine',cost:0,glory:0,emberBloom:.3,dead:true,gains:{},sigil:'star',flavor:'Every spark it sees, it answers with a storm.'},
+  emberstormcore:{id:'emberstormcore',name:'Emberstorm Core',color:'ember',rarity:'master',type:'Relic',sub:'Engine',cost:0,glory:0,emberBloom:.25,dead:true,gains:{},sigil:'star',flavor:'Every spark it sees, it answers with a storm.'},
   vaultledger:{id:'vaultledger',name:'The Vault Ledger',color:'aurel',rarity:'master',type:'Relic',sub:'Tome',cost:0,glory:0,handGold:4,handBuy:2,dead:true,gains:{},sigil:'coin',flavor:'The whole vault, balanced in your favor.'},
   heartofforge:{id:'heartofforge',name:'Heart of the Forge',color:'ember',rarity:'master',type:'Relic',sub:'Coal',cost:0,glory:0,handStars:6,dead:true,gains:{},sigil:'flame',flavor:'It is where the fire remembers it was once a star.'},
   sunstone:{id:'sunstone',name:'The Sunstone',color:'aurel',rarity:'master',type:'Relic',sub:'Regalia',cost:0,glory:0,xMult:1.4,dead:true,gains:{},sigil:'star',flavor:'A shard of the first dawn. It multiplies all it touches.'},
   voidprism:{id:'voidprism',name:'The Void Prism',color:'umbra',rarity:'master',type:'Relic',sub:'Regalia',cost:0,glory:0,xMult:1.6,dead:true,gains:{},sigil:'eye',flavor:'It bends the whole score through a darkness and out the far side, larger.'},
-  sovereigncrown:{id:'sovereigncrown',name:'The Sovereign Crown',color:'aurel',rarity:'master',type:'Relic',sub:'Regalia',cost:0,glory:0,relicMult:2.5,dead:true,gains:{},sigil:'crown',flavor:'Worn only by the smith the Forge could not break.'},
+  sovereigncrown:{id:'sovereigncrown',name:'The Sovereign Crown',color:'aurel',rarity:'master',type:'Relic',sub:'Regalia',cost:0,glory:0,relicMult:2,dead:true,gains:{},sigil:'crown',flavor:'Worn only by the smith the Forge could not break.'},
   eternalfurnace:{id:'eternalfurnace',name:'The Eternal Furnace',color:'ember',rarity:'master',type:'Relic',sub:'Engine',cost:0,glory:0,handFocus:4,handDraw:2,dead:true,gains:{},sigil:'flame',flavor:'It needs no coal, no bellows, no smith. It simply burns.'},
-  grandstarforge:{id:'grandstarforge',name:'The Grand Starforge',color:'ember',rarity:'master',type:'Relic',sub:'Engine',cost:0,glory:0,emberBloom:.5,dead:true,gains:{},sigil:'star',flavor:'Each ember you cast becomes a sun.'},
+  grandstarforge:{id:'grandstarforge',name:'The Grand Starforge',color:'ember',rarity:'master',type:'Relic',sub:'Engine',cost:0,glory:0,emberBloom:.4,dead:true,gains:{},sigil:'star',flavor:'Each ember you cast becomes a sun.'},
   moltenheart:{id:'moltenheart',name:'The Molten Heart',color:'ember',rarity:'master',type:'Relic',sub:'Coal',cost:0,glory:0,handStars:12,dead:true,gains:{},sigil:'flame',flavor:'The Forge gave you its own heart. Do not waste it.'},
   // v0.9: cap-raising relics — lift the MULT ceiling so a built MULT engine keeps paying past the base cap. Optional
   // (the cap already rises +3/boss on its own); these let a MULT build push higher. Stackable via capBonus.
@@ -2438,7 +2552,7 @@ const DB={
   giltcolossus:{id:'giltcolossus',name:'Gilt Colossus',color:'aurel',rarity:'mythic',type:'Creature',sub:'Titan',cost:12,power:9,glory:12,deep:true,gains:{gold:2},sigil:'crown',flavor:'It counts as architecture.',
     syn:{kind:'kin',color:'aurel',gain:{stars:3}}},
   secondsun:{id:'secondsun',name:'The Second Sun',color:'ember',rarity:'mythic',type:'Artifact',sub:'Dawn',cost:14,glory:8,deep:true,gains:{focus:3},sigil:'phoenix',flavor:'The first one was practice.',
-    syn:{kind:'addMultFlat',m:1.5}},
+    syn:{kind:'addMultFlat',m:1.2}},
   starwright:{id:'starwright',name:'Starwright',color:'tide',rarity:'mythic',type:'Creature',sub:'Artificer',cost:13,power:7,glory:6,cantrip:true,deep:true,gains:{draw:2},sigil:'star',flavor:'She files the points sharp.',
     syn:{kind:'types',type:'Spell',need:3,gain:{stars:6}}},
   titheeternal:{id:'titheeternal',name:'Worldtree Eternal',color:'verdant',rarity:'mythic',type:'Spell',sub:'Covenant',cost:12,glory:4,deep:true,gains:{},sigil:'tree',flavor:'Every branch mirrors the whole. So does your fortune.',
@@ -2451,11 +2565,11 @@ const DB={
   worldanvil:{id:'worldanvil',name:'Anvil of the Green World',color:'verdant',rarity:'mythic',type:'Creature',sub:'Titan',cost:10,power:6,glory:5,deep:true,afterBoss:2,gains:{},sigil:'tree',flavor:'The forest counts its rings; the anvil counts your blows.',
     syn:{kind:'starScale',per:1}},
   compound:{id:'compound',name:'Verdant Compound',color:'verdant',rarity:'uncommon',type:'Spell',sub:'Alchemy',cost:4,glory:2,gains:{},sigil:'leaf',flavor:'Growth, distilled and bottled.',
-    syn:{kind:'addMultPerColor',color:'verdant',m:.3}},
+    syn:{kind:'addMultPerColor',color:'verdant',m:.25}},
   prism:{id:'prism',name:'Glass Prism',color:'tide',rarity:'uncommon',type:'Artifact',sub:'Lens',cost:4,glory:3,gains:{},sigil:'eye',flavor:'It bends what has no shape.',
-    syn:{kind:'addMultPerColor',color:'tide',m:.25}},
+    syn:{kind:'addMultPerColor',color:'tide',m:.2}},
   catalyst:{id:'catalyst',name:'Emberchain Catalyst',color:'ember',rarity:'rare',type:'Artifact',sub:'Engine',cost:6,glory:4,gains:{},sigil:'vortex',flavor:'Each link ignites the next.',
-    syn:{kind:'addMultPerCombo',m:.18}},
+    syn:{kind:'addMultPerCombo',m:.15}},
   resonator:{id:'resonator',name:'Sigil Resonator',color:'umbra',rarity:'rare',type:'Artifact',sub:'Engine',cost:6,glory:3,focusCost:1,gains:{focus:2,buy:1},sigil:'moon',flavor:'It hums at the frequency of shadow — and shadow answers.', // v0.6.1 #2: 1 ❖ to play (nets +1 ❖) so a focus engine isn't a wash
     syn:{kind:'kin',color:'umbra',gain:{focus:1}}},
   fractal:{id:'fractal',name:'The Gilded Fractal',color:'aurel',rarity:'mythic',type:'Artifact',sub:'Paradox',cost:9,deep:true,afterBoss:3,glory:3,gains:{gold:2},xMult:1.5,sigil:'star',flavor:'Zoom in. It is still gold.',
@@ -2604,13 +2718,13 @@ function synText(def){
     case 'starPerBurn':return `Tally: +${s.m} ★ per card burned this run`;
     case 'starPerTurn':return `Tally: +${s.m} ★ × the turn number`;
     case 'addMultPerFire':return `Tally: +${s.m}× MULT per ⚡ fired this turn`;
-    case 'comboX2':return `Tally: +0.12× MULT per card in chain`;
+    case 'comboX2':return `Tally: +${ECHO_RATE}× MULT per card in chain`;
     case 'addMultFlat':return `Tally: +${s.m}× MULT`;
     case 'addMultPerColor':return `Tally: +${s.m}× MULT per <span style="color:${COLORS[s.color].hex}">${COLORS[s.color].name}</span> played`;
     case 'addMultPerCombo':return `Tally: +${s.m}× MULT per card in chain`;
 
     case 'xMult':return `Tally: MULT ×${s.x}`;
-    case 'multDouble':return `Tally: +3× MULT`;
+    case 'multDouble':return `Tally: +2.5× MULT`;
   }
 }
 /* returns {gains, contrib, label} if playing this card now would fire its on-play synergy */
@@ -2735,7 +2849,8 @@ const state={
   focus:1,focusPerTurn:1,buys:1,buysPerTurn:1, // v0.5 #4: base 1 ❖; the Kindling starter (free, +1 ❖) is the battery, so the opening is a choice rather than a flat straitjacket
   busy:false,hoverIdx:-1,market:[],pendingEffects:[],
   tithe:6,gameOver:false,burned:0,boonsClaimed:0,relics:[],commissions:[],
-  twist:null,bossesCleared:0,usedTwists:[],endless:false,pendingVictory:false, // chapters
+  twist:null,bossesCleared:0,usedTwists:[], // chapters
+  maxCombo:0, // v0.11: the run's longest chain — the debrief reads it
   act1Mercy:false, // v0.8.4: the one free first-miss forgiveness (Act 1 only) — spent or not
   bestTurnGlory:0, // v0.10: the run's best single-turn score — read-only apex trigger (recordScore() mutates, so never use it per turn)
 };
@@ -2767,7 +2882,7 @@ function sgDump(){
       gold:state.gold,focus:state.focus,buys:state.buys,tithe:state.tithe,rank:state.rank,combo:state.combo,
       bonusStars:state.bonusStars,synFires:state.synFires,burned:state.burned,boons:state.boonsClaimed,
       bossesCleared:state.bossesCleared,twist:state.twist&&(state.twist.id||state.twist.name)||null,
-      endless:state.endless,gameOver:state.gameOver,pendingVictory:state.pendingVictory,busy:state.busy})),
+      gameOver:state.gameOver,busy:state.busy})),
     score:grab(()=>computeScore()),
     hand:grab(()=>pile(state.hand)),played:grab(()=>pile(state.played)),
     deck:grab(()=>pile(state.deck)),discard:grab(()=>pile(state.discard)),
@@ -2829,7 +2944,7 @@ const TITHE_BASE=t=>t===1?6:Math.round(6.6*Math.pow(1.28,t-1)); // r18: +10% fro
 const ACTS=8, TURNS_PER_ACT=6, FINAL_TURN=ACTS*TURNS_PER_ACT; // 8 × 6 → the Masterwork on turn 48 (v0.3: was 12; shorter run, less deck/hand/relic sprawl)
 const chapterMode=()=>!inTrial();                              // the trials are the tutorial; the real run IS the chapter run
 const actOf=t=>Math.min(ACTS,Math.max(1,Math.ceil(t/TURNS_PER_ACT)));
-const isBossTurn=t=>chapterMode()&&!state.endless&&t%TURNS_PER_ACT===0&&t<=FINAL_TURN;
+const isBossTurn=t=>chapterMode()&&t%TURNS_PER_ACT===0&&t<=FINAL_TURN;
 const isFinalBoss=t=>t===FINAL_TURN;
 const bossTurnOfAct=a=>a*TURNS_PER_ACT;                        // the boss lands on the act's last turn
 const ROMAN=['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
@@ -2841,14 +2956,18 @@ const DEMAND_RATE=1.28;   // per-turn geometric climb — tracks a competent eng
 const EARLY_GRACE=9;      // v0.6 (variant C): longer opening cushion — eases t1-t8, leaves t9+/bosses on the full curve
 const GRACE_FLOOR=0.5;    // v0.6 (variant C): deeper opening cushion (turn-1 multiplier)
 const MULT_CAP=15;        // v0.7: 7→15. v0.9: this is now the BASE cap — the effective cap RISES (see effMultCap)
+// v0.11 mult tension: sources shaved ~15-20% mid-game (admin data: adds of 11-13× by t12 made demand a formality).
+// These three feed BOTH computeScore and the end-turn reveal — a change here must never desync the two.
+const CHAIN_RATE=.18;     // was .2 — the dial: .16 if playtests want more bite
+const ECHO_RATE=.10;      // was .12 (comboX2's softer second chain)
+const TRIBAL_RATE=.20;    // was .25 per extra same-color card
 const X_CAP=4;            // v0.4: hard clamp on the multiplicative bucket (was 16 — stacked xMult capstones detonated the curve)
 const CAP_PER_BOSS=3;     // v0.9: the additive-MULT cap grows +3 per boss cleared (15→36 by the final boss) so the ceiling tracks the climb
 const DEMAND_KNEE=19;     // v0.9: demand is pure geometric through t18, then tapers (Act 4+ softens so the summit is reachable)
-const DEMAND_LATE_RATE=1.13; // v0.9: the gentler per-turn rate past the knee (vs DEMAND_RATE 1.28 early)
+const DEMAND_LATE_RATE=1.12; // v0.9: gentler rate past the knee. v0.11: 1.13→1.12 refunds the mult nerf late (t48 97k→74k)
 // The effective additive-MULT cap: base 15, +3 per boss cleared, + any capBonus relics (stacking, optional).
 // Routed through every place the old fixed MULT_CAP clamped, so the ceiling rises with the run.
 const effMultCap=()=>MULT_CAP+CAP_PER_BOSS*(state.bossesCleared||0)+(typeof benchSum==='function'?benchSum('capBonus'):0);
-const ENDLESS_GROWTH=1.12;// post-win runaway, continued FROM the Masterwork demand (never the raw TITHE_BASE cliff)
 const BOSS_TELL_LEAD=2;   // how many build turns ahead the coming boss "stirs"
 // The Boon threshold: a build turn earns a Boon only when its score clears this multiple of the demand. v0.3 raised
 // the base 1.6→2.4 so Boons land ~once/act instead of every hand (they were firing constantly on any working engine).
@@ -2856,7 +2975,6 @@ const BOON_MULT=c=>2.4+.2*c; // c = boonsClaimed so far — the more you've take
 const boonThreshold=()=>Math.round(BOON_MULT(state.boonsClaimed)*state.tithe);
 // Demand: a MONOTONIC formula — every turn is higher than the last (no act reset). The boss turn spikes hard by its demandMult.
 function chapterDemand(t){
-  if(t>FINAL_TURN)return endlessDemand(t);
   // v0.9: demand TAPER. Pure geometric ×1.28 through the Act-3 boss (t≤18, unchanged from every prior build),
   // then a gentler ×1.13/turn. A capped multiplier × ~linear base★ can't catch a geometric demand — the old curve
   // made t42-48 need ~68,000 base★ (impossible). The knee at 19 keeps Acts 1-3 byte-identical (the tested early
@@ -2868,7 +2986,6 @@ function chapterDemand(t){
   if(t%TURNS_PER_ACT===0){ const b=BOSSES[actOf(t)]; return Math.round(base*((b&&b.demandMult)||2.5)); } // boss turn — forces the push
   return Math.round(base);
 }
-function endlessDemand(t){ return Math.round(chapterDemand(FINAL_TURN)*Math.pow(ENDLESS_GROWTH,t-FINAL_TURN)); }
 
 /* The eight Aspects (v0.3: was twelve). Each is BOTH the boss identity (name/epithet/sigil/color/tag) AND its
    modifier — on a boss turn `state.twist` is a clone of one of these, read directly by computeScore/setup. Every
@@ -2965,7 +3082,7 @@ function relicStars(){ // benched relics pay every turn; dross still pays from t
 function tribalMult(){
   const counts={};
   state.played.forEach(p=>{const c=p.inst.def.color;counts[c]=(counts[c]||0)+1});
-  return Object.values(counts).reduce((s,n)=>s+.25*Math.max(0,n-1),0);
+  return Object.values(counts).reduce((s,n)=>s+TRIBAL_RATE*Math.max(0,n-1),0);
 }
 function multContribOf(def){
   const s=def.syn;
@@ -2993,13 +3110,13 @@ function computeScore(){
   const stars=state.played.reduce((s,p)=>s+starsFor(p.inst.def)*sm,0)+state.bonusStars+benchSum('handStars'); // handStars = flat base ★, inside the mult
   const base=stars;
   let add=1
-    +.2*effCombo()
+    +CHAIN_RATE*effCombo()
     +tribalMult()
     +relicMultBench()
     +benchSum('emberBloom')*emberPlayed()      // Starforge: each Ember card played swells the MULT
     +state.played.reduce((s,p)=>s+multContribOf(p.inst.def),0);
-  if(playedHas('comboX2'))add+=.12*effCombo();               // v0.4: a softer repeat of the chain (was a full second .2×)
-  if(playedHas('multDouble'))add+=3;                          // v0.4: a flat boost, not ×2 the whole bucket (that was the worst exploder)
+  if(playedHas('comboX2'))add+=ECHO_RATE*effCombo();         // v0.4: a softer repeat of the chain
+  if(playedHas('multDouble'))add+=2.5;                        // v0.4: a flat boost, not ×2 the whole bucket. v0.11: 3→2.5
   add=Math.min(effMultCap(),add);                             // v0.4: cap the built MULT — the core anti-explosion clamp. v0.9: cap rises per boss + capBonus relics
   if(state.twist&&state.twist.multDamp!=null)add*=state.twist.multDamp; // a boss damp then bites the capped value (The Hollow Forge)
   let x=state.played.reduce((m,p)=>m*(p.inst.def.xMult||1),1)
@@ -3759,6 +3876,7 @@ async function resolveCommissions(){
 
 /* ── pile viewer: see your deck ── */
 let pvTab='all'; // v0.9: which pile the view is filtered to
+let pvReadonly=false; // v0.11: pile view opened OVER a suspended reward (boon/master draft) — look, don't touch
 function pvSource(){ // the instances shown for the current tab
   const hand=state.hand.map(h=>h.inst), played=state.played.map(p=>p.inst);
   if(pvTab==='deck')return state.deck.slice();
@@ -3803,13 +3921,22 @@ function renderPileView(){
       const slot=document.createElement('div');
       slot.className='pv-slot';
       const el=buildCardEl(g.def,{market:true});
-      pressable(el,()=>openInspect({def:g.def,forge:true})); // v0.6 #1: the zoom offers FORGE for a forgeable pair
-      el.addEventListener('contextmenu',e=>{e.preventDefault();openInspect({def:g.def,forge:true})});
+      const zoom=()=>{ // v0.11 #3: the zoom follows the MODE — readonly reads, burn offers the pyre, else forge
+        if(pvReadonly)return openInspect({def:g.def});
+        if(burnMode){
+          const onTable=state.played.filter(p=>p.inst.def.id===g.def.id).length;
+          return openInspect(g.n-onTable>0&&(!inTrial()||g.def.slag)?{def:g.def,burn:true,slotEl:slot}:{def:g.def});
+        }
+        openInspect({def:g.def,forge:true}); // v0.6 #1: the zoom offers FORGE for a forgeable pair
+      };
+      pressable(el,zoom);
+      el.addEventListener('contextmenu',e=>{e.preventDefault();zoom()});
       slot.appendChild(el);
       const badge=document.createElement('span');
       badge.className='pilecount';
       badge.textContent='×'+g.n;
       slot.appendChild(badge);
+      if(pvReadonly){grid.appendChild(slot);return} // no forge/burn rows while a reward is suspended
       if(burnMode){
         const onTable=state.played.filter(p=>p.inst.def.id===g.def.id).length;
         // in the trials only dross can be burned — never tempt a new player to torch a valuable card
@@ -3888,7 +4015,11 @@ function fitPileView(){
 addEventListener('resize',()=>{if($('#pileview').classList.contains('on'))fitPileView()});
 document.fonts.ready.then(()=>{if($('#pileview').classList.contains('on'))fitPileView()}); // a late web-font swap reflows card metrics without firing resize → re-fit so the scroll box stays correct
 function openPileView(){
-  if(state.busy)return; // burnMode allowed — the pyre reaches the piles
+  // v0.11: a boon/master-draft is a SUSPENDED state (its promise holds endTurn) — safe to read the deck over it
+  const suspended=!!boonResolve||$('#mrdraft').classList.contains('on');
+  if(state.busy&&!suspended)return; // burnMode allowed — the pyre reaches the piles
+  pvReadonly=suspended;
+  $('#pileview').classList.toggle('readonly',pvReadonly);
   pvTab='all'; // always open on the full view
   renderPileView();
   $('#pileview').classList.add('on');
@@ -3899,7 +4030,7 @@ $('#pv-tabs').addEventListener('click',e=>{
   const t=e.target.closest('.pv-tab');if(!t)return;
   pvTab=t.dataset.pvtab;AudioFX.click();pvUnhover();renderPileView();
 });
-function closePileView(){$('#pileview').classList.remove('on');pvUnhover();Coach.tick()}
+function closePileView(){$('#pileview').classList.remove('on','readonly');pvReadonly=false;pvUnhover();Coach.tick()}
 // Hover-pop + neighbour-recede, driven by which .pv-slot is actually under the pointer (see the CSS note).
 // Delegated on the inner grid so it survives every innerHTML re-render (forge/burn repaint the whole grid).
 function pvUnhover(){
@@ -3996,16 +4127,21 @@ function offerBoon(){
 }
 $('#boon-skip').addEventListener('click',()=>{if(boonResolve)boonResolve()});
 // A Boon is a FREE reward — a stray backdrop click must NOT discard it. Only a card or DECLINE dismisses (like #mrdraft).
+$('#boon-view').addEventListener('click',()=>{AudioFX.click();openPileView()}); // v0.11: read the deck before choosing
+$('#mr-view').addEventListener('click',()=>{AudioFX.click();openPileView()});
+$('#mr-skip').addEventListener('click',()=>{if(mrResolve)mrResolve()}); // click-only — deliberately NOT on Escape (a habitual double-Esc must not eat a Master Relic)
 
-/* ── the Master Relic draft: the boss reward. Clones the boon overlay, but the claim MOUNTS the relic
-   to the bench instead of pushing to the deck, and there is no skip — the reward is not optional. ── */
+/* ── the Master Relic draft: the boss reward. Clones the boon overlay — the claim MOUNTS the relic
+   to the bench instead of pushing to the deck. v0.11: SKIP CLAIM exists for the lean-bench purist. ── */
+let mrResolve=null;
 function masterRelicDraft(count=3){
   return new Promise(resolve=>{
     const row=$('#mr-row');row.innerHTML='';
     $('#mr-sub').textContent=count>3
       ?'You faced the Aspect early — the Forge offers a richer draft. Take one.'
       :'One relic. It mounts to your bench and powers every turn from here on.';
-    const done=()=>{$('#mrdraft').classList.remove('on');resolve()};
+    const done=()=>{mrResolve=null;$('#mrdraft').classList.remove('on');resolve()};
+    mrResolve=()=>{AudioFX.click();done()};
     masterOffer(count).forEach((def,i)=>{
       const el=buildCardEl(def); // full-size — a Master Relic should feel monumental
       el.style.opacity='0';
@@ -4042,7 +4178,7 @@ const sigilSVG=(sig,hex)=>`<svg viewBox="0 0 100 80">${(SIGILS[sig]||SIGILS.star
 // Two-tier chapter map for a 12×6 run: an Act ribbon (I…XII), a boss-countdown line, and the current act's 6-turn strip.
 function renderChapterMap(){
   const map=$('#chaptermap');if(!map)return;
-  if(!chapterMode()||state.endless){map.classList.remove('on');map.innerHTML='';return}
+  if(!chapterMode()){map.classList.remove('on');map.innerHTML='';return}
   const cur=actOf(state.turn);
   let ribbon='';
   for(let a=1;a<=ACTS;a++){
@@ -4069,7 +4205,7 @@ function renderChapterMap(){
 // v0.4 #14: leap straight to the act's boss, abandoning the remaining build turns (forgoing their glory + shopping).
 // The boss is unchanged; the reward is a richer draft + bonus gold (banked in state.skipBonus, paid on the clear).
 function faceBossNow(){
-  if(state.busy||state.gameOver||!chapterMode()||state.endless||isBossTurn(state.turn))return;
+  if(state.busy||state.gameOver||!chapterMode()||isBossTurn(state.turn))return;
   const bt=bossTurnOfAct(actOf(state.turn));
   if(bt<=state.turn)return;
   state.skipToBoss=true;
@@ -4078,7 +4214,7 @@ function faceBossNow(){
 // The persistent boss HUD: sigil + name + a LIVE gimmick readout, pinned for the whole boss turn.
 function renderTwistBanner(){
   const b=$('#twistbanner');if(!b)return;
-  if(chapterMode()&&!state.endless&&state.twist&&isBossTurn(state.turn)){
+  if(chapterMode()&&state.twist&&isBossTurn(state.turn)){
     const t=state.twist, hex=COLORS[t.color].hex;
     b.style.borderColor=bossRgba(hex,.5);
     b.innerHTML=`<span class="bb-sigil" style="color:${hex}">${sigilSVG(t.sigil,hex)}</span>`+
@@ -4088,7 +4224,7 @@ function renderTwistBanner(){
   }else{b.classList.remove('on');b.innerHTML=''}
 }
 function updateBossLive(){ // refresh the live readout (focus/plays left) as the player acts
-  if(!(chapterMode()&&!state.endless&&state.twist&&state.twist.live))return;
+  if(!(chapterMode()&&state.twist&&state.twist.live))return;
   const el=$('#bb-live');if(el)el.textContent=state.twist.live(state);
 }
 function bossLedger(b){ // derive the ▲gift / ▼bite / ◆demand rows from the modifier fields — plain language (v0.3 #9)
@@ -4265,6 +4401,7 @@ function playCard(entry){
   state.played.push(entry);
   Balance.card('plays',def); // usage telemetry: what players actually play
   state.combo++;
+  if(state.combo>state.maxCombo)state.maxCombo=state.combo; // v0.11: longest chain, for the debrief
   entry.synFire=computeSynFire(entry); // synergy locked in at play order
   if(entry.synFire)state.synFires++;
   // two-stage slam: wind-up lift, then accelerated drop onto the table
@@ -4581,7 +4718,8 @@ function renderMarketSlot(slot,i){
   const wasUnrevealed=slot.slotEl.classList.contains('unrevealed');
   slot.slotEl.innerHTML='';
   if(!slot.def){
-    slot.slotEl.innerHTML='<div class="empty">SOLD</div>';
+    // v0.11: SOLD is a promise, not a dead end — the Bazaar restocks after every boss (and each rank-up)
+    slot.slotEl.innerHTML='<div class="empty">SOLD<small>new wares after the boss</small></div>';
     slot.cardEl=null;return;
   }
   const d=slot.def;
@@ -4846,7 +4984,7 @@ async function endTurn(){
   // ③ MULT charges — every source ticks the ember number upward
   const meterR=()=>$('#t-mult').getBoundingClientRect();
   const multBits=[];
-  if(effCombo()>0)multBits.push({label:`CHAIN ×${effCombo()}`,v:.2*effCombo(),color:'#ffb35c'});
+  if(effCombo()>0)multBits.push({label:`CHAIN ×${effCombo()}`,v:CHAIN_RATE*effCombo(),color:'#ffb35c'});
   const tm=tribalMult();
   if(tm>0)multBits.push({label:'TRIBAL KINSHIP',v:tm,color:'#4ade80'});
   const eb=benchSum('emberBloom')*emberPlayed();
@@ -4859,7 +4997,7 @@ async function endTurn(){
     const m=rl.def.relicMult||0;
     if(m>0)multBits.push({label:`${rl.def.name.toUpperCase()} RADIATES`,v:m,color:COLORS[rl.def.color].hex,el:rl.el});
   });
-  if(playedHas('comboX2'))multBits.push({label:'CHAIN ECHO',v:.12*effCombo(),color:'#ffb35c', // matches computeScore's +.12×chain (was a stale .2×)
+  if(playedHas('comboX2'))multBits.push({label:'CHAIN ECHO',v:ECHO_RATE*effCombo(),color:'#ffb35c', // matches computeScore's echo rate
     el:state.played.find(p=>p.inst.def.syn&&p.inst.def.syn.kind==='comboX2').el});
   let multShown=1,k=0,capHit=false;
   const revealCap=effMultCap(); // v0.9: the run's current additive-MULT ceiling (rises per boss + capBonus relics)
@@ -4893,10 +5031,10 @@ async function endTurn(){
   }
   if(playedHas('multDouble')){
     await tw(220);
-    multShown+=3;                                   // matches computeScore's flat add+=3 (was a runaway ×2 that overshot then snapped down)
+    multShown+=2.5;                                 // matches computeScore's flat add+=2.5
     const md=state.played.find(p=>p.inst.def.syn&&p.inst.def.syn.kind==='multDouble');
     if(md){md.el.classList.add('synflash');setTimeout(()=>md.el.classList.remove('synflash'),600)}
-    slamText('MULT SURGE +3×',{color:'#cfa9ff',size:2.6});
+    slamText('MULT SURGE +2.5×',{color:'#cfa9ff',size:2.6});
     AudioFX.zap(8);shake(6);flashWash('rgba(176,108,255,.25)');
     showMult(multShown);
     await tw(450);
@@ -4987,8 +5125,11 @@ async function endTurn(){
   // ⑥ THE JUDGMENT — did the turn meet the Forge's demand?
   const turnGlory=sc.final;
   updateTitheMeter(sc);
-  if(chapterMode())Balance.turn({t:state.turn,act:actOf(state.turn),boss:isBossTurn(state.turn), // difficulty log: demand vs score
-    dem:state.tithe,score:turnGlory,base:Math.round(sc.base),mult:Math.round(sc.mult*100)/100,cleared:turnGlory>=state.tithe});
+  if(chapterMode()){
+    Balance.turn({t:state.turn,act:actOf(state.turn),boss:isBossTurn(state.turn), // difficulty log: demand vs score
+      dem:state.tithe,score:turnGlory,base:Math.round(sc.base),mult:Math.round(sc.mult*100)/100,cleared:turnGlory>=state.tithe});
+    Balance.board(boardSnap(sc)); // v0.11: the WATCH snapshot rides the same beat
+  }
   await tw(350);
   if(inTrial()&&state.glory>=TRIAL.goal)return trialVictory(); // the goal outranks the judgment
   if(turnGlory<state.tithe){
@@ -5040,8 +5181,7 @@ async function endTurn(){
     await tw(650);
     if(isBossTurn(state.turn)){ // a Boss Commission was met
       if(isFinalBoss(state.turn)){
-        // The Masterwork is complete — the win. Flag it; the full ceremony + Endless fire once the turn resolves.
-        state.pendingVictory=true;state.endless=true;
+        // The Masterwork is complete — THE GAME IS OVER (v0.11: Endless removed).
         // §4.3 THE HARD-STOP: the band cuts dead, the world goes black and holds its breath —
         // contrast, not pile-on, crowns the Masterwork. THEN the fanfare detonates.
         try{Music.fadeOut(.4)}catch(e){}
@@ -5054,6 +5194,12 @@ async function endTurn(){
         AudioFX.power();AudioFX.shimmer();AudioFX.chant(2);
         shake(12*Math.max(juiceLevel(),.2));flashWash('rgba(255,210,87,.34)');
         await tw(750);
+        // silent final-rank sync — the glory is already banked; the Debrief crowns it, no rank ceremony
+        while(state.rank+1<RANKS.length&&state.glory>=RANKS[state.rank+1].at)state.rank++;
+        $('#rankname').textContent=RANKS[state.rank].name;updateRankbar();
+        removeEventListener('pointerdown',rushOn); // the tally's rush window would otherwise leak
+        await runVictory();
+        return; // no sweep, no commissions, no turn 49, no redeal — the board freezes under the Debrief
       }else{
         state.bossesCleared++;
         const skb=state.skipBonus||0;state.skipBonus=0;                                     // v0.4 #14: "faced early" → better spoils
@@ -5062,6 +5208,8 @@ async function endTurn(){
         await bossDefeat(state.twist);                                                      // the shatter beat (task: boss presentation)
         Heat.set(Heat.run*.4); // v0.10: deliberate QUIET for the reward draft — the next act's climb starts low
         await masterRelicDraft(skb>0?4:3);                                                  // skipping earns a 4-card draft, not 3
+        await evolveMarket();                                        // v0.11: each fallen Aspect deepens the Bazaar — SOLD slots refill all the way to the summit
+        if(state.market.some(x=>x.rack&&!x.def))await evolveRack();  // and an emptied relic shelf restocks
       }
     }else if(TRIAL.boonsOn&&turnGlory>=boonThreshold()){
       // the Boon: overshooting a build turn by BOON_MULT× (2.4+ .2·claims) earns a free draft pick — ~once/act
@@ -5114,7 +5262,7 @@ async function endTurn(){
   if(state.twist&&state.twist.drainFrac!=null)                        // resolve the skim to a concrete ★ swing off THIS demand
     state.twist.flatStarSwing=-Math.round(state.twist.drainFrac*state.tithe);
   if(state.twist&&state.twist.comboSeed)state.combo+=state.twist.comboSeed; // seeded chain (so a comboMult gift always bites)
-  Heat.reset(); // v0.10: the run's intensity spine follows the new turn (act/boss/rank/endless-cycle)
+  Heat.reset(); // v0.10: the run's intensity spine follows the new turn (act/boss/rank)
   state.focus=Math.max(0,state.focusPerTurn+benchSum('handFocus')+((state.twist&&state.twist.focusBonus)||0)); // v0.6 #8: floor 0 (was 1) so the Sealed Hearth's −1 ❖ actually bites at base focus 1 → 0 paid plays; free cards (coins/sparks/Tidewake) + Kindling's +1 ❖ still let you act and recover
   state.buys=state.buysPerTurn+benchSum('handBuy');
   const benchGold=benchSum('handGold');
@@ -5149,7 +5297,6 @@ async function endTurn(){
   floatText(innerWidth/2,$('#tithe').getBoundingClientRect().bottom+30,
     `THE FORGE DEMANDS ${state.tithe} ★`,{color:'#ff9a75',size:1.15});
   AudioFX.tone({f:98,type:'sawtooth',dur:.5,g:.1});
-  if(state.pendingVictory){state.pendingVictory=false;await runVictory()} // the Masterwork is done — crown the run, then Endless
 }
 $('#endturn').addEventListener('click',endTurn);
 
@@ -5161,7 +5308,15 @@ function loadScores(){try{return JSON.parse(localStorage.getItem('ch-af-scores')
    never sees it. Trials never save. A save shows CONTINUE on the start menu; death/new-run clears it. */
 const SAVE_KEY='ch-sg-save';
 let wantRestore=false; // set by the CONTINUE menu button; consumed in boot()
-function loadSave(){try{const s=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');return s&&s.v===1?s:null}catch(e){return null}}
+function loadSave(){try{
+  const s=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');
+  if(!s||s.v!==1)return null;
+  if(s.endless||s.pendingVictory||s.turn>FINAL_TURN){ // v0.11: a pre-Endless-removal save of a WON run — retire it
+    try{localStorage.removeItem(SAVE_KEY)}catch(e){}
+    return null;
+  }
+  return s;
+}catch(e){return null}}
 function clearRun(){try{localStorage.removeItem(SAVE_KEY)}catch(e){}}
 function saveRun(){
   if(typeof chapterMode!=='function'||!chapterMode())return; // only the real chapters run persists
@@ -5173,7 +5328,7 @@ function saveRun(){
       focus:state.focus,focusPerTurn:state.focusPerTurn,buys:state.buys,buysPerTurn:state.buysPerTurn,
       bonusStars:state.bonusStars,synFires:state.synFires,combo:state.combo,tithe:state.tithe,
       burned:state.burned,boonsClaimed:state.boonsClaimed,bossesCleared:state.bossesCleared,bestTurnGlory:state.bestTurnGlory||0,
-      usedTwists:state.usedTwists,endless:state.endless,pendingVictory:state.pendingVictory,act1Mercy:state.act1Mercy,
+      usedTwists:state.usedTwists,act1Mercy:state.act1Mercy,maxCombo:state.maxCombo||0,
       twist:state.twist||null,
       deck:ids(state.deck),discard:ids(state.discard),
       relics:state.relics.map(r=>({id:r.def.id,shattered:!!r.shattered})),
@@ -5190,7 +5345,7 @@ function restoreRun(save){
   state.hand=[];state.played=[];
   state.relics=(save.relics||[]).map(r=>{const d=defFromId(r.id);if(!d)return null;const i=makeInstance(d);if(r.shattered)i.shattered=true;return i}).filter(Boolean);
   state.commissions=(save.commissions||[]).slice();
-  for(const k of ['turn','gold','glory','rank','focus','focusPerTurn','buys','buysPerTurn','bonusStars','synFires','combo','tithe','burned','boonsClaimed','bossesCleared','endless','pendingVictory','act1Mercy','bestTurnGlory'])
+  for(const k of ['turn','gold','glory','rank','focus','focusPerTurn','buys','buysPerTurn','bonusStars','synFires','combo','tithe','burned','boonsClaimed','bossesCleared','act1Mercy','bestTurnGlory','maxCombo'])
     if(save[k]!==undefined)state[k]=save[k];
   state.usedTwists=save.usedTwists||[];
   state.twist=save.twist||null;
@@ -5229,16 +5384,18 @@ function scoreboardHTML(top,current){
 }
 // One run ends: record locally (instant board, personal-best ceremony), then swap in the
 // global board once the server answers. Returns {best} so callers keep their FX checks.
-function finishScores(){
+function finishScores(targetEl){ // v0.11: targetEl===null → record+submit only (the Debrief renders its own board)
   const prevBest=(loadScores()[0]||{}).g||0; // read BEFORE recordScore mutates — the record we may shatter
   const{best,top,entry}=recordScore();
   const shattered=best&&prevBest>0&&entry.g>prevBest*1.5; // §4 Tier-4 — ~a few per 100 runs
   const titleHTML=label=>`<div class="hs-title${best?' newbest':''}">${best?'★ NEW BEST RUN ★':label}</div>`;
-  $('#go-scores').innerHTML=titleHTML('BEST RUNS')+scoreboardHTML(top,entry);
-  submitScore(entry).then(resp=>{
-    if(resp&&resp.top&&resp.top.length)$('#go-scores').innerHTML=titleHTML('THE HONOR ROLL')+scoreboardHTML(resp.top,null);
+  const el=targetEl===null?null:(targetEl||$('#go-scores'));
+  if(el)el.innerHTML=titleHTML('BEST RUNS')+scoreboardHTML(top,entry);
+  const submitP=submitScore(entry).then(resp=>{
+    if(el&&resp&&resp.top&&resp.top.length)el.innerHTML=titleHTML('THE HONOR ROLL')+scoreboardHTML(resp.top,null);
+    return resp;
   });
-  return{best,shattered};
+  return{best,shattered,entry,top,submitP};
 }
 async function trialVictory(){
   state.gameOver=true;
@@ -5263,12 +5420,20 @@ async function trialVictory(){
   ov.classList.add('show');
   btn.addEventListener('click',advanceTrial,{once:true});
 }
-// The Masterwork is complete — the run is won. By the time this fires, endTurn has already resolved the
-// board into turn 10 (endless=true, so the demand is the raw runaway curve). We crown the run, record the
-// score, then ENTER ENDLESS hands the already-dealt board back for the high-score chase.
+/* ═══════════════ v0.11 THE VICTORY DEBRIEF ═══════════════
+   The Masterwork falls → the game is OVER. endTurn already played the hard-stop + slam and
+   returned without resolving the turn (no sweep, no redeal — the final board freezes under us).
+   We snapshot the run's telemetry BEFORE Balance.end() wipes it, record the score, then raise
+   the dossier. #gameover is death/trial-only from here on. */
 async function runVictory(){
   state.gameOver=true; // freeze the loop under the ceremony
-  if(chapterMode())Balance.end(true); // difficulty log: the run was won
+  clearRun(); // a finished run offers no CONTINUE
+  const rows=Balance.rows.slice(); // capture FIRST — Balance.end() clears rows+cards
+  const cards=JSON.parse(JSON.stringify(Balance.cards));
+  if(chapterMode())Balance.end(true); // pushes the run into ch-bal-log (DOSSIER No. reads the log after this)
+  const elapsed=Telemetry.elapsed();
+  Telemetry.track('game_won',{mode:'full',glory:state.glory,turns:state.turn,rank:RANKS[state.rank].name,
+    duration_ms:elapsed,extra:{relics:state.relics.length,burned:state.burned,boons:state.boonsClaimed,maxCombo:state.maxCombo||0}});
   $('#endturn').textContent='END TURN';
   try{Coach.clear();Coach.active=false}catch(e){}
   try{Music.fadeOut(3)}catch(e){}
@@ -5277,34 +5442,179 @@ async function runVictory(){
   FX.burst(innerWidth/2,innerHeight*.4,'#ffd257',90,11);
   FX.burst(innerWidth/2,innerHeight*.4,'#fff3c2',52,8);
   await wait(950);
-  const ov=$('#gameover');
-  ov.querySelector('.go-pre').textContent='THE MASTERWORK IS COMPLETE';
-  ov.querySelector('h2').textContent='You Are Forged — Master Smith';
-  const masters=state.relics.filter(r=>r.def.rarity==='master').length;
-  ov.querySelector('.go-stats').innerHTML=
-    `The Forge is sated. <b class="gs-gold">${state.glory} ★</b> raised across <b>${ACTS}</b> chapters.<br>`+
-    `<b>${masters}</b> Master ${masters===1?'Relic':'Relics'} claimed · rank <b>${RANKS[state.rank].name}</b>.<br>`+
-    `Cross into <b>Endless</b> and see how far the machine truly runs.`;
-  const{best,shattered}=finishScores();
-  const btn=$('#again');
-  btn.textContent='ENTER ENDLESS';
-  ov.classList.add('win'); // gold ceremony palette, not the death frame
-  ov.classList.add('show');
-  if(best){ // §4.1 Tier-3 vocabulary at the victory screen too
+  const sc=finishScores(null); // record + submit; the dossier renders its own placement
+  openDebrief({rows,cards,elapsed,...sc});
+  if(sc.best){ // §4.1 Tier-3 vocabulary rides over the dossier
     AudioFX.chant(2);
     FX.burst(innerWidth/2,innerHeight*.3,'#ffd98a',50,8);
     if(!Firsts.seen('record'))slamText('YOUR NAME ENTERS THE ROLL',{color:'#ffe9b0',size:2.2,punch:.8});
-    if(shattered)recordShatterFlourish();
+    if(sc.shattered)recordShatterFlourish();
   }
-  btn.addEventListener('click',()=>{
-    AudioFX.click();
-    ov.classList.remove('show');
-    state.gameOver=false;            // the board (turn 10) is already dealt behind the overlay
-    clearBossState();renderChapterMap();renderTwistBanner(); // endless=true → the Act track hides itself, board returns to gold
-    try{Music.start()}catch(e){}
-    slamText('ENDLESS — THE FORGE NEVER SLEEPS',{color:'#ffd257',size:2.1});
-    updateTitheMeter();
-  },{once:true});
+}
+// Build every dossier module from the captured run and raise the overlay.
+function openDebrief(snap){
+  const{rows,cards,elapsed,best,shattered,entry,top,submitP}=snap;
+  const defOf=x=>x.inst?x.inst.def:x.def;
+  const fmtN=v=>v.toLocaleString('en-US');
+  const fmtDur=ms=>{const m=Math.max(1,Math.round(ms/60000));return m>=60?`${Math.floor(m/60)}h ${m%60}m`:`${m}m`};
+  const byT=new Map(rows.map(r=>[r.t,r]));
+  // masthead
+  $('#db-no').textContent=`DOSSIER No. ${loadBalLog().length||1}`;
+  $('#db-sub').textContent=`${ACTS} CHAPTERS · ${FINAL_TURN} TURNS · ${state.bossesCleared+1} ASPECTS BROKEN · THE FORGE IS SATED`;
+  // (a) hero tiles
+  const tile=(num,lab,id)=>`<div class="db-tile"><div class="db-num"${id?` id="${id}"`:''}>${num}</div><div class="db-lab">${lab}</div></div>`;
+  const localPlace=top.indexOf(entry)+1;
+  $('#db-hero').innerHTML=
+    tile('0','glory raised','db-glory')+
+    tile(escHTML(RANKS[state.rank].name),'final rank')+
+    tile(fmtDur(elapsed),'at the anvil')+
+    tile(best?'★ NEW BEST':(localPlace?`No. ${localPlace}`:'—'),localPlace||best?'this forge':'best runs','db-place');
+  if(submitP)submitP.then(resp=>{ // upgrade the placement tile once the shared roll answers
+    if(!resp||!resp.top)return;
+    const g=resp.top.findIndex(r=>r.me&&r.g===entry.g);
+    if(g>=0){const el=$('#db-place');if(el){el.textContent=`No. ${g+1}`;el.nextElementSibling.textContent='THE HONOR ROLL'}}
+  }).catch(()=>{});
+  // (b) the run curve — hand-rolled SVG, log-Y, X by turn (gaps from skipped turns stay honest)
+  $('#db-curve').innerHTML=debriefCurveSVG(rows);
+  // (c) the eight trials
+  let shaveT=0,shaveM=Infinity;
+  for(let a=1;a<=ACTS;a++){const r=byT.get(a*TURNS_PER_ACT);
+    if(r&&r.cleared&&r.dem>0){const m=(r.score-r.dem)/r.dem;if(m<shaveM){shaveM=m;shaveT=a}}}
+  $('#db-acts').innerHTML=Array.from({length:ACTS},(_,k)=>{
+    const a=k+1,b=BOSSES[a],r=byT.get(a*TURNS_PER_ACT);
+    if(!r)return `<div class="db-act"><span class="rn">${ROMAN[k]}</span><span class="bn">${escHTML(b.name)}<i>${escHTML(b.epithet)}</i></span><span>—</span><span>—</span><span>—</span></div>`;
+    const margin=r.dem>0?Math.round((r.score-r.dem)/r.dem*100):0;
+    const shave=a===shaveT&&shaveM<Infinity;
+    return `<div class="db-act${shave?' shave':''}">
+      <span class="rn">${ROMAN[k]}</span>
+      <span class="bn">${escHTML(b.name)}<i>${escHTML(b.epithet)}</i></span>
+      <span>asked ${fmtN(r.dem)}</span><span>paid ${fmtN(r.score)}</span>
+      <span class="${r.cleared?'':'neg'}">${r.cleared?(shave?`<span class="tag">THE CLOSEST SHAVE</span> +${margin}%`:`+${margin}%`):`<span class="tag">FORGIVEN</span> ${margin}%`}</span>
+    </div>`;
+  }).join('');
+  // (d) engine autopsy
+  const fRow=byT.get(FINAL_TURN)||rows[rows.length-1]||{base:0,mult:1,score:0};
+  const peakRow=rows.find(r=>r.score===state.bestTurnGlory);
+  const late=rows.filter(r=>r.act>=7);
+  const lateMult=late.length?late.reduce((s,r)=>s+r.mult,0)/late.length:fRow.mult;
+  const verdict=lateMult>=24?['A MULT ENGINE','the forge multiplied — the chain and the crowns did the killing']
+    :lateMult>=10?['TWIN-HAMMERED','stars and mult struck in concert']
+    :['STAR-WROUGHT','raw base ★ carried the summit'];
+  const lb=Math.log10(Math.max(2,fRow.base)),lm=Math.log10(Math.max(2,fRow.mult));
+  const basePct=Math.round(lb/(lb+lm)*100);
+  $('#db-engine-wrap').innerHTML=
+    `<div class="db-engine">`+
+      tile(`${fmtN(state.bestTurnGlory||0)} ★`,`peak turn${peakRow?` · t${peakRow.t}`:''}`)+
+      tile(`×${state.maxCombo||0}`,'longest chain')+
+      tile(`${fmtN(Math.round(fRow.base))} × ${fRow.mult}`,'the final blow · base × mult')+
+      tile(fmtN(state.burned),'cards burned')+
+    `</div>`+
+    `<div class="db-verdict"><b>${verdict[0]}</b> — ${verdict[1]}.</div>`+
+    `<div class="db-bar"><i class="seg-base" style="width:${basePct}%"></i><i class="seg-mult" style="width:${100-basePct}%"></i></div>`+
+    `<div class="db-barlab"><span>BASE ★ ${basePct}%</span><span>MULT ${100-basePct}%</span></div>`;
+  // (e) the deck, as it stood (played still on the table — no sweep happened)
+  const pool=[...state.deck,...state.discard,...state.hand,...state.played].map(defOf);
+  const RAR=['slag','common','uncommon','rare','mythic'];
+  const rc={};pool.forEach(d=>{rc[d.rarity]=(rc[d.rarity]||0)+1});
+  const forged=pool.filter(d=>(d.tier||0)>0).length;
+  const maxRC=Math.max(1,...RAR.map(r=>rc[r]||0));
+  const topOf=kind=>{
+    const t=cards[kind]||{};
+    const e=Object.entries(t).sort((a,b)=>b[1]-a[1])[0];
+    return e?`<b>${escHTML(cards.names[e[0]]||e[0])}</b> ×${e[1]}`:'—';
+  };
+  $('#db-deck').innerHTML=
+    `<div class="db-deckgrid"><div class="db-hist">`+
+      RAR.filter(r=>rc[r]).map(r=>`<div class="db-hrow"><span>${r}</span><i style="width:${Math.round((rc[r]||0)/maxRC*100)}%"></i><b>${rc[r]||0}</b></div>`).join('')+
+      `<div class="db-hrow"><span>⁂ forged</span><i style="width:${Math.round(forged/maxRC*100)}%"></i><b>${forged}</b></div>`+
+      `<div class="db-hrow"><span>total</span><i style="width:100%"></i><b>${pool.length}</b></div>`+
+    `</div><div class="db-wares">`+
+      `<div class="db-ware">${topOf('plays')}<span>most played</span></div>`+
+      `<div class="db-ware">${topOf('buys')}<span>most bought</span></div>`+
+      `<div class="db-ware">${topOf('forges')}<span>most forged</span></div>`+
+      `<div class="db-ware">${topOf('burns')}<span>most burned</span></div>`+
+    `</div></div>`;
+  // (f) the bench
+  const masters=state.relics.filter(r=>r.def.rarity==='master').length;
+  $('#db-bench-h').textContent=`THE BENCH · ${masters} MASTER ${masters===1?'RELIC':'RELICS'} MOUNTED`;
+  $('#db-bench').innerHTML=state.relics.length
+    ?state.relics.map(r=>`<span class="db-relic${r.def.rarity==='master'?' master':''}${r.shattered?' spent':''}">${escHTML(r.def.name)}${r.shattered?'<small>SPENT</small>':''}</span>`).join('')
+    :'<span class="db-relic">a bare bench — the deck did it alone</span>';
+  // raise + choreography: doc rises, seal stamps, modules stagger, glory counts up
+  $('#debrief').classList.add('on');
+  const mods=document.querySelectorAll('#debrief .db-mod');
+  if(REDUCED_MOTION){
+    mods.forEach(m=>m.classList.add('in'));
+    $('#db-seal').classList.add('stamped');
+    $('#db-glory').textContent=fmtN(state.glory);
+  }else{
+    mods.forEach((m,i)=>setTimeout(()=>m.classList.add('in'),250+i*80));
+    setTimeout(()=>{ // the stamp: one thud, the only shake of the aftermath
+      $('#db-seal').classList.add('stamped');
+      AudioFX.tone({f:60,f2:28,type:'sine',dur:.5,g:.4});
+      shake(4);
+    },600);
+    const t0=performance.now(),DUR=900,target=state.glory;
+    const step=t=>{
+      const p=Math.min(1,(t-t0)/DUR),e=1-Math.pow(1-p,3);
+      $('#db-glory').textContent=fmtN(Math.round(target*e));
+      if(p<1)requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+}
+// The dossier's chart: score vs demand across the run, log-Y, boss diamonds, act numerals.
+function debriefCurveSVG(rows){
+  if(!rows.length)return '<div class="db-legend">no telemetry recorded for this run</div>';
+  const W=980,H=280,PL=46,PR=14,PT=14,PB=30;
+  const ty=v=>Math.log10(Math.max(1,v));
+  const yMax=Math.max(...rows.map(r=>Math.max(ty(r.score),ty(r.dem))))*1.04||1;
+  const X=t=>PL+(t-1)/(FINAL_TURN-1)*(W-PL-PR);
+  const Y=v=>PT+(1-ty(v)/yMax)*(H-PT-PB);
+  const path=key=>rows.map((r,i)=>`${i?'L':'M'}${X(r.t).toFixed(1)},${Y(r[key]).toFixed(1)}`).join('');
+  let g='';
+  for(let d=1;Math.pow(10,d)<=Math.pow(10,yMax);d++){
+    const v=Math.pow(10,d),y=Y(v).toFixed(1);
+    g+=`<line x1="${PL}" y1="${y}" x2="${W-PR}" y2="${y}" stroke="rgba(232,182,76,.1)"/>`+
+       `<text x="${PL-6}" y="${+y+3}" text-anchor="end" font-size="9" fill="#8f8570" font-family="var(--mono)">${v>=1000?(v/1000)+'k':v}</text>`;
+  }
+  for(let a=1;a<=ACTS;a++){
+    const x=X(a*TURNS_PER_ACT).toFixed(1);
+    g+=`<line x1="${x}" y1="${PT}" x2="${x}" y2="${H-PB}" stroke="rgba(232,182,76,.14)"/>`+
+       `<text x="${X(a*TURNS_PER_ACT-TURNS_PER_ACT/2).toFixed(1)}" y="${H-10}" text-anchor="middle" font-size="9" fill="#8f8570" letter-spacing="2">${ROMAN[a-1]}</text>`;
+  }
+  const fill=`<path d="${path('score')}L${X(rows[rows.length-1].t).toFixed(1)},${H-PB}L${X(rows[0].t).toFixed(1)},${H-PB}Z" fill="url(#dbg)"/>`;
+  const bosses=rows.filter(r=>r.boss).map(r=>{
+    const x=X(r.t),y=Y(r.score);
+    const big=r.t===FINAL_TURN?7:5;
+    return `<path d="M${x},${y-big} L${x+big},${y} L${x},${y+big} L${x-big},${y} Z" `+
+      (r.cleared?`fill="#ffd257"${r.t===FINAL_TURN?' filter="drop-shadow(0 0 5px rgba(255,210,87,.9))"':''}`:`fill="none" stroke="#ff8a5c" stroke-width="1.5"`)+`/>`;
+  }).join('');
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="score versus demand across the run">
+    <defs><linearGradient id="dbg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="rgba(255,217,138,.16)"/><stop offset="1" stop-color="rgba(255,217,138,0)"/>
+    </linearGradient></defs>
+    ${g}${fill}
+    <path d="${path('dem')}" fill="none" stroke="#ff8a5c" stroke-width="1.5" stroke-dasharray="5 4" opacity=".85"/>
+    <path d="${path('score')}" fill="none" stroke="#ffd98a" stroke-width="2.25"/>
+    ${bosses}
+  </svg>`;
+}
+$('#db-newrun').addEventListener('click',()=>{AudioFX.click();try{sessionStorage.setItem('ch-af-restart','1')}catch(e){}location.reload()});
+$('#db-scores').addEventListener('click',()=>{AudioFX.click();openHiscore()}); // #hiscore (z340) opens above the dossier
+/* v0.11 spectate: a self-contained board snapshot — the admin has no card DB, so every entry
+   carries its display info. Card ids only would halve the size but leave the console blind.
+   Hard caps (hand 20 / played 24) keep the worst case ~4.5KB, inside the server's 8KB body limit. */
+function boardSnap(sc){
+  const card=d=>({i:d.id,n:d.name,c:d.color,r:d.rarity,k:d.cost,g:d.glory||0,...(d.tier>1?{f:d.tier}:{})});
+  return {t:state.turn,act:actOf(state.turn),boss:isBossTurn(state.turn),
+    glory:state.glory,gold:state.gold,focus:state.focus,buys:state.buys,combo:state.combo,
+    tithe:state.tithe,score:sc?sc.final:0,cap:effMultCap(),rank:RANKS[state.rank].name,
+    twist:state.twist?state.twist.name:null,deckN:state.deck.length,discN:state.discard.length,
+    hand:state.hand.slice(0,20).map(h=>card(h.inst.def)),
+    played:state.played.slice(0,24).map(p=>card(p.inst.def)),
+    market:state.market.map(x=>({i:x.def?x.def.id:null,n:x.def?x.def.name:null,c:x.def?x.def.color:null,k:x.def?x.def.cost:0,rem:x.remaining,rack:!!x.rack})),
+    relics:state.relics.map(r=>({i:r.def.id,n:r.def.name,c:r.def.color,sh:!!r.shattered}))};
 }
 async function gameOverSequence(turnGlory){
   state.gameOver=true;
@@ -5352,8 +5662,8 @@ async function gameOverSequence(turnGlory){
   }
   Telemetry.track('game_over',{mode:'full',glory:state.glory,turns:state.turn,rank:RANKS[state.rank].name,duration_ms:Telemetry.elapsed(),extra:{burned:state.burned,boons:state.boonsClaimed}});
   const{best,shattered}=finishScores();
-  // reset the shared overlay's title/button to the death defaults — runVictory left them on victory copy ("ENTER ENDLESS"),
-  // so an Endless death would otherwise show the wrong heading and a button labelled ENTER ENDLESS that actually restarts
+  // reset the shared overlay's title/button to the death defaults — trialVictory may have left win copy
+  // (v0.11: real victories moved to their own #debrief overlay and never touch #gameover)
   ov.classList.remove('win');
   ov.querySelector('.go-pre').textContent='THE TITHE UNPAID';
   ov.querySelector('h2').textContent='The Forge Grows Cold';
