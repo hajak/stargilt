@@ -940,3 +940,13 @@ The two parked playtest items.
 - [x] (4) Start with 6 gold (was 3).
 - Also: the Victory Debrief prototype artifact (Erik's data) updated with the same cosmos backdrop.
 - Tests: full battery 223 green + new-mechanics headless pass. Deployed + prod-verified.
+
+
+## Round 48 — v0.11.2: version-aware difficulty analytics + game self-registers balance (2026-07-18)
+- [x] Also shipped first, separately: the Dross-chip Bazaar fix (ash "+N Dross" market-tile chip).
+- [x] Phase 1: game emits ch_config once per run (difficultyConfig() — every knob + 8 boss mults), Balance.config beacon at boot.
+- [x] Phase 2: HISTORICAL_VERSIONS registry (git-exact v0.8.3+, prose v0.7.x approx) + /api/admin/difficulty (group by build) + balance?build=.
+- [x] Phase 3: Difficulty tab → single-version deep dive (default latest, exact demand from config, settings panel + delta-vs-previous).
+- [x] Phase 4: Versions tab — registry table with auto-diff highlights + version-normalized tightness overlay (score÷demand).
+- [x] Phase 5: Pulse — engagement global; win%/median-depth/game-funnel (per-run) scope to a build selector; aggregate.js overview.byBuild; playerDetail runs carry build.
+- Tests: /api/admin/difficulty + balance?build= + difficultyConfig shape + Difficulty/Versions/Pulse headless; admintest updated (6 tabs, per-run funnel); scores/hiscore/game battery green. Deployed + prod-verified.
