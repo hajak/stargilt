@@ -958,3 +958,10 @@ The two parked playtest items.
 - [x] Phase 3: admin variance panel (dilution + Dross curves, dead-hand-rate bars), run-strip cause tags (turnCause), post-boss watch, opening-hand one-liner.
 - [x] Phase 4: DEMAND_RATE 1.28→1.30 (mid +18-30%, early +8%), DEMAND_LATE_RATE 1.12→1.11 (t48 held ~74k).
 - Tests: config/telemetry/dead-hand/server-aggregation/admin-variance headless; demand assertions updated (v0110 t24/36/48=3975/17219/74142, v090 t18=1872); full battery green. Deployed + prod-verified.
+
+
+## Round 50 — v0.11.4: boss roster redesign for mechanical variety (2026-07-18)
+- [x] New dampColor mechanic (starsFor hook, rounded; random colour picked at boss setup, excl. ash; themes the board).
+- [x] Roster: The Tarnish (dampColor 0.5) @act3, The Silting (drossSeed:2, 2.4→2.2) @act5, The Hollow Forge→allStarMult:0.6 @act6; kept 1/2/4/7/8; retired comboMult + multDamp; only 1&8 keep −❖.
+- [x] bossLedger bite rows for allStarMult<1 + dampColor; live-HUD strings; admin BOSS_BY_ACT mirror (act3/act5).
+- Tests: per-mechanic + ledger/live + invariant + t30 demand (~7.8k) headless; boss intro screenshot; full battery 223 green. Deployed + prod-verified.
