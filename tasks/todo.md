@@ -965,3 +965,12 @@ The two parked playtest items.
 - [x] Roster: The Tarnish (dampColor 0.5) @act3, The Silting (drossSeed:2, 2.4→2.2) @act5, The Hollow Forge→allStarMult:0.6 @act6; kept 1/2/4/7/8; retired comboMult + multDamp; only 1&8 keep −❖.
 - [x] bossLedger bite rows for allStarMult<1 + dampColor; live-HUD strings; admin BOSS_BY_ACT mirror (act3/act5).
 - Tests: per-mechanic + ledger/live + invariant + t30 demand (~7.8k) headless; boss intro screenshot; full battery 223 green. Deployed + prod-verified.
+
+
+## Round 51 — v0.11.5: consistency fixes (variance, not curve) (2026-07-18)
+- Diagnosis from the v0.11.3 variance panel: Act-2 tightness already ideal; deaths = DEAD HAND bricks + focus-lock (player-named). Fix reliability, not difficulty.
+- [x] Focus-lock: common/uncommon focus engines (gains.focus>0) play FREE (freeFocusEngine); rare/mythic keep cost; focusCostOf respects explicit 0.
+- [x] 2nd early draw: starter ['tidewake','tidewake','kindling'].
+- [x] Dead-hand mulligan: openSnap.enab===0 → reshuffle+redraw once (mulliganDeadHand, guarded; new-turn/resume/turn-1).
+- [x] Tighter start: GRACE_FLOOR 0.5→0.62 (lifts t1-5 only, converges by t8; mid untouched; no rate change).
+- Tests: focus costs, 2 Tidewakes, mulligan on forced dead hand, t1 demand 6→7 / mid untouched; full battery 223 green. Deployed + prod-verified.
