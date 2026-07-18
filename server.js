@@ -293,11 +293,13 @@ async function handleAdmin(req, res, pathname, url) {
     // Optional per-player view: ?cid= accepts any of a player's cids and matches the whole
     // merged person (the admin's merge feature folds alias cids into one canonical id).
     const wantCid = url.searchParams.get('cid');
+    const wantBuild = url.searchParams.get('build'); // v0.11.2: scope the per-run strips to one version
     const canon = wantCid ? buildCanon(await store.getLabels()) : null;
     const wantPerson = wantCid ? personOf(wantCid, canon) : null;
     const runs = new Map(); // sid → run
     for (const e of events) {
       if (e.type !== 'ch_turn' && e.type !== 'ch_run') continue;
+      if (wantBuild && e.build !== wantBuild) continue;
       if (wantPerson && personOf(e.cid, canon) !== wantPerson) continue;
       const x = e.extra || {};
       let r = runs.get(e.sid);
@@ -313,6 +315,41 @@ async function handleAdmin(req, res, pathname, url) {
       .sort((a, b) => new Date(b.started) - new Date(a.started))
       .slice(0, 60);
     return sendJSON(res, 200, { runs: list });
+  }
+  // ── v0.11.2 version-aware difficulty: group ch_turn/ch_run BY BUILD (not sid) and aggregate per turn,
+  //    so score/clear/depth can be compared WITHIN a version instead of conflated across balance changes.
+  //    Carries each version's self-registered difficulty config (ch_config) when present. Aggregated → no run cap. ──
+  if (req.method === 'GET' && pathname === '/api/admin/difficulty') {
+    const events = await store.allEvents();
+    const median = (a) => { if (!a.length) return 0; const s = a.slice().sort((x, y) => x - y); const m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
+    const pct = (a, q) => { if (!a.length) return 0; const s = a.slice().sort((x, y) => x - y); return s[Math.min(s.length - 1, Math.floor(q * (s.length - 1)))]; };
+    const V = new Map(); // build → { turns:Map(t→{scores,dem,cleared,alive}), sids:Set, wins, deaths:{}, config }
+    for (const e of events) {
+      const build = e.build || '—';
+      if (e.type === 'ch_config') { // newest config per build wins (events arrive chronologically)
+        let v = V.get(build); if (!v) { v = { turns: new Map(), sids: new Set(), wins: 0, deaths: {}, config: null }; V.set(build, v); }
+        v.config = e.extra || {};
+        continue;
+      }
+      if (e.type !== 'ch_turn' && e.type !== 'ch_run') continue;
+      let v = V.get(build); if (!v) { v = { turns: new Map(), sids: new Set(), wins: 0, deaths: {}, config: null }; V.set(build, v); }
+      if (e.sid) v.sids.add(e.sid);
+      const x = e.extra || {};
+      if (e.type === 'ch_turn') {
+        let b = v.turns.get(x.t); if (!b) { b = { scores: [], dem: x.dem, cleared: 0, alive: 0 }; v.turns.set(x.t, b); }
+        b.dem = x.dem; b.alive++; if (x.score != null) b.scores.push(x.score); if (x.cleared) b.cleared++;
+      } else { // ch_run
+        if (x.won) v.wins++;
+        else { const act = Math.max(1, Math.ceil((x.endTurn || 0) / 6)); v.deaths[act] = (v.deaths[act] || 0) + 1; }
+      }
+    }
+    const versions = [...V.entries()].map(([build, v]) => ({
+      build, runCount: v.sids.size, wins: v.wins, deaths: v.deaths, config: v.config,
+      byTurn: [...v.turns.entries()].sort((a, b2) => a[0] - b2[0]).map(([t, b]) => ({
+        t, dem: b.dem, med: median(b.scores), p25: pct(b.scores, 0.25), p75: pct(b.scores, 0.75), cleared: b.cleared, alive: b.alive,
+      })),
+    })).filter((x) => x.byTurn.length || x.config); // keep versions with data or a registered config
+    return sendJSON(res, 200, { versions });
   }
   // ── card usage: what players buy / play / forge / burn (from ch_run + ch_cards tallies) ──
   if (req.method === 'GET' && pathname === '/api/admin/cards') {

@@ -164,9 +164,33 @@ function overviewOf(players, nowMs) {
   };
 }
 
+// v0.11.2: per-build breakdown of the VERSION-DEPENDENT metrics (win rate, depth, game funnel),
+// so Pulse can scope them to one version instead of conflating every balance change into one number.
+// Engagement metrics (players/time/sessions) stay in `overview` — they are version-invariant.
+// Keyed off ch_run (carries build + endTurn + won); depth/funnel are per-RUN (the right frame for difficulty).
+function byBuildOf(events) {
+  const B = {};
+  for (const e of events) {
+    if (e.type !== 'ch_run') continue;
+    const b = e.build || '—', x = e.extra || {};
+    const v = B[b] || (B[b] = { runs: 0, wins: 0, depths: [], act2: 0, act4: 0, act6: 0 });
+    v.runs++; if (x.won) v.wins++;
+    const d = x.endTurn || 0; v.depths.push(d);
+    if (d >= 7) v.act2++; if (d >= 19) v.act4++; if (d >= 31) v.act6++;
+  }
+  const out = {};
+  for (const b of Object.keys(B)) {
+    const v = B[b], s = v.depths.slice().sort((a, c) => a - c);
+    out[b] = { runs: v.runs, wins: v.wins, medianDepth: s.length ? s[s.length >> 1] : 0, funnel: { act2: v.act2, act4: v.act4, act6: v.act6, won: v.wins } };
+  }
+  return out;
+}
+
 function aggregate(events, labels, nowMs) {
   const players = groupByPerson(events, labels);
-  return { overview: overviewOf(players, nowMs ?? Date.now()), players };
+  const overview = overviewOf(players, nowMs ?? Date.now());
+  overview.byBuild = byBuildOf(events);
+  return { overview, players };
 }
 
 // Shared values between two ordered lists (compared by JSON key).
@@ -217,7 +241,7 @@ function playerDetail(events, labels, targetId) {
   const mine = events.filter((e) => personOf(e.cid, canon) === targetId);
   const runs = mine
     .filter((e) => e.type === 'game_over' || e.type === 'trial_won' || e.type === 'trial_death')
-    .map((e) => ({ ts: e.ts, type: e.type, mode: e.mode, stage: e.stage, glory: e.glory, turns: e.turns, rank: e.rank, duration_ms: e.duration_ms }))
+    .map((e) => ({ ts: e.ts, type: e.type, mode: e.mode, stage: e.stage, glory: e.glory, turns: e.turns, rank: e.rank, duration_ms: e.duration_ms, build: e.build }))
     .sort((a, b) => ms(b.ts) - ms(a.ts));
   // Session history: one row per sid — when, how long, and what happened in it.
   const bySid = new Map();

@@ -108,6 +108,32 @@ select.ctl:focus{border-color:var(--gold)}
 .legendrow .li{display:inline-flex;align-items:center;gap:.35rem;font-weight:700}
 .legendrow .sw{width:14px;height:3px;border-radius:2px}
 .legendrow .swd{width:9px;height:9px;border-radius:2px}
+/* v0.11.2 version-settings panel + registry */
+.verpanel{border:1px solid var(--hair);border-radius:10px;padding:.7rem .85rem;margin:0 0 .9rem;background:rgba(232,182,76,.03)}
+.verpanel:empty{display:none}
+.vp-head{display:flex;align-items:baseline;gap:.6rem;flex-wrap:wrap;margin-bottom:.6rem;font-size:.82rem}
+.vp-src{font-size:.6rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);border:1px solid var(--hair);border-radius:20px;padding:.12rem .5rem}
+.vp-src.live{color:var(--c-verdant);border-color:rgba(74,222,128,.35)}
+.vp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:.4rem}
+.vp-cell{display:flex;flex-direction:column;gap:.15rem;padding:.35rem .5rem;border-radius:7px;background:rgba(255,255,255,.03);border:1px solid transparent}
+.vp-cell.vp-changed{border-color:rgba(232,182,76,.5);background:rgba(232,182,76,.09)}
+.vp-k{font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+.vp-v{font-size:.9rem;font-weight:800;color:var(--ink-1);font-variant-numeric:tabular-nums}
+.vp-v i{font-style:normal;font-weight:600;font-size:.6rem;color:var(--gold);margin-left:.35rem}
+.vp-boss{margin-top:.55rem;font-size:.7rem;color:var(--ink-2)}
+.vp-boss b{color:var(--gold-bright);font-weight:800;margin-right:.15rem;font-variant-numeric:tabular-nums}
+.vp-note{margin-top:.55rem;font-size:.74rem;line-height:1.5;color:var(--ink-2);border-left:2px solid var(--hair);padding-left:.6rem}
+.vt-scroll{overflow-x:auto}
+table.vt{border-collapse:collapse;font-size:.72rem;width:100%;min-width:760px}
+table.vt th{text-align:right;font-size:.56rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);font-weight:800;padding:.4rem .5rem;border-bottom:1px solid var(--hair);white-space:nowrap}
+table.vt th:first-child{text-align:left}
+table.vt td{text-align:right;padding:.4rem .5rem;border-bottom:1px solid var(--hair-soft);color:var(--ink-2);font-variant-numeric:tabular-nums;white-space:nowrap}
+table.vt td.vt-ver{text-align:left;color:var(--gold-bright);font-weight:800}
+table.vt td.vt-changed{color:var(--gold-bright);font-weight:800;background:rgba(232,182,76,.1)}
+.vt-approx{font-style:normal;font-size:.55rem;color:var(--ink-3);border:1px solid var(--hair);border-radius:10px;padding:0 .3rem;margin-left:.2rem}
+.verpick{display:flex;flex-wrap:wrap;gap:.5rem .9rem;margin-bottom:.7rem}
+.verchk{display:inline-flex;align-items:center;gap:.35rem;font-size:.74rem;font-weight:700;cursor:pointer}
+.verchk input{accent-color:var(--gold)}
 .ballegend{display:flex;gap:.9rem;flex-wrap:wrap;font-size:.66rem;color:var(--ink-3);margin:.7rem 0 .5rem}
 .ballegend b{font-weight:800}
 .balrun{padding:.6rem 0;border-bottom:1px solid var(--hair-soft)}
@@ -323,6 +349,7 @@ input.field:focus{border-color:var(--gold);box-shadow:0 0 18px rgba(232,182,76,.
   <nav class="tabs" id="tabs">
     <button class="tab" data-tab="pulse">Pulse</button>
     <button class="tab" data-tab="difficulty">⚖ Difficulty</button>
+    <button class="tab" data-tab="versions">◷ Versions</button>
     <button class="tab" data-tab="compare">⇄ Compare</button>
     <button class="tab" data-tab="cards">⚒ Cards</button>
     <button class="tab" data-tab="players">Players</button>
@@ -331,10 +358,11 @@ input.field:focus{border-color:var(--gold);box-shadow:0 0 18px rgba(232,182,76,.
   <section data-tab="pulse">
     <div class="stats" id="stats"></div>
     <div class="card">
-      <div class="hd"><h2>Funnels · does the tutorial work, how deep do runs go</h2><span class="sub">each bar = share of ALL players · % = conversion from the stage above</span></div>
+      <div class="hd"><h2>Funnels · does the tutorial work, how deep do runs go</h2>
+        <div class="controls"><span class="sub">Learn = share of ALL players · Game = share of runs on</span><select class="ctl" id="pulsebuild"></select></div></div>
       <div class="bd grid2">
-        <div><div class="eyebrow" style="font-size:.56rem;margin-bottom:.4rem">Learn — the optional tutorial</div><div class="funnel" id="learnfunnel"></div></div>
-        <div><div class="eyebrow" style="font-size:.56rem;margin-bottom:.4rem">Game — the real run (8 acts)</div><div class="funnel" id="gamefunnel"></div></div>
+        <div><div class="eyebrow" style="font-size:.56rem;margin-bottom:.4rem">Learn — the optional tutorial (all versions)</div><div class="funnel" id="learnfunnel"></div></div>
+        <div><div class="eyebrow" style="font-size:.56rem;margin-bottom:.4rem">Game — the real run, <span id="gamefunnel-ver">latest</span></div><div class="funnel" id="gamefunnel"></div></div>
       </div>
     </div>
     <div class="grid2" style="gap:1.1rem">
@@ -362,6 +390,7 @@ input.field:focus{border-color:var(--gold);box-shadow:0 0 18px rgba(232,182,76,.
         </div>
       </div>
       <div class="bd">
+        <div id="balsettings" class="verpanel"></div>
         <div class="chartbox" id="demchart"></div>
         <div class="legendrow" id="demlegend"></div>
         <div class="chartbox" id="clearchart" style="margin-top:.8rem"></div>
@@ -374,6 +403,23 @@ input.field:focus{border-color:var(--gold);box-shadow:0 0 18px rgba(232,182,76,.
         </div>
         <div id="balruns"></div>
         <button class="btn-ghost" id="balmore" hidden style="margin-top:.6rem"></button>
+      </div>
+    </div>
+  </section>
+
+  <section data-tab="versions">
+    <div class="card">
+      <div class="hd"><h2>◷ Versions · what each build's difficulty was</h2>
+        <span class="sub">self-registered from v0.11.2 on · earlier builds backfilled from git + the changelog (approx where noted). Changed knobs are highlighted against the version below.</span></div>
+      <div class="bd"><div id="verreg"></div></div>
+    </div>
+    <div class="card" style="margin-top:.8rem">
+      <div class="hd"><h2>⇄ Compare versions · tightness by turn</h2>
+        <span class="sub">median score ÷ that version's demand — a version-normalized difficulty (1.0 = just cleared; higher = roomier). Pick builds to overlay.</span></div>
+      <div class="bd">
+        <div id="verpick" class="verpick"></div>
+        <div class="chartbox" id="verchart"></div>
+        <div class="legendrow" id="verlegend"></div>
       </div>
     </div>
   </section>
@@ -431,6 +477,59 @@ let BALCACHE = null;   // last balance payload for the current filter
 const STALE_MS = 10 * 60 * 1000; // v0.11: a "live" run with no beacon for 10 min is ABANDONED (slow late turns can exceed the Pulse 5-min gate)
 let BAL_EXPANDED = false; // difficulty run strips: capped at 8 until "show all"
 let AUTO = true;       // auto-refresh on by default (the "live" in live debugging)
+let DIFFCACHE = null;  // last /api/admin/difficulty payload (per-version aggregates + configs)
+
+// ── v0.11.2 VERSION REGISTRY ──────────────────────────────────────────────
+// The game self-registers its difficulty settings from v0.11.2 on (ch_config telemetry). This is the
+// BACKFILL for older versions, which never emitted it: exact values recovered from git for v0.8.3+,
+// and from the prose changelog (flagged) for the pre-git v0.7.x. Fields match the game's difficultyConfig()
+// shape. Only the versions where difficulty actually CHANGED are listed; the resolver picks the newest
+// entry ≤ a given build, so patch versions with no balance change inherit their predecessor's config.
+// A `note` summarizes what changed & why. `approx:true` = reconstructed from prose, not exact.
+const CANON_BOSSMULTS = [1.3, 1.6, 1.85, 2.1, 2.4, 2.6, 2.8, 3.2]; // stable across every version that has telemetry (v0.7.0+)
+const HISTORICAL_VERSIONS = {
+  'v0.7.0': { demandBase: 10.4, demandRate: 1.28, knee: null, lateRate: null, grace: 9, graceFloor: 0.5, multCap: 15, capPerBoss: 0, xCap: 4, chainRate: .2, echoRate: .12, tribalRate: .25, starBoost: 1, startGold: 3, bossGold: 5, bossMults: CANON_BOSSMULTS, act1Mercy: false, approx: true, note: 'MULT cap 7→15, DEMAND_BASE 13→10.4 (−20%), +3 scaling star engines. Much easier — the late curve became answerable.' },
+  'v0.8.0': { demandBase: 11.7, demandRate: 1.28, knee: null, lateRate: null, grace: 9, graceFloor: 0.5, multCap: 15, capPerBoss: 0, xCap: 4, chainRate: .2, echoRate: .12, tribalRate: .25, starBoost: 1, startGold: 3, bossGold: 5, bossMults: CANON_BOSSMULTS, act1Mercy: false, approx: true, note: 'DEMAND_BASE 10.4→11.7 and 6 exploiter mythics gated (deep/afterBoss). Harder — v0.7 had overshot to "too easy".' },
+  'v0.8.4': { demandBase: 11.7, demandRate: 1.28, knee: null, lateRate: null, grace: 9, graceFloor: 0.5, multCap: 15, capPerBoss: 0, xCap: 4, chainRate: .2, echoRate: .12, tribalRate: .25, starBoost: 1, startGold: 3, bossGold: 5, bossMults: CANON_BOSSMULTS, act1Mercy: true, note: 'Free Act-1 first-miss mercy added — eases the newcomer Boss-1 wall (killed 44% of early runs).' },
+  'v0.9.0': { demandBase: 11.7, demandRate: 1.28, knee: 19, lateRate: 1.13, grace: 9, graceFloor: 0.5, multCap: 15, capPerBoss: 3, xCap: 4, chainRate: .2, echoRate: .12, tribalRate: .25, starBoost: 1, startGold: 3, bossGold: 5, bossMults: CANON_BOSSMULTS, act1Mercy: true, note: 'Late-game fix: demand tapers past a knee at turn 19 (rate 1.28→1.13) and the MULT cap rises +3 per boss (15→36). The summit becomes reachable.' },
+  'v0.11.0': { demandBase: 11.7, demandRate: 1.28, knee: 19, lateRate: 1.12, grace: 9, graceFloor: 0.5, multCap: 15, capPerBoss: 3, xCap: 4, chainRate: .18, echoRate: .10, tribalRate: .20, starBoost: 1, startGold: 3, bossGold: 5, bossMults: CANON_BOSSMULTS, act1Mercy: true, note: 'MULT nerf for tension: chain .2→.18, tribal .25→.20, echo .12→.10, card m −20%; late demand refunded 1.13→1.12. Mid-game (t9-18) ~15% harder.' },
+  'v0.11.1': { demandBase: 11.7, demandRate: 1.28, knee: 19, lateRate: 1.12, grace: 9, graceFloor: 0.5, multCap: 15, capPerBoss: 3, xCap: 4, chainRate: .18, echoRate: .10, tribalRate: .20, starBoost: 1.06, startGold: 6, bossGold: 6, bossMults: CANON_BOSSMULTS, act1Mercy: true, note: 'Give-back via stars+gold (not mult): STAR_BOOST 1.06 (base ★ +6%), start gold 3→6, per-boss gold +5→+6.' },
+};
+// parse "chapters · v0.11.1" (or "v0.11.1") → [11,1] · [0,11,1]
+const verKey = (b) => (String(b || '').match(/v?(\d+)\.(\d+)(?:\.(\d+))?/) || [0, 0, 0, 0]).slice(1).map((n) => +n || 0);
+const verCmp = (a, b) => { const x = verKey(a), y = verKey(b); return (x[0] - y[0]) || (x[1] - y[1]) || (x[2] - y[2]); };
+const verLabel = (b) => String(b || '').replace('chapters · ', '');
+// Resolve a build's difficulty config: prefer live telemetry (ch_config from /api/admin/difficulty),
+// else the newest historical entry ≤ that build (patch versions inherit their predecessor's balance).
+function configFor(build) {
+  const live = DIFFCACHE && (DIFFCACHE.versions.find((v) => v.build === build) || {}).config;
+  if (live && Object.keys(live).length) return { ...live, _src: 'telemetry' };
+  const keys = Object.keys(HISTORICAL_VERSIONS).sort(verCmp);
+  let pick = null;
+  for (const k of keys) if (verCmp('v' + verKey(build).join('.'), k) >= 0) pick = k;
+  return pick ? { ...HISTORICAL_VERSIONS[pick], _src: 'registry', _from: pick } : null;
+}
+// The demand curve a version's own config produces (exact — not scraped from run data, which mixed versions).
+function demandCurve(cfg) {
+  if (!cfg) return [];
+  const KNEE = cfg.knee || Infinity, LATE = cfg.lateRate || cfg.demandRate;
+  const out = [];
+  for (let t = 1; t <= 48; t++) {
+    let base = t <= KNEE - 1 ? cfg.demandBase * Math.pow(cfg.demandRate, t - 1)
+      : cfg.demandBase * Math.pow(cfg.demandRate, KNEE - 2) * Math.pow(LATE, t - (KNEE - 1));
+    if (t < cfg.grace) base *= cfg.graceFloor + (1 - cfg.graceFloor) * (t - 1) / (cfg.grace - 1);
+    if (t % 6 === 0) base *= (cfg.bossMults[t / 6 - 1] != null ? cfg.bossMults[t / 6 - 1] : 2.5);
+    out.push({ x: t, y: Math.round(base) });
+  }
+  return out;
+}
+// The knobs shown in the settings panel / registry, in display order.
+const CFG_FIELDS = [
+  ['demandBase', 'demand base'], ['demandRate', 'demand rate'], ['knee', 'taper knee (turn)'], ['lateRate', 'late rate'],
+  ['multCap', 'MULT cap'], ['capPerBoss', 'cap +/boss'], ['xCap', 'x-cap'],
+  ['chainRate', 'chain/card'], ['echoRate', 'echo/card'], ['tribalRate', 'tribal/color'], ['starBoost', 'star boost'],
+  ['startGold', 'start gold'], ['bossGold', 'boss gold'], ['act1Mercy', 'Act-1 mercy'],
+];
 
 // ── api ──
 async function api(path, opts = {}) {
@@ -492,12 +591,22 @@ const nameOfCid = (cid) => {
   return p ? displayName(p) : shortId(cid);
 };
 
+// v0.11.2: the Pulse version-dependent stats (win rate, depth, game funnel) are scoped to one build;
+// engagement stats stay global. The selector defaults to the latest build with data.
+let PULSE_BUILD = '';
+function syncPulseBuild(o) {
+  const keys = Object.keys(o.byBuild || {}).filter((b) => (o.byBuild[b].runs || 0) > 0).sort((a, b) => verCmp(b, a));
+  const sel = $('#pulsebuild');
+  if (!PULSE_BUILD || !keys.includes(PULSE_BUILD)) PULSE_BUILD = keys[0] || '';
+  sel.innerHTML = keys.map((b) => `<option ${b === PULSE_BUILD ? 'selected' : ''} value="${esc(b)}">${esc(verLabel(b))}</option>`).join('') || '<option value="">no runs</option>';
+  return o.byBuild && o.byBuild[PULSE_BUILD];
+}
 // ── stat tiles (client-computed from the summary, so tiles and table can never disagree) ──
 function renderStats(o, players) {
-  const withRuns = players.filter((p) => p.game && (p.game.runs || p.game.bestTurn));
-  const wins = players.filter((p) => p.game && p.game.won).length;
-  const depths = withRuns.map((p) => p.game.bestTurn).filter(Boolean).sort((a, b) => a - b);
-  const medDepth = depths.length ? depths[Math.floor(depths.length / 2)] : 0;
+  const bb = syncPulseBuild(o);                          // version-dependent block scopes to the chosen build
+  const runs = bb ? bb.runs : 0, wins = bb ? bb.wins : 0;
+  const medDepth = bb ? bb.medianDepth : 0;
+  const verTag = PULSE_BUILD ? verLabel(PULSE_BUILD) : '—';
   const liveNow = players.filter((p) => p.lastSeen && Date.now() - new Date(p.lastSeen) < 3e5).length;
   const pill = $('#livepill');
   pill.classList.toggle('idle', !liveNow);
@@ -506,8 +615,8 @@ function renderStats(o, players) {
   $('#stats').innerHTML = `
     <div class="stat"><div class="k">Players</div><div class="v num">${o.uniquePlayers}</div><div class="sub">${o.active7d} active 7d · ${o.active24h} today</div></div>
     <div class="stat"><div class="k">Full runs</div><div class="v num">${o.totalFullGames}</div><div class="sub">${o.totalTrials} trial runs</div></div>
-    <div class="stat"><div class="k">Forged (won)</div><div class="v num">${wins}<em> / ${withRuns.length}</em></div><div class="sub">${withRuns.length ? Math.round(100 * wins / withRuns.length) + '% of players with runs' : 'no runs yet'}</div></div>
-    <div class="stat"><div class="k">Median depth</div><div class="v num">${medDepth ? 't' + medDepth : '—'}</div><div class="sub">${medDepth ? 'Act ' + Math.min(8, Math.ceil(medDepth / 6)) + ' of 8' : 'best turn reached'}</div></div>
+    <div class="stat"><div class="k">Forged (won) · ${esc(verTag)}</div><div class="v num">${wins}<em> / ${runs}</em></div><div class="sub">${runs ? Math.round(100 * wins / runs) + '% of runs on this version' : 'no runs on this version'}</div></div>
+    <div class="stat"><div class="k">Median depth · ${esc(verTag)}</div><div class="v num">${medDepth ? 't' + medDepth : '—'}</div><div class="sub">${medDepth ? 'Act ' + Math.min(8, Math.ceil(medDepth / 6)) + ' of 8' : 'best turn reached'}</div></div>
     <div class="stat"><div class="k">Active time</div><div class="v num">${fmtDur(o.totalPlaytimeMs)}</div><div class="sub">foreground only (excl. idle tabs)</div></div>
     <div class="stat"><div class="k">Countries</div><div class="v num">${cty.length}</div><div class="chips">${cty.slice(0, 4).map(([c, n]) => `<span class="chip">${esc(c)} · ${n}</span>`).join('') || '<span class="sub">unknown</span>'}</div></div>
     <div class="stat"><div class="k">Builds</div><div class="v num">${o.builds.length}</div><div class="chips">${o.builds.slice(0, 3).map((b) => `<span class="chip">${esc(b.replace('chapters · ', ''))}</span>`).join('')}</div></div>`;
@@ -526,7 +635,7 @@ function funnelHTML(stages, total, color) {
     </div>`;
   }).join('');
 }
-function renderFunnels(players) {
+function renderFunnels(players, o) {
   const n = players.length;
   const L = (f) => players.filter(f).length;
   $('#learnfunnel').innerHTML = funnelHTML([
@@ -536,14 +645,17 @@ function renderFunnels(players) {
     { label: 'Trial II cleared', n: L((p) => p.learn && p.learn.cleared >= 2) },
     { label: 'Graduated', n: L((p) => p.learn && p.learn.graduated) },
   ], n, 'var(--ch-gold)');
+  // v0.11.2: the Game funnel is PER-RUN, scoped to the selected build (depth thresholds only make sense within a version)
+  const bb = o && o.byBuild && o.byBuild[PULSE_BUILD];
+  $('#gamefunnel-ver').textContent = PULSE_BUILD ? verLabel(PULSE_BUILD) : '—';
+  const runs = bb ? bb.runs : 0, f = bb ? bb.funnel : { act2: 0, act4: 0, act6: 0, won: 0 };
   $('#gamefunnel').innerHTML = funnelHTML([
-    { label: 'Visited', n },
-    { label: 'Started a run', n: L((p) => p.game && (p.game.runs || p.game.bestTurn)) },
-    { label: 'Act 2 reached', n: L((p) => p.game && p.game.bestTurn >= 7) },
-    { label: 'Act 4 reached', n: L((p) => p.game && p.game.bestTurn >= 19) },
-    { label: 'Act 6 reached', n: L((p) => p.game && p.game.bestTurn >= 31) },
-    { label: 'Forged ★', n: L((p) => p.game && p.game.won) },
-  ], n, 'var(--ch-score)');
+    { label: 'Runs', n: runs },
+    { label: 'Act 2 reached', n: f.act2 },
+    { label: 'Act 4 reached', n: f.act4 },
+    { label: 'Act 6 reached', n: f.act6 },
+    { label: 'Forged ★', n: f.won },
+  ], runs, 'var(--ch-score)');
 }
 
 // ── SVG line chart (demand vs score, log y) with crosshair tooltip ──
@@ -632,40 +744,122 @@ function clearChart(box, byTurn, bossTicks) {
 // ── difficulty panel ──
 async function loadBalance() {
   const cid = $('#balplayer').value;
-  const data = await api('/api/admin/balance' + (cid ? '?cid=' + encodeURIComponent(cid) : ''));
-  BALCACHE = data;
+  const [diff, bal] = await Promise.all([
+    api('/api/admin/difficulty'),                                   // per-version aggregates (uncapped) + configs
+    api('/api/admin/balance' + (cid ? '?cid=' + encodeURIComponent(cid) : '')), // recent run strips
+  ]);
+  DIFFCACHE = diff; BALCACHE = bal;
   renderBalance();
+  renderVersions();
+}
+// ── v0.11.2 Versions tab: the registry (every build's knobs, diff-highlighted) + a tightness overlay ──
+const VER_PALETTE = ['#2f8fe6', '#e0492a', '#2fae5f', '#b8880f', '#9a55e8', '#41a8ff'];
+let VER_PICK = null; // Set of builds selected for the overlay (null → default to the two newest)
+function renderVersions() {
+  const dataVers = (DIFFCACHE && DIFFCACHE.versions || []).filter((v) => v.byTurn.length);
+  // registry rows = every build we can describe (has data OR a registry/telemetry config), newest first
+  const allBuilds = [...new Set([...dataVers.map((v) => v.build), ...knownConfigVersions()])].sort((a, b) => verCmp(b, a));
+  const reg = $('#verreg');
+  if (!allBuilds.length) { reg.innerHTML = '<div class="empty">No versions recorded yet.</div>'; }
+  else {
+    const head = `<tr><th>version</th>${CFG_FIELDS.map(([, l]) => `<th>${l}</th>`).join('')}<th>runs</th><th>won</th></tr>`;
+    const rows = allBuilds.map((build, i) => {
+      const cfg = configFor(build), prev = i + 1 < allBuilds.length ? configFor(allBuilds[i + 1]) : null;
+      const dv = dataVers.find((v) => v.build === build);
+      const cells = CFG_FIELDS.map(([k]) => {
+        const now = cfgVal(cfg, k), was = prev ? cfgVal(prev, k) : now;
+        return `<td class="${prev && now !== was ? 'vt-changed' : ''}" ${prev && now !== was ? `title="was ${esc(was)}"` : ''}>${esc(now)}</td>`;
+      }).join('');
+      const wr = dv && dv.runCount ? Math.round(dv.wins / dv.runCount * 100) + '%' : '—';
+      return `<tr><td class="vt-ver">${esc(verLabel(build))}${cfg && cfg.approx ? ' <i class="vt-approx">approx</i>' : ''}</td>${cells}<td class="num">${dv ? dv.runCount : 0}</td><td class="num">${wr}</td></tr>`;
+    }).join('');
+    reg.innerHTML = `<div class="vt-scroll"><table class="vt">${head}${rows}</table></div>`;
+  }
+  // compare picker — default to the two newest with data
+  if (!VER_PICK) VER_PICK = new Set(dataVers.slice().sort((a, b) => verCmp(b.build, a.build)).slice(0, 2).map((v) => v.build));
+  const pick = $('#verpick');
+  pick.innerHTML = dataVers.slice().sort((a, b) => verCmp(b.build, a.build)).map((v, i) =>
+    `<label class="verchk"><input type="checkbox" data-vb="${esc(v.build)}" ${VER_PICK.has(v.build) ? 'checked' : ''}><span style="color:${VER_PALETTE[i % VER_PALETTE.length]}">${esc(verLabel(v.build))}</span> <span class="muted">${v.runCount}r</span></label>`).join('') || '<span class="muted">no version has run data yet</span>';
+  renderVerOverlay();
+}
+function renderVerOverlay() {
+  const dataVers = (DIFFCACHE && DIFFCACHE.versions || []).filter((v) => v.byTurn.length).slice().sort((a, b) => verCmp(b.build, a.build));
+  const chosen = dataVers.filter((v) => VER_PICK.has(v.build));
+  const series = chosen.map((v, i) => {
+    const cfg = configFor(v.build);
+    const demByT = {}; if (cfg) demandCurve(cfg).forEach((p) => (demByT[p.x] = p.y));
+    return {
+      name: verLabel(v.build), color: VER_PALETTE[dataVers.indexOf(v) % VER_PALETTE.length],
+      pts: v.byTurn.map((b) => { const dem = demByT[b.t] || b.dem || 1; return { x: b.t, y: Math.round((b.med / dem) * 100) / 100 }; }),
+    };
+  });
+  series.push({ name: 'cleared line', color: 'rgba(232,182,76,.4)', dash: '3 3', pts: [{ x: 1, y: 1 }, { x: 48, y: 1 }] });
+  lineChart($('#verchart'), { series, logY: false, yFmt: (v) => v + '×', bossTicks: [6, 12, 18, 24, 30, 36, 42, 48] });
+  $('#verlegend').innerHTML = chosen.map((v, i) => `<span class="li"><span class="sw" style="background:${VER_PALETTE[dataVers.indexOf(v) % VER_PALETTE.length]}"></span>${esc(verLabel(v.build))}</span>`).join('')
+    + '<span class="li"><span class="sw" style="background:rgba(232,182,76,.5)"></span>1.0× = just cleared</span>';
+}
+// The ordered set of versions we hold a config for (registry ∪ live telemetry) — for delta lookups.
+function knownConfigVersions() {
+  const s = new Set(Object.keys(HISTORICAL_VERSIONS).map((k) => 'chapters · ' + k));
+  (DIFFCACHE && DIFFCACHE.versions || []).forEach((v) => { if (v.config && Object.keys(v.config).length) s.add(v.build); });
+  return [...s].sort(verCmp);
+}
+const cfgVal = (c, k) => { const v = c ? c[k] : undefined; if (v === null || v === undefined) return k === 'knee' || k === 'lateRate' ? 'none' : '—'; if (typeof v === 'boolean') return v ? 'yes' : 'no'; return String(v); };
+// Render one version's difficulty settings, highlighting what changed vs the previous known version.
+function renderVersionPanel(el, build, cfg) {
+  if (!cfg) { el.innerHTML = `<div class="vp-note">No difficulty settings recorded for ${esc(verLabel(build) || 'this version')}.</div>`; return; }
+  const known = knownConfigVersions();
+  const prevBuild = known.filter((b) => verCmp(b, build) < 0).pop();
+  const prev = prevBuild ? configFor(prevBuild) : null;
+  const cells = CFG_FIELDS.map(([k, label]) => {
+    const now = cfgVal(cfg, k), was = prev ? cfgVal(prev, k) : now;
+    const changed = prev && now !== was;
+    return `<div class="vp-cell${changed ? ' vp-changed' : ''}"><span class="vp-k">${label}</span><span class="vp-v">${esc(now)}${changed ? `<i>was ${esc(was)}</i>` : ''}</span></div>`;
+  }).join('');
+  const mults = (cfg.bossMults || []).map((m, i) => `<b title="Act ${roman(i + 1) || i + 1}">${m}</b>`).join(' ');
+  const srcTag = cfg._src === 'telemetry' ? '<span class="vp-src live">self-registered</span>'
+    : `<span class="vp-src">from registry${cfg._from && 'chapters · ' + cfg._from !== build ? ' · inherits ' + cfg._from : ''}${cfg.approx ? ' · approx (pre-git)' : ''}</span>`;
+  el.innerHTML = `<div class="vp-head"><b>${esc(verLabel(build))} · difficulty settings</b> ${srcTag}</div>
+    <div class="vp-grid">${cells}</div>
+    <div class="vp-boss">boss demand ×: ${mults}</div>
+    ${cfg.note ? `<div class="vp-note">${esc(cfg.note)}</div>` : ''}`;
 }
 function renderBalance() {
-  const build = $('#balbuild').value;
-  let runs = (BALCACHE && BALCACHE.runs) || [];
-  const builds = [...new Set(runs.map((r) => r.build).filter(Boolean))];
+  // v0.11.2: the Difficulty tab is now a SINGLE-VERSION deep dive. The charts read the server's
+  // per-version aggregates (DIFFCACHE), never the version-conflated run pool; demand is drawn from
+  // the version's own difficulty config, so a v0.6 curve is never overlaid on a v0.11 median.
+  const versions = (DIFFCACHE && DIFFCACHE.versions || []).filter((v) => v.byTurn.length).slice().sort((a, b) => verCmp(b.build, a.build));
   const sel = $('#balbuild');
-  const keep = sel.value;
-  sel.innerHTML = '<option value="">All builds</option>' + builds.map((b) => `<option ${b === keep ? 'selected' : ''} value="${esc(b)}">${esc(b.replace('chapters · ', ''))}</option>`).join('');
-  if (build) runs = runs.filter((r) => r.build === build);
-  // aggregate by turn: median score, demand (same curve per build), clear rate
-  const byTurn = new Map();
-  for (const r of runs) for (const t of r.turns) {
-    let b = byTurn.get(t.t);
-    if (!b) { b = { scores: [], dem: t.dem, cleared: 0, alive: 0 }; byTurn.set(t.t, b); }
-    b.scores.push(t.score); b.dem = t.dem; b.alive++; if (t.cleared) b.cleared++;
-  }
-  const xs = [...byTurn.keys()].sort((a, b) => a - b);
-  const med = (a) => { const s = a.slice().sort((x, y) => x - y); return s[Math.floor(s.length / 2)]; };
+  let build = sel.value;
+  if (!build || !versions.some((v) => v.build === build)) build = versions.length ? versions[0].build : ''; // default: latest
+  sel.innerHTML = versions.map((v) => `<option ${v.build === build ? 'selected' : ''} value="${esc(v.build)}">${esc(verLabel(v.build))}</option>`).join('') || '<option value="">no data</option>';
+  const ver = versions.find((v) => v.build === build);
+  const cfg = configFor(build);
+
+  // ── the version's difficulty settings panel (what made this version hard/easy) ──
+  renderVersionPanel($('#balsettings'), build, cfg);
+
+  if (!ver) { $('#demchart').innerHTML = ''; $('#clearchart').innerHTML = ''; $('#demlegend').innerHTML = ''; $('#balruns').innerHTML = '<div class="empty">No difficulty data for this version yet.</div>'; return; }
+
+  const xs = ver.byTurn.map((b) => b.t);
   const bossTicks = xs.filter((x) => x % 6 === 0);
+  const demandPts = cfg ? demandCurve(cfg).filter((p) => xs.includes(p.x)) // EXACT curve from the version's config
+    : ver.byTurn.map((b) => ({ x: b.t, y: b.dem }));                       // fallback: demand as recorded
   lineChart($('#demchart'), {
     bossTicks,
     series: [
-      { name: 'demand', color: '#e0492a', dash: '5 4', pts: xs.map((x) => ({ x, y: byTurn.get(x).dem })) },
-      { name: 'median score', color: '#2f8fe6', pts: xs.map((x) => ({ x, y: med(byTurn.get(x).scores), note: `(${byTurn.get(x).alive} runs)` })) },
+      { name: 'demand', color: '#e0492a', dash: '5 4', pts: demandPts },
+      { name: 'median score', color: '#2f8fe6', pts: ver.byTurn.map((b) => ({ x: b.t, y: b.med, note: `(${b.alive} runs)` })) },
     ],
   });
-  $('#demlegend').innerHTML = xs.length ? `
-    <span class="li"><span class="sw" style="background:#e0492a"></span>demand (log scale)</span>
-    <span class="li"><span class="sw" style="background:#2f8fe6"></span>median score of runs alive that turn</span>
-    <span class="li"><span class="swd" style="background:#2fae5f"></span>clear-rate bars below · ${runs.length} runs</span>` : '';
-  clearChart($('#clearchart'), byTurn, bossTicks);
+  const wr = ver.runCount ? Math.round(ver.wins / ver.runCount * 100) : 0;
+  $('#demlegend').innerHTML = `
+    <span class="li"><span class="sw" style="background:#e0492a"></span>demand (from ${verLabel(build)}'s config)</span>
+    <span class="li"><span class="sw" style="background:#2f8fe6"></span>median score</span>
+    <span class="li"><span class="swd" style="background:#2fae5f"></span>clear-rate below · ${ver.runCount} runs · ${ver.wins} won (${wr}%)</span>`;
+  const clearMap = new Map(ver.byTurn.map((b) => [b.t, { cleared: b.cleared, alive: b.alive, dem: b.dem }]));
+  clearChart($('#clearchart'), clearMap, bossTicks);
+  let runs = ((BALCACHE && BALCACHE.runs) || []).filter((r) => r.build === build);
   // per-run strips — capped so the Difficulty tab stays a short page; "show all" expands
   const cls = (m) => (m < 1 ? 'miss' : m < 1.4 ? 'tight' : m < 2.2 ? 'ok' : 'easy');
   const CAP = 8;
@@ -863,7 +1057,7 @@ async function load() {
   const data = await api('/api/admin/summary');
   CACHE = data;
   renderStats(data.overview, data.players);
-  renderFunnels(data.players);
+  renderFunnels(data.players, data.overview);
   renderTable(data.players);
   renderCompare(data.players);
   $('#freshness').textContent = 'updated ' + new Date().toLocaleTimeString();
@@ -983,7 +1177,7 @@ async function openDetail(cid) {
 }
 
 // ── tabs: hash-routed, no re-render on switch (data refreshes globally on the 12s tick) ──
-const TABS = ['pulse', 'difficulty', 'compare', 'cards', 'players'];
+const TABS = ['pulse', 'difficulty', 'versions', 'compare', 'cards', 'players'];
 function showTab(name) {
   if (!TABS.includes(name)) name = 'pulse';
   document.querySelectorAll('section[data-tab]').forEach((s) => s.classList.toggle('tab-on', s.dataset.tab === name));
@@ -1002,6 +1196,8 @@ $('#logout').onclick = () => { sessionStorage.removeItem(KEY_STORE); location.re
 $('#scrim').onclick = closeDrawer;
 $('#balplayer').addEventListener('change', () => loadBalance().catch(() => {}));
 $('#balbuild').addEventListener('change', renderBalance);
+$('#verpick').addEventListener('change', (e) => { const c = e.target.closest('input[data-vb]'); if (!c) return; if (c.checked) VER_PICK.add(c.dataset.vb); else VER_PICK.delete(c.dataset.vb); renderVerOverlay(); });
+$('#pulsebuild').addEventListener('change', (e) => { PULSE_BUILD = e.target.value; if (CACHE) { renderStats(CACHE.overview, CACHE.players); renderFunnels(CACHE.players, CACHE.overview); } });
 $('#balmore').addEventListener('click', () => { BAL_EXPANDED = !BAL_EXPANDED; renderBalance(); });
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDrawer(); });
 
