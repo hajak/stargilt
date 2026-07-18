@@ -306,7 +306,8 @@ async function handleAdmin(req, res, pathname, url) {
       if (!r) { r = { sid: e.sid, cid: e.cid, build: e.build, started: e.ts, ended: e.ts, turns: [], won: null, endTurn: 0, endGlory: 0 }; runs.set(e.sid, r); }
       r.ended = e.ts; // events arrive chronologically — last one marks the run's end (→ visible duration)
       if (e.type === 'ch_turn') {
-        r.turns.push({ t: x.t, act: x.act, boss: !!x.boss, dem: x.dem, score: x.score, base: x.base, mult: x.mult, cleared: !!x.cleared });
+        r.turns.push({ t: x.t, act: x.act, boss: !!x.boss, dem: x.dem, score: x.score, base: x.base, mult: x.mult, cleared: !!x.cleared,
+          deckN: x.deckN, drossN: x.drossN, openN: x.openN, openEnab: x.openEnab, openPlay: x.openPlay, openDead: x.openDead, focusLeft: x.focusLeft, played: x.played, charms: x.charms }); // v0.11.3 variance signals for the run-strip cause tags
       } else { r.won = !!x.won; r.endTurn = x.endTurn || 0; r.endGlory = x.endGlory || 0; }
     }
     const list = [...runs.values()]
@@ -336,8 +337,15 @@ async function handleAdmin(req, res, pathname, url) {
       if (e.sid) v.sids.add(e.sid);
       const x = e.extra || {};
       if (e.type === 'ch_turn') {
-        let b = v.turns.get(x.t); if (!b) { b = { scores: [], dem: x.dem, cleared: 0, alive: 0 }; v.turns.set(x.t, b); }
+        let b = v.turns.get(x.t); if (!b) { b = { scores: [], dem: x.dem, cleared: 0, alive: 0, deckN: [], drossN: [], dead: 0, focusLeft: [], miss: { dead: 0, diluted: 0, hard: 0 } }; v.turns.set(x.t, b); }
         b.dem = x.dem; b.alive++; if (x.score != null) b.scores.push(x.score); if (x.cleared) b.cleared++;
+        // v0.11.3 variance signals: deck dilution, dead-hand rate, resource waste, miss-cause
+        if (x.deckN != null) b.deckN.push(x.deckN);
+        if (x.drossN != null) b.drossN.push(x.drossN);
+        if (x.focusLeft != null) b.focusLeft.push(x.focusLeft);
+        const deadHand = (x.openEnab === 0 && (x.openN || 0) > 0); // opening hand had no draw/focus enabler
+        if (deadHand) b.dead++;
+        if (!x.cleared) { const diluted = (x.deckN || 0) > 0 && (x.drossN || 0) / (x.deckN || 1) >= 0.25; b.miss[deadHand ? 'dead' : diluted ? 'diluted' : 'hard']++; }
       } else { // ch_run
         if (x.won) v.wins++;
         else { const act = Math.max(1, Math.ceil((x.endTurn || 0) / 6)); v.deaths[act] = (v.deaths[act] || 0) + 1; }
@@ -347,6 +355,8 @@ async function handleAdmin(req, res, pathname, url) {
       build, runCount: v.sids.size, wins: v.wins, deaths: v.deaths, config: v.config,
       byTurn: [...v.turns.entries()].sort((a, b2) => a[0] - b2[0]).map(([t, b]) => ({
         t, dem: b.dem, med: median(b.scores), p25: pct(b.scores, 0.25), p75: pct(b.scores, 0.75), cleared: b.cleared, alive: b.alive,
+        medDeckN: median(b.deckN), medDrossN: median(b.drossN), deadHandRate: b.alive ? Math.round(100 * b.dead / b.alive) : 0,
+        avgFocusLeft: b.focusLeft.length ? Math.round(10 * b.focusLeft.reduce((s, n) => s + n, 0) / b.focusLeft.length) / 10 : 0, miss: b.miss,
       })),
     })).filter((x) => x.byTurn.length || x.config); // keep versions with data or a registered config
     return sendJSON(res, 200, { versions });

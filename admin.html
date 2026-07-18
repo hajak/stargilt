@@ -177,6 +177,17 @@ table.vt td.vt-changed{color:var(--gold-bright);font-weight:800;background:rgba(
 .balcell.tight{background:rgba(232,182,76,.18)} .balcell.tight .m{color:var(--gold-bright)}
 .balcell.ok{background:rgba(47,174,95,.14)} .balcell.ok .m{color:var(--c-verdant)}
 .balcell.easy{background:rgba(47,143,230,.14)} .balcell.easy .m{color:#8fc7ff}
+.balcell{position:relative}
+.cause{margin-top:.15rem;font-size:.5rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;border-radius:4px;padding:.04rem .18rem;line-height:1.3}
+.cause.dead{color:#ff8a5c;background:rgba(224,73,42,.18)}
+.cause.diluted{color:#c79bff;background:rgba(154,85,232,.18)}
+.cause.hard{color:var(--ink-3);background:rgba(255,255,255,.05)}
+.varpanel{margin:.9rem 0 .4rem;padding:.7rem .85rem;border:1px solid var(--hair);border-radius:10px;background:rgba(154,85,232,.03)}
+.varpanel .hd2{font-size:.78rem;font-weight:800;color:var(--ink-1);margin-bottom:.5rem}
+.varpanel .hd2 .sub{font-weight:600;color:var(--ink-3);font-size:.66rem}
+.postboss{margin-top:.55rem;font-size:.68rem;color:var(--ink-2);display:flex;flex-wrap:wrap;gap:.4rem;align-items:baseline}
+.postboss .pb{border:1px solid var(--hair);border-radius:6px;padding:.1rem .4rem;font-variant-numeric:tabular-nums}
+.postboss .pb.hot{color:#ff8a5c;border-color:rgba(224,73,42,.5);background:rgba(224,73,42,.1)}
 
 /* ── compare ── */
 .cmp-head,.cmp-row{display:grid;grid-template-columns:1.6fr 1.3fr .8fr .55fr .7fr .7fr .7fr .7fr .7fr .7fr .8fr .8fr;gap:.5rem;align-items:center}
@@ -400,6 +411,13 @@ input.field:focus{border-color:var(--gold);box-shadow:0 0 18px rgba(232,182,76,.
           <span><b style="color:var(--c-verdant)">roomy</b> 1.4–2.2×</span>
           <span><b style="color:#8fc7ff">too easy</b> &gt;2.2×</span>
           <span>◆ = boss turn · each cell = score ÷ demand</span>
+        </div>
+        <div id="varpanel" class="varpanel">
+          <div class="hd2">◷ Why — deck dilution &amp; dead hands <span class="sub" id="varnote"></span></div>
+          <div class="chartbox" id="dilchart"></div>
+          <div class="legendrow" id="dillegend"></div>
+          <div class="chartbox" id="deadchart" style="margin-top:.5rem"></div>
+          <div id="postboss" class="postboss"></div>
         </div>
         <div id="balruns"></div>
         <button class="btn-ghost" id="balmore" hidden style="margin-top:.6rem"></button>
@@ -741,6 +759,56 @@ function clearChart(box, byTurn, bossTicks) {
   box.innerHTML = g;
 }
 
+// ── v0.11.3 variance analysis: separate hard-by-design from unlucky (dead hand / diluted deck) ──
+// classify one run's turn (from the raw balance fields) into a cause
+function turnCause(t) {
+  if (t.openN == null) return null; // pre-v0.11.3 run, no signal
+  if (t.openEnab === 0 && t.openN > 0) return { k: 'dead', label: 'dead hand', why: `opening hand had no draw/focus enabler (${t.openDead || 0} dead of ${t.openN})` };
+  if ((t.deckN || 0) > 0 && (t.drossN || 0) / t.deckN >= 0.25) return { k: 'diluted', label: 'diluted', why: `${t.drossN} Dross in a ${t.deckN}-card deck (${Math.round(100 * t.drossN / t.deckN)}%)` };
+  if (!t.cleared) return { k: 'hard', label: 'genuinely hard', why: 'full hand, still short of demand' };
+  return null;
+}
+function renderVariance(ver, bossTicks) {
+  const bt = ver.byTurn;
+  const hasSig = bt.some((b) => b.medDeckN || b.deadHandRate || b.medDrossN); // only v0.11.3+ data has these
+  const panel = $('#varpanel');
+  if (!hasSig) { panel.style.display = 'none'; return; }
+  panel.style.display = '';
+  const xs = bt.map((b) => b.t);
+  // dilution: median deck size + median Dross (linear scale)
+  lineChart($('#dilchart'), {
+    logY: false, yFmt: (v) => v + '', bossTicks,
+    series: [
+      { name: 'deck size', color: '#b8880f', pts: bt.map((b) => ({ x: b.t, y: b.medDeckN || 0 })) },
+      { name: 'Dross in deck', color: '#9a55e8', pts: bt.map((b) => ({ x: b.t, y: b.medDrossN || 0 })) },
+    ],
+  });
+  $('#dillegend').innerHTML = `<span class="li"><span class="sw" style="background:#b8880f"></span>median deck size</span><span class="li"><span class="sw" style="background:#9a55e8"></span>median Dross (dilution)</span><span class="li"><span class="swd" style="background:#e0492a"></span>dead-hand rate below (opening hand with no enabler)</span>`;
+  // dead-hand rate bars (share of runs whose opening hand had no draw/focus enabler that turn)
+  clearChartPct($('#deadchart'), bt, bossTicks);
+  // post-boss watch: the Dross-injection dilution spike + dead hands right after each boss
+  const post = [7, 13, 19, 25, 31, 37, 43].map((t) => bt.find((b) => b.t === t)).filter(Boolean);
+  const overallDead = bt.length ? Math.round(bt.reduce((s, b) => s + (b.deadHandRate || 0), 0) / bt.length) : 0;
+  $('#varnote').textContent = `· ${overallDead}% of opening hands had no enabler (avg across turns)`;
+  $('#postboss').innerHTML = post.length
+    ? '<b>Post-boss turns</b> (deck freshly diluted by the boss): ' + post.map((b) => `<span class="pb ${b.deadHandRate >= 40 ? 'hot' : ''}">t${b.t}: ${b.deadHandRate}% dead · ${b.medDrossN} Dross</span>`).join('')
+    : '';
+}
+// a 0-100% bar row for a per-turn percentage field (deadHandRate) — mirrors clearChart's look
+function clearChartPct(box, byTurn, bossTicks) {
+  const W = 900, H = 90, PL = 34, PR = 12, PT = 10, PB = 16;
+  const xs = byTurn.map((b) => b.t); if (!xs.length) { box.innerHTML = ''; return; }
+  const xMin = Math.min(...xs), xMax = Math.max(...xs);
+  const bw = Math.min(14, Math.max(3, ((W - PL - PR) / (xMax - xMin + 1)) - 2));
+  const X = (x) => PL + ((x - xMin) / (xMax - xMin || 1)) * (W - PL - PR - bw);
+  let g = `<svg viewBox="0 0 ${W} ${H}" role="img"><text x="${PL - 7}" y="${PT + 8}" text-anchor="end" font-size="9.5" fill="#7d7566">100%</text><text x="${PL - 7}" y="${H - PB}" text-anchor="end" font-size="9.5" fill="#7d7566">0%</text><line x1="${PL}" y1="${PT}" x2="${W - PR}" y2="${PT}" stroke="rgba(255,255,255,.06)"/>`;
+  for (const b of byTurn) {
+    const rate = (b.deadHandRate || 0) / 100, h = Math.max(1.5, rate * (H - PT - PB));
+    g += `<rect x="${X(b.t)}" y="${H - PB - h}" width="${bw}" height="${h}" rx="2" fill="#e0492a" opacity="${bossTicks.includes(b.t) ? 1 : .72}"><title>turn ${b.t}: ${b.deadHandRate || 0}% dead hands (no enabler in the opening)</title></rect>`;
+  }
+  g += `<text x="${W - PR}" y="${H - 4}" text-anchor="end" font-size="9" fill="#7d7566">dead-hand rate →</text></svg>`;
+  box.innerHTML = g;
+}
 // ── difficulty panel ──
 async function loadBalance() {
   const cid = $('#balplayer').value;
@@ -859,6 +927,7 @@ function renderBalance() {
     <span class="li"><span class="swd" style="background:#2fae5f"></span>clear-rate below · ${ver.runCount} runs · ${ver.wins} won (${wr}%)</span>`;
   const clearMap = new Map(ver.byTurn.map((b) => [b.t, { cleared: b.cleared, alive: b.alive, dem: b.dem }]));
   clearChart($('#clearchart'), clearMap, bossTicks);
+  renderVariance(ver, bossTicks);
   let runs = ((BALCACHE && BALCACHE.runs) || []).filter((r) => r.build === build);
   // per-run strips — capped so the Difficulty tab stays a short page; "show all" expands
   const cls = (m) => (m < 1 ? 'miss' : m < 1.4 ? 'tight' : m < 2.2 ? 'ok' : 'easy');
@@ -880,7 +949,9 @@ function renderBalance() {
         const who = nameOfCid(r.cid);
         const cells = r.turns.map((t) => {
           const m = t.dem > 0 ? t.score / t.dem : 0;
-          return `<div class="balcell ${cls(m)}${t.boss ? ' boss' : ''}" title="turn ${t.t}${t.boss ? ' · BOSS' : ''} · base ${t.base} × mult ${t.mult} = ${t.score} vs demand ${t.dem}"><div class="m num">${t.boss ? '◆' : ''}${m.toFixed(1)}×</div><div class="ds num">${fmtN(t.dem)}→${fmtN(t.score)}</div></div>`;
+          const cause = turnCause(t); // v0.11.3: was a weak/missed turn bad luck or genuine difficulty?
+          const tag = (m < 1.4 && cause) ? `<div class="cause ${cause.k}">${cause.label}</div>` : '';
+          return `<div class="balcell ${cls(m)}${t.boss ? ' boss' : ''}" title="turn ${t.t}${t.boss ? ' · BOSS' : ''} · base ${t.base} × mult ${t.mult} = ${t.score} vs demand ${t.dem}${cause ? ' · ' + cause.why : ''}"><div class="m num">${t.boss ? '◆' : ''}${m.toFixed(1)}×</div><div class="ds num">${fmtN(t.dem)}→${fmtN(t.score)}</div>${tag}</div>`;
         }).join('');
         return `<div class="balrun"><div class="rh">${res} <b>${esc(who)}</b> <span class="dur num">⏱ ${fmtDur(new Date(r.ended || r.started) - new Date(r.started))}</span> <span class="muted">${esc((r.build || '').replace('chapters · ', ''))}</span> <span class="muted num">${ago(r.started)} · ${r.turns.length} turns · ${r.won === null ? liveGlory : (r.endGlory || 0)}★${r.won === null ? ` · seen ${ago(r.ended)}` : ''}</span></div><div class="balcells">${cells}</div></div>`;
       }).join('')
