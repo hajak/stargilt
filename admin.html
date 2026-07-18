@@ -1139,7 +1139,7 @@ async function load() {
 }
 
 // ── death location: acts are 6 turns, the 6th is that act's boss ──
-const BOSS_BY_ACT = { 1: 'The Sealed Hearth', 2: 'The Starved Flue', 3: 'The Molten Vise', 4: 'The Skimming', 5: 'The Guttering', 6: 'The Hollow Forge', 7: 'The Iron Cage', 8: 'The Masterwork' };
+const BOSS_BY_ACT = { 1: 'The Sealed Hearth', 2: 'The Starved Flue', 3: 'The Tarnish', 4: 'The Skimming', 5: 'The Silting', 6: 'The Hollow Forge', 7: 'The Iron Cage', 8: 'The Masterwork' }; // v0.11.4 roster
 function deathWhere(endTurn) {
   if (!endTurn) return '';
   const act = Math.min(8, Math.ceil(endTurn / 6));
