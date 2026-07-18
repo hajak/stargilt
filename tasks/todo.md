@@ -981,3 +981,9 @@ The two parked playtest items.
 - [x] Charm shatters to forgive the first missed tithe ANYWHERE (not Act-1-only); buy more at the Bazaar.
 - [x] boot mounts state.relics=[emberheart] (fresh chapter run; CONTINUE overwrites with saved bench); death path → straight to charm-shatter; state.act1Mercy removed from init/save/restore.
 - Tests: v084 mercy rewritten to charm behavior; v085 death clears the charm first; charm-start headless (1 charm mounted + visible + announcement); full battery green. Deployed + prod-verified.
+
+
+## Round 53 — v0.11.7: focus-badge fix + charm-message hold (2026-07-18)
+- [x] costsFocus now keys on focusCostOf(def)>0 (was !isFreePlay) — free focus-engines no longer show a "❖ 0" badge / red edge; real-cost cards (incl. rare/mythic) still do.
+- [x] slamText gains a `hold` option; the game-start Emberheart Charm message lingers ~3.6s.
+- Tests: badge across card types (Conclave/Warren none, Verdant Bloom/Vintner keep, treasures none); full battery green. Deployed + prod-verified.
