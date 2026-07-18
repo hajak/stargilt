@@ -928,3 +928,15 @@ The two parked playtest items.
       Autopsy (maxCombo tracker), deck histogram, bench roll-call, MASTERWORK COMPLETE stamp; game_won event.
 - Tests: v0110test 21/21; battery 223 green (pilejump sway tolerance 8→22px for the lower piles under rotation).
       Deployed + prod-verified.
+
+
+## Round 47 — v0.11.1: mystical debrief backdrop + star/gold give-back + opening Dross ware + 6 gold (2026-07-18)
+- [x] (1) Victory Debrief mystical backdrop: #db-cosmos canvas — counter-rotating forge-sigil rings + twinkling
+      gold constellation drifting up, self-sleeping RAF (Cosmos module, started in openDebrief), faint by design,
+      REDUCED_MOTION → still frame. z-layer: cosmos 0 / embers 1 / doc 2.
+- [x] (2) "Slightly too hard" give-back via STARS+GOLD (not mult): STAR_BOOST=1.06 per played card in BOTH
+      computeScore and the tally (projection===tally intact; ⚡ flag still reads raw); per-boss gold +5→+6.
+- [x] (3) Opening Bazaar guarantees a strong Dross-for-power ware (cheap/low-focus) — first of the 7 food groups.
+- [x] (4) Start with 6 gold (was 3).
+- Also: the Victory Debrief prototype artifact (Erik's data) updated with the same cosmos backdrop.
+- Tests: full battery 223 green + new-mechanics headless pass. Deployed + prod-verified.
