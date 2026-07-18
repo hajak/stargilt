@@ -974,3 +974,10 @@ The two parked playtest items.
 - [x] Dead-hand mulligan: openSnap.enab===0 → reshuffle+redraw once (mulliganDeadHand, guarded; new-turn/resume/turn-1).
 - [x] Tighter start: GRACE_FLOOR 0.5→0.62 (lifts t1-5 only, converges by t8; mid untouched; no rate change).
 - Tests: focus costs, 2 Tidewakes, mulligan on forced dead hand, t1 demand 6→7 / mid untouched; full battery 223 green. Deployed + prod-verified.
+
+
+## Round 52 — v0.11.6: start armed with a visible Emberheart Charm (2026-07-18)
+- [x] Replace the invisible free Act-1 mercy with a real Emberheart Charm mounted on the bench from turn 1; announce it at game start.
+- [x] Charm shatters to forgive the first missed tithe ANYWHERE (not Act-1-only); buy more at the Bazaar.
+- [x] boot mounts state.relics=[emberheart] (fresh chapter run; CONTINUE overwrites with saved bench); death path → straight to charm-shatter; state.act1Mercy removed from init/save/restore.
+- Tests: v084 mercy rewritten to charm behavior; v085 death clears the charm first; charm-start headless (1 charm mounted + visible + announcement); full battery green. Deployed + prod-verified.
