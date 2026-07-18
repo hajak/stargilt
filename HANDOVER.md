@@ -35,20 +35,22 @@ Previous session (v0.10.0): the full Dopamine & Juice overhaul — Heat spine, e
 - Prod-verify through the gate: cookie is `sg_gate=<sha256('sg-gate::Mellon')[:32]>`, not the plaintext.
 
 ## Current State
-- **v0.10.0 live and prod-verified.** All suites green: v0100test (27), v090 (13), v085 (14), v084 (7), burn (8), v080 (12), v069 (14), pilejump (5), scores (46), admin (32).
-- **No known bugs open.** Feel-checks that only a human can do: the apex chant in context, boss-mode music darkening, the victory hard-stop, death silence, trauma-shake feel on a real feast, SCREEN FX slider sweep.
+- **v0.11.0 live and prod-verified** (version string + /api/admin/board answering through the gate). All suites green: v0110 (21), v0100 (26), v090 (13), v085 (14), v084 (7), burn (8), v080 (12), v069 (14), pilejump (5), passAsmoke (13), scores (46), admin (32), hiscore (12) — 223 assertions.
+- **No known bugs open.** Human feel-checks pending: the debrief entrance on a REAL win, the mult nerf's mid-game tension (watch Boss 2-3 clear rates in /admin), spectate against a live human session.
 
 ## Next Steps
-- [ ] **Hampus plays it** — the whole overhaul is tuned by formula, not by ear/eye on a real run yet. Expect knob-turning requests (chant volume, shake ceiling, GORGES threshold).
+- [ ] **Watch the admin Difficulty tab** after a few days of v0.11 play: did t9-18 tighten as intended (clear rates), did anyone hit the Boss-1 wall harder (Act-1 was meant to stay untouched)? CHAIN_RATE .18→.16 is the single dial if more bite is wanted.
+- [ ] First real v0.11 winner: check the debrief renders well with their real data (esp. long names, huge glory, the async honor-roll placement upgrade).
 - [ ] The parked **design-improvements list** the user said he'd send ("I will do it soon. Ignore for now.").
-- [ ] Possible follow-ups: mobile perf tier for freeze/bursts (critique #7 — only reduced-motion + the slider gate today); Analytics could later add per-run drill-in.
+- [ ] Possible follow-ups: mobile perf tier for freeze/bursts; ANALYTICS per-run drill-in; spectate auto-refresh countdown chip.
 
 ## Important Files
 | File | Purpose |
 |------|---------|
-| `index.html` | The entire game. `chapters · v0.10.0`. |
-| `chapters.html` | Byte-identical copy — keep synced. |
-| `tasks/dopamine-plan.md` | The build spec (now fully implemented). |
-| `tasks/todo.md` | Rolling log — Round 45 = this build. |
-| `CONTEXT.md` | Project bible; v0.10.0 changelog is the header entry. |
-| scratchpad `v0100test.mjs` | The 27-assert overhaul suite (+ the full battery beside it). |
+| `index.html` | The entire game. `chapters · v0.11.0`. Edit here, then `cp index.html chapters.html`. |
+| `chapters.html` | Byte-identical copy — never hand-edit. |
+| `server.js` | Static + gate + telemetry + honor roll + admin API (new: `/api/admin/board`). |
+| `admin.html` | Forge Console (new: LIVE/ABANDONED age gate, WATCH spectate panel). |
+| `CONTEXT.md` | Project bible; v0.11.0 changelog is the header entry. |
+| `tasks/todo.md` | Rolling log — Round 46 = this build. |
+| scratchpad `v0110test.mjs` | The 21-assert v0.11 suite (+ the full battery beside it). |
