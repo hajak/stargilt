@@ -258,10 +258,32 @@ async function handleAdmin(req, res, pathname, url) {
     const events = await store.allEvents();
     const canon = buildCanon(await store.getLabels());
     const wantPerson = personOf(wantCid, canon);
+    // /api/t is unauthenticated — shape-validate the snapshot before it reaches the admin's browser
+    // (mirrors the whitelist treatment the events route applies to its extra fields).
+    const nOf = (v) => (Number.isFinite(+v) ? +v : 0);
+    const sOf = (v, max = 60) => (typeof v === 'string' ? v.slice(0, max) : '');
+    const cardOf = (c) => (c && typeof c === 'object'
+      ? { i: sOf(c.i, 40), n: sOf(c.n), c: sOf(c.c, 12), r: sOf(c.r, 12), k: nOf(c.k), g: nOf(c.g), f: nOf(c.f) } : null);
+    const shapeBoard = (x) => {
+      if (!x || typeof x !== 'object') return {};
+      return {
+        t: nOf(x.t), act: nOf(x.act), boss: !!x.boss,
+        glory: nOf(x.glory), gold: nOf(x.gold), focus: nOf(x.focus), buys: nOf(x.buys), combo: nOf(x.combo),
+        tithe: nOf(x.tithe), score: nOf(x.score), cap: nOf(x.cap),
+        rank: sOf(x.rank), twist: x.twist == null ? null : sOf(x.twist),
+        deckN: nOf(x.deckN), discN: nOf(x.discN),
+        hand: (Array.isArray(x.hand) ? x.hand.slice(0, 20) : []).map(cardOf).filter(Boolean),
+        played: (Array.isArray(x.played) ? x.played.slice(0, 24) : []).map(cardOf).filter(Boolean),
+        market: (Array.isArray(x.market) ? x.market.slice(0, 16) : []).map((m) => (m && typeof m === 'object'
+          ? { i: m.i == null ? null : sOf(m.i, 40), n: m.n == null ? null : sOf(m.n), c: sOf(m.c, 12), k: nOf(m.k), rem: nOf(m.rem), rack: !!m.rack } : null)).filter(Boolean),
+        relics: (Array.isArray(x.relics) ? x.relics.slice(0, 20) : []).map((r) => (r && typeof r === 'object'
+          ? { i: sOf(r.i, 40), n: sOf(r.n), c: sOf(r.c, 12), sh: !!r.sh } : null)).filter(Boolean),
+      };
+    };
     for (let i = events.length - 1; i >= 0; i--) {
       const e = events[i];
       if (e.type === 'ch_board' && personOf(e.cid, canon) === wantPerson)
-        return sendJSON(res, 200, { ts: e.ts, cid: e.cid, name: e.name, board: e.extra || {} });
+        return sendJSON(res, 200, { ts: e.ts, cid: e.cid, name: e.name, board: shapeBoard(e.extra) });
     }
     return sendJSON(res, 404, { error: 'no board snapshot yet' });
   }

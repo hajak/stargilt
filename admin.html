@@ -1046,9 +1046,14 @@ $('#gate-key').addEventListener('keydown', (e) => { if (e.key === 'Enter') enter
 /* ── v0.11 SPECTATE: watch a live board, zero animation — re-rendered from the newest ch_board snapshot ── */
 let SPEC_CID = null, SPEC_TIMER = 0;
 const CCOLORS = { ember: '#e0492a', tide: '#2f8fe6', verdant: '#2fae5f', umbra: '#9a55e8', aurel: '#b8880f', ash: '#8f8570' };
+// The board payload arrives from the UNAUTHENTICATED /api/t — treat every field as hostile.
+// Names go through esc(); everything that should be a number is FORCED numeric (a string here
+// would otherwise ride innerHTML into the admin's browser). Colors are dict-key lookups only.
+const num = (v) => (Number.isFinite(+v) ? +v : 0);
 function specChip(c) {
-  const cc = CCOLORS[c.c] || '#888';
-  return `<span class="spec-chip" style="--cc:${cc}">${esc(c.n || c.i || '—')}<small>${c.k ? c.k + '⬤' : ''}${c.g ? ' ' + c.g + '★' : ''}${c.f ? ' ⁂' + c.f : ''}</small></span>`;
+  const cc = CCOLORS[c.c] || '#888'; // key lookup — output is always our own hex table
+  const k = num(c.k), g = num(c.g), f = num(c.f);
+  return `<span class="spec-chip" style="--cc:${cc}">${esc(String(c.n || c.i || '—'))}<small>${k ? k + '⬤' : ''}${g ? ' ' + g + '★' : ''}${f ? ' ⁂' + f : ''}</small></span>`;
 }
 async function loadSpectate() {
   if (!SPEC_CID) return;
@@ -1060,19 +1065,19 @@ async function loadSpectate() {
   $('#spec-ago').textContent = 'as of ' + ago(d.ts) + (b.boss ? ' · ◆ BOSS: ' + (b.twist || '') : '');
   const chips = (a) => (a && a.length ? a.map(specChip).join('') : '<span class="muted">—</span>');
   $('#spec-body').innerHTML =
-    `<div class="spec-hud"><span>t</span><b class="num">${b.t || '—'}</b><span>act</span><b class="num">${b.act || '—'}</b>` +
-    `<span>★</span><b class="num">${fmtN(b.glory || 0)}</b><span>⬤</span><b class="num">${b.gold || 0}</b>` +
-    `<span>❖</span><b class="num">${b.focus || 0}</b><span>⚒</span><b class="num">${b.buys || 0}</b>` +
-    `<span>cap</span><b class="num">×${b.cap || '—'}</b><span>combo</span><b class="num">×${b.combo || 0}</b>` +
-    `<span>rank</span><b>${esc(b.rank || '—')}</b></div>` +
-    `<div class="spec-hud"><span>the Forge asked</span><b class="num">${fmtN(b.tithe || 0)}★</b><span>the turn paid</span><b class="num">${fmtN(b.score || 0)}★</b></div>` +
+    `<div class="spec-hud"><span>t</span><b class="num">${num(b.t) || '—'}</b><span>act</span><b class="num">${num(b.act) || '—'}</b>` +
+    `<span>★</span><b class="num">${fmtN(num(b.glory))}</b><span>⬤</span><b class="num">${num(b.gold)}</b>` +
+    `<span>❖</span><b class="num">${num(b.focus)}</b><span>⚒</span><b class="num">${num(b.buys)}</b>` +
+    `<span>cap</span><b class="num">×${num(b.cap) || '—'}</b><span>combo</span><b class="num">×${num(b.combo)}</b>` +
+    `<span>rank</span><b>${esc(String(b.rank || '—'))}</b></div>` +
+    `<div class="spec-hud"><span>the Forge asked</span><b class="num">${fmtN(num(b.tithe))}★</b><span>the turn paid</span><b class="num">${fmtN(num(b.score))}★</b></div>` +
     `<div class="spec-sec">Played (${(b.played || []).length})</div><div class="spec-chips">${chips(b.played)}</div>` +
-    `<div class="spec-sec">Hand (${(b.hand || []).length}) · deck ${b.deckN ?? '—'} · discard ${b.discN ?? '—'}</div><div class="spec-chips">${chips(b.hand)}</div>` +
+    `<div class="spec-sec">Hand (${(b.hand || []).length}) · deck ${num(b.deckN)} · discard ${num(b.discN)}</div><div class="spec-chips">${chips(b.hand)}</div>` +
     `<div class="spec-sec">The Bazaar</div><div class="spec-chips">${(b.market || []).map((m) => m.i
-      ? `<span class="spec-chip" style="--cc:${CCOLORS[m.c] || '#888'}">${esc(m.n)}<small>${m.k}⬤ ×${m.rem}${m.rack ? ' · relic' : ''}</small></span>`
+      ? `<span class="spec-chip" style="--cc:${CCOLORS[m.c] || '#888'}">${esc(String(m.n || ''))}<small>${num(m.k)}⬤ ×${num(m.rem)}${m.rack ? ' · relic' : ''}</small></span>`
       : '<span class="spec-chip sold">SOLD</span>').join('') || '<span class="muted">—</span>'}</div>` +
     `<div class="spec-sec">Bench (${(b.relics || []).length})</div><div class="spec-chips">${(b.relics || []).map((r) =>
-      `<span class="spec-chip${r.sh ? ' spent' : ''}" style="--cc:${CCOLORS[r.c] || '#888'}">${esc(r.n)}</span>`).join('') || '<span class="muted">—</span>'}</div>`;
+      `<span class="spec-chip${r.sh ? ' spent' : ''}" style="--cc:${CCOLORS[r.c] || '#888'}">${esc(String(r.n || ''))}</span>`).join('') || '<span class="muted">—</span>'}</div>`;
 }
 function openSpectate(cid) {
   SPEC_CID = cid;
