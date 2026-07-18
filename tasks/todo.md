@@ -950,3 +950,11 @@ The two parked playtest items.
 - [x] Phase 4: Versions tab — registry table with auto-diff highlights + version-normalized tightness overlay (score÷demand).
 - [x] Phase 5: Pulse — engagement global; win%/median-depth/game-funnel (per-run) scope to a build selector; aggregate.js overview.byBuild; playerDetail runs carry build.
 - Tests: /api/admin/difficulty + balance?build= + difficultyConfig shape + Difficulty/Versions/Pulse headless; admintest updated (6 tabs, per-run funnel); scores/hiscore/game battery green. Deployed + prod-verified.
+
+
+## Round 49 — v0.11.3: richer difficulty telemetry (design vs luck) + mid-game tuning (2026-07-18)
+- [x] Phase 1: ch_turn logs deckN/drossN + opening-hand {openN,openEnab,openPlay,openDead} (captureOpenHand at deal seam) + focusLeft/buysLeft/played/combo/charms.
+- [x] Phase 2: /api/admin/difficulty byTurn adds medDeckN/medDrossN/deadHandRate/avgFocusLeft + miss-cause {dead,diluted,hard}; balance turns carry raw fields.
+- [x] Phase 3: admin variance panel (dilution + Dross curves, dead-hand-rate bars), run-strip cause tags (turnCause), post-boss watch, opening-hand one-liner.
+- [x] Phase 4: DEMAND_RATE 1.28→1.30 (mid +18-30%, early +8%), DEMAND_LATE_RATE 1.12→1.11 (t48 held ~74k).
+- Tests: config/telemetry/dead-hand/server-aggregation/admin-variance headless; demand assertions updated (v0110 t24/36/48=3975/17219/74142, v090 t18=1872); full battery green. Deployed + prod-verified.
