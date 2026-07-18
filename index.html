@@ -160,6 +160,7 @@ canvas.fxcanvas{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:n
 .rtile .mchips b.fo{color:#ff8a5c;border-color:rgba(255,110,60,.5)}
 .rtile .mchips b.bu{color:#8fc7ff;border-color:rgba(65,168,255,.5)}
 .rtile .mchips b.mu{color:#ff8a5c;border-color:rgba(255,110,60,.6);text-shadow:0 0 6px rgba(255,110,60,.4)}
+.rtile .mchips b.sl{color:#b0a795;border-color:rgba(176,167,149,.55);background:rgba(20,17,14,.9)} /* Dross downside — ash, not gold */
 /* v0.3 #2: the burn button is its OWN dark-ember danger control — not orange text on the gold forge gradient (was unreadable) */
 .forgebtn.burnbtn{color:#ffd7c4;background:linear-gradient(172deg,#5a1e10 0%,#38160c 55%,#220c06 100%);border-color:rgba(255,120,70,.7);
   box-shadow:inset 0 1px 0 rgba(255,180,150,.25), 0 3px 10px rgba(0,0,0,.45),0 0 0 0 rgba(255,110,60,0)}
@@ -4710,6 +4711,7 @@ function railChipsHTML(def){
   if(g.buy)c.push(`<b class="bu">+${g.buy}⚒</b>`);
   if(g.draw)c.push(`<b class="bu">Draw ${g.draw}</b>`);
   if(def.trash)c.push(`<b class="mu">Burn 1</b>`);
+  if(def.gainSlag)c.push(`<b class="sl" title="each play silts ${def.gainSlag} Dross into your deck">+${def.gainSlag} Dross</b>`);
   if(def.handFocus)c.push(`<b class="fo">+${def.handFocus}❖ / turn</b>`);
   if(def.handGold)c.push(`<b class="go">+${def.handGold}⬤ / turn</b>`);
   if(def.handBuy)c.push(`<b class="bu">+${def.handBuy}⚒ / turn</b>`);
