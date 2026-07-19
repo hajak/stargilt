@@ -677,7 +677,8 @@ function renderFunnels(players, o) {
 }
 
 // ── SVG line chart (demand vs score, log y) with crosshair tooltip ──
-function lineChart(box, { series, height = 240, logY = true, yFmt = fmtN, xLabel = 'turn', bossTicks = [] }) {
+function lineChart(box, { series, height = 240, logY = true, yFmt = fmtN, xLabel = 'turn', bossTicks = [], bosses = [] }) {
+  if (bosses.length && !bossTicks.length) bossTicks = bosses.map((b) => b.t); // v0.11.8: named boss markers imply the ◆ ticks
   const W = 920, H = height, PL = 46, PR = 12, PT = 12, PB = 26;
   const allPts = series.flatMap((s) => s.pts);
   if (!allPts.length) { box.innerHTML = '<div class="empty">No run data yet for this filter.</div>'; return; }
@@ -699,6 +700,12 @@ function lineChart(box, { series, height = 240, logY = true, yFmt = fmtN, xLabel
     <text x="${PL - 7}" y="${Y(t) + 3}" text-anchor="end" font-size="9.5" fill="#7d7566" font-family="var(--sans)">${yFmt(t)}</text>`).join('');
   g += xticks.map((x) => `<text x="${X(x)}" y="${H - 8}" text-anchor="middle" font-size="9.5" fill="${bossTicks.includes(x) ? '#b9ad92' : '#7d7566'}" font-family="var(--sans)">${bossTicks.includes(x) ? '◆' : ''}${x}</text>`).join('');
   g += `<text x="${W - PR}" y="${H - 8}" text-anchor="end" font-size="9" fill="#7d7566">${xLabel} →</text>`;
+  // v0.11.8: the full 8-boss gauntlet as named vertical markers — the End Boss (Masterwork, t48) flagged in gold
+  g += bosses.map((b) => { const x = X(b.t); if (x < PL - 1 || x > W - PR + 1) return '';
+    const col = b.end ? '#e8b64c' : 'rgba(232,182,76,.26)';
+    return `<line x1="${x}" y1="${PT}" x2="${x}" y2="${H - PB}" stroke="${col}" stroke-width="${b.end ? 1.6 : 1}"${b.end ? '' : ' stroke-dasharray="2 4"'}/>`
+      + `<text x="${x + 3}" y="${PT + 2}" transform="rotate(90 ${x + 3} ${PT + 2})" text-anchor="start" font-size="8.5" font-weight="${b.end ? 800 : 600}" fill="${b.end ? '#ffd98a' : '#9a8f76'}" font-family="var(--sans)">${b.end ? '★ ' + esc(b.name) + ' · END' : esc(b.name)}</text>`;
+  }).join('');
   series.forEach((s, si) => {
     const pts = s.pts.slice().sort((a, b) => a.x - b.x);
     const d = pts.map((p, i) => `${i ? 'L' : 'M'}${X(p.x).toFixed(1)},${Y(p.y).toFixed(1)}`).join('');
@@ -911,10 +918,13 @@ function renderBalance() {
 
   const xs = ver.byTurn.map((b) => b.t);
   const bossTicks = xs.filter((x) => x % 6 === 0);
-  const demandPts = cfg ? demandCurve(cfg).filter((p) => xs.includes(p.x)) // EXACT curve from the version's config
-    : ver.byTurn.map((b) => ({ x: b.t, y: b.dem }));                       // fallback: demand as recorded
+  // v0.11.8: draw the demand curve across the FULL run (to t48) so the whole 8-boss gauntlet always shows —
+  // even when every run dies early, you can see how far short of the End Boss the run-cloud falls.
+  const demandPts = cfg ? demandCurve(cfg)                                 // EXACT curve from the version's config, all 48 turns
+    : ver.byTurn.map((b) => ({ x: b.t, y: b.dem }));                       // fallback: demand as recorded (data turns only)
+  const bosses = [1, 2, 3, 4, 5, 6, 7, 8].map((a) => ({ t: a * 6, name: (BOSS_BY_ACT[a] || '').replace('The ', ''), end: a === 8 }));
   lineChart($('#demchart'), {
-    bossTicks,
+    bosses,
     series: [
       { name: 'demand', color: '#e0492a', dash: '5 4', pts: demandPts },
       { name: 'median score', color: '#2f8fe6', pts: ver.byTurn.map((b) => ({ x: b.t, y: b.med, note: `(${b.alive} runs)` })) },
