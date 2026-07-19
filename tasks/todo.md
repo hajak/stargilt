@@ -987,3 +987,12 @@ The two parked playtest items.
 - [x] costsFocus now keys on focusCostOf(def)>0 (was !isFreePlay) — free focus-engines no longer show a "❖ 0" badge / red edge; real-cost cards (incl. rare/mythic) still do.
 - [x] slamText gains a `hold` option; the game-start Emberheart Charm message lingers ~3.6s.
 - Tests: badge across card types (Conclave/Warren none, Verdant Bloom/Vintner keep, treasures none); full battery green. Deployed + prod-verified.
+
+
+## Round 54 — v0.11.8: 5 playtest items (2026-07-19)
+- [x] (1) Ominous End Turn: .danger now throbs a red glow (etdanger; reduced-motion static).
+- [x] (2) Fail-end confirm (#confirmend): ending short pops KEEP PLAYING / END ANYWAY, names the charm/death cost; Esc/scrim=keep.
+- [x] (3) Iron Cage → soft cap (softCap:{after:3,mult:0.4}); softCapFactor by play-index in computeScore+tally (invariant held); ⛓ float; ledger/live/tag.
+- [x] (4) Boon PEEK THE BOARD toggle: clears the overlay, un-dims the board (Bazaar+hand), button to return.
+- [x] (5) Admin difficulty: full demand curve to t48 (whole 8-boss gauntlet always shown); named boss markers; End Boss (t48) gold-flagged.
+- Tests updated: v084/v085/v0110 death-forcers + v090 idle-Enter dismiss the confirm (intended). Full battery green. Deployed + prod-verified.
