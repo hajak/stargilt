@@ -1022,3 +1022,10 @@ Strong-player scores ran the whole mid at 4-10× the tithe (ideal 1.0-1.4×). Us
 - [x] Bug 3 Spell Surge: mechanic kept (only type:'Spell' cards count, 2 needed), made legible — synText reworded + a live '⚡ SPELLS n/N' counter on the hand card (design call: clarify, not change the trigger).
 - [x] Tests: v01111test (11) + rebuilt smoke (6). NOTE: scratchpad battery was ROTATED (week gap) — puppeteer reinstalled, historical battery files gone; recreate from git if needed.
 - Deployed + prod-verified (chapters · v0.11.11).
+
+
+## Round 58 — v0.11.12: hover-to-spread hand + committed test suite (2026-07-26)
+- [x] HOVER-TO-SPREAD: hovering the hand splays the fan open (peek floor 70→124px, band 0.74→0.9 via state.handSpread in layoutHand); pointerenter sets it, pointerleave collapses after a 110ms debounce; free .55s transition. Fixes the long-standing hand-occlusion pain. (Idea from Amicro's Scatter Spread.)
+- [x] TEST SUITE now lives in the repo at tests/ (was scratchpad-only, got rotated away): 8 files, 54 assertions, one harness + runner. `cd tests && npm run setup` once, then `npm test` (exits nonzero on failure — gate deploys on it).
+- [x] GIT: committed the 3 deployed-but-uncommitted versions (v0.11.9/10/11) + created the PUBLIC repo github.com/hajak/stargilt. ⚠ TODO for user: rotate SG_GATE on Railway (public repo exposes "Mellon" + the bypass cookie).
+- Deployed + prod-verified (chapters · v0.11.12).
