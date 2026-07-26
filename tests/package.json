@@ -1,0 +1,13 @@
+{
+  "name": "stargilt-tests",
+  "private": true,
+  "type": "module",
+  "description": "Headless regression suite for StarGilt (index.html).",
+  "scripts": {
+    "test": "node run.mjs",
+    "setup": "npm install && npx puppeteer browsers install chrome-headless-shell"
+  },
+  "dependencies": {
+    "puppeteer-core": "^24.0.0"
+  }
+}
