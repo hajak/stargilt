@@ -996,3 +996,29 @@ The two parked playtest items.
 - [x] (4) Boon PEEK THE BOARD toggle: clears the overlay, un-dims the board (Bazaar+hand), button to return.
 - [x] (5) Admin difficulty: full demand curve to t48 (whole 8-boss gauntlet always shown); named boss markers; End Boss (t48) gold-flagged.
 - Tests updated: v084/v085/v0110 death-forcers + v090 idle-Enter dismiss the confirm (intended). Full battery green. Deployed + prod-verified.
+
+
+## Round 55 — v0.11.9: 4 playtest bugfixes + a difficulty memo (2026-07-20)
+- [x] (1) #tithe score HUD: width 360px→max-content (min 360/max 94vw) + .cap-hint white-space:nowrap — big numbers no longer overflow/wrap ("CAP N" can't break to a 2nd line & collide with the header). The reported "graphical bug" was the in-game HUD, not the debrief.
+- [x] (2) FACE THE BOSS NOW gated on pledgedGlory()>=state.tithe (else deny 'MEET THE TITHE FIRST'): kills v0.11.8's fail-confirm firing on a legit skip AND closes the escape-from-a-failing-turn hatch; no endTurn change.
+- [x] (3) BURN ANY CARD: repro proved the code already burns any owned card in a real run (starters/Dross/forged/bought, hand + pile view) — it was a discoverability gap. Added body.burning flame-edge on every in-hand card (burnready pulse; reduced-motion static) + pointer cursor + clearer burnbar copy. No eligibility change.
+- [x] (4) Debrief "THE DECK, AS IT STOOD": bars now share one denominator (pool.length) — was maxRC for rarity/forged vs hardcoded 100% for total, so forged=26 read shorter than total=35; forged now reads ~74% of a full total bar.
+- [x] (5) DIFFICULTY "too easy once the machine gets going" — memo written; user chose A+C. SHIPPED in v0.11.10 (below).
+- Tests: v0119test.mjs (11) + v0110 deck-bar invariant; full battery green. Deployed + prod-verified (chapters · v0.11.9).
+
+
+## Round 56 — v0.11.10: DIFFICULTY (A+C) (2026-07-20)
+Strong-player scores ran the whole mid at 4-10× the tithe (ideal 1.0-1.4×). User picked A (raise the bar) + C (slow the snowball). No scoring-engine change — the dopamine stays.
+- [x] A: DEMAND_RATE 1.30→1.335 (mid tightens: t18 1872→2941 +57%, t24 3975→5755 +45%); DEMAND_LATE_RATE 1.11→1.095 (summit held reachable, t48 74142→77436 +4% — no v0.9 capped-vs-geometric wall); Boss 1 demandMult 1.3→1.2 (newcomer wall protected, t6 +6% only).
+- [x] C: BOON_MULT base 2.4→3.2 (+0.2/claim kept) — free Boon needs a genuine >3.2× spike; self-scales to skill (newcomers at ~1.5× untouched).
+- [x] Self-registers: difficultyConfig() gains boonMult; admin CFG_FIELDS gains 'boon threshold ×' row (older versions '—').
+- [ ] WATCH in /admin after runs land: mid tightness drops toward 1.4-2.2×, Act-5+ clear-rate holds (summit reachable), boss-1 clears don't regress.
+- Tests: baltune.mjs (10) + updated demand assertions v0110/v090; full battery green. Deployed + prod-verified (chapters · v0.11.10).
+
+
+## Round 57 — v0.11.11: 3 playtest bugs (2026-07-26)
+- [x] Bug 1 CONTINUE: saveRun guard turn<2→turn<1 + a pre-deal saveRun() in the fresh boot path — a new run is resumable before the first END TURN ("new game → leave → continue" showed no button because nothing saved during turn 1).
+- [x] Bug 2 Face the Boss: bank the current turn's tithe-met glory (computeScore().final, guaranteed ≥ tithe by v0.11.9's gate) with a BANKED slam before the skip jumps — was silently discarded inside if(!skip).
+- [x] Bug 3 Spell Surge: mechanic kept (only type:'Spell' cards count, 2 needed), made legible — synText reworded + a live '⚡ SPELLS n/N' counter on the hand card (design call: clarify, not change the trigger).
+- [x] Tests: v01111test (11) + rebuilt smoke (6). NOTE: scratchpad battery was ROTATED (week gap) — puppeteer reinstalled, historical battery files gone; recreate from git if needed.
+- Deployed + prod-verified (chapters · v0.11.11).
