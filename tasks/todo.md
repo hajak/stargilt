@@ -1029,3 +1029,11 @@ Strong-player scores ran the whole mid at 4-10× the tithe (ideal 1.0-1.4×). Us
 - [x] TEST SUITE now lives in the repo at tests/ (was scratchpad-only, got rotated away): 8 files, 54 assertions, one harness + runner. `cd tests && npm run setup` once, then `npm test` (exits nonzero on failure — gate deploys on it).
 - [x] GIT: committed the 3 deployed-but-uncommitted versions (v0.11.9/10/11) + created the PUBLIC repo github.com/hajak/stargilt. ⚠ TODO for user: rotate SG_GATE on Railway (public repo exposes "Mellon" + the bypass cookie).
 - Deployed + prod-verified (chapters · v0.11.12).
+
+
+## Round 59 — v0.11.13: high-score = one slot per player (2026-08-01)
+- [x] Server (store.js): addScore dedupes by cid (best only), returns {top, entered, best}; dedupeByBest migrates legacy multi-row-per-player data on read+write. topScores dedupes defensively.
+- [x] Server (server.js): /api/score passes entered/best through (verified end-to-end via curl).
+- [x] Client (finishScores): one-per-player board + a .hs-reject "won't enter the roll" note when a run doesn't beat your best; returns {entered}; debrief adds the note for a won-but-not-best run (no false NEW BEST). MY RUNS history untouched.
+- [x] Tests: scores.test.mjs (node unit, 8) + hiscore.test.mjs (browser, 8). Suite now 10 files / 70 assertions, all green.
+- Deployed + prod-verified (chapters · v0.11.13).

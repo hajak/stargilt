@@ -107,26 +107,30 @@ function readScores() {
   try { const v = JSON.parse(fs.readFileSync(SCORES, 'utf8')); return Array.isArray(v) ? v : []; } catch (e) { return []; }
 }
 
-// Insert a run's score. A row with the same rid (one run = one page load) is replaced
-// only by a better total — a win that continues into Endless holds one slot at its peak.
+// v0.11.13: ONE slot per PLAYER — the board keeps each cid's BEST run only. A run that doesn't beat
+// that player's standing best does not enter. Legacy rows without a cid fall back to their rid so
+// pre-cid data still collapses sanely. Returns { top, entered, best }.
+const scoreKey = (s) => s.cid || ('rid:' + (s.rid || ''));
+function dedupeByBest(list) {
+  const best = new Map();
+  for (const s of list) { const k = scoreKey(s); const cur = best.get(k); if (!cur || s.g > cur.g) best.set(k, s); }
+  return [...best.values()].sort((a, b) => b.g - a.g || String(a.ts).localeCompare(String(b.ts)));
+}
 async function addScore(entry) {
   const list = USE_FILE ? readScores() : mem.scores;
-  const prior = entry.rid ? list.findIndex((s) => s.rid === entry.rid) : -1;
-  if (prior >= 0) {
-    if (entry.g < list[prior].g) return list.slice();
-    list.splice(prior, 1);
-  }
-  list.push(entry);
-  list.sort((a, b) => b.g - a.g || String(a.ts).localeCompare(String(b.ts)));
-  const top = list.slice(0, SCORES_KEPT);
+  const k = scoreKey(entry);
+  const priorBest = list.reduce((m, s) => scoreKey(s) === k ? Math.max(m, s.g) : m, 0);
+  const entered = entry.g > priorBest;                                 // strictly better than your standing best takes the slot
+  const merged = dedupeByBest(entered ? list.concat([entry]) : list);  // also collapses any legacy multi-row-per-player data on write
+  const top = merged.slice(0, SCORES_KEPT);
   if (USE_FILE) writeObj(SCORES, top);
   else mem.scores = top;
-  return top.slice();
+  return { top: top.slice(), entered, best: Math.max(priorBest, entry.g) };
 }
 
 async function topScores(n) {
   const list = USE_FILE ? readScores() : mem.scores;
-  return list.slice(0, n);
+  return dedupeByBest(list).slice(0, n);                               // defensive: one row per player even before a write migrates old data
 }
 
 module.exports = { init, insertEvent, allEvents, getLabels, setLabel, merge, unmerge, geoGet, geoSet, allGeo, addScore, topScores, BACKEND, _mem: mem };

@@ -433,8 +433,8 @@ async function handle(req, res) {
         g, t, r: clampStr(raw.r, 40) || '',
         ts: now.toISOString(), d: now.toISOString().slice(0, 10),
       };
-      const list = await store.addScore(entry);
-      return sendJSON(res, 200, { ok: true, top: shapeTop(list.slice(0, 10), cid) });
+      const { top, entered, best } = await store.addScore(entry);
+      return sendJSON(res, 200, { ok: true, top: shapeTop(top.slice(0, 10), cid), entered, best });
     } catch (e) {
       return sendJSON(res, 400, { error: 'bad request' });
     }
