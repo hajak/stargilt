@@ -45,7 +45,15 @@ export async function bootGame(page, { fresh = true, name = 'Claude' } = {}) {
       localStorage.setItem('ch-af-tutor-off', '1');
     } catch (e) {}
     const play = document.querySelector('#sm-play');
-    if (play && document.querySelector('#startmenu').classList.contains('on')) { play.click(); await w(1200); }
+    if (play && document.querySelector('#startmenu').classList.contains('on')) { play.click(); await w(600); }
+    // v0.12-exp: the first real PLAY runs the skippable cold-open — dismiss it like a player would
+    for (let i = 0; i < 20; i++) {
+      const co = document.querySelector('#coldopen');
+      if (co && co.classList.contains('on')) { co.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true })); await w(600); break; }
+      await w(100);
+      if (i === 5) break; // no cold-open coming (already seen) — move on
+    }
+    await w(600);
     const ne = document.querySelector('#nameentry');
     if (ne && ne.classList.contains('on')) { document.querySelector('#ne-input').value = name; document.querySelector('#ne-go').click(); await w(1000); }
     for (let i = 0; i < 60 && window.__af.busy; i++) await w(120);

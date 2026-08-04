@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>StarGilt — feed the forge</title>
+<title>StarGilt — Forged in Chains</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path d='M50 6l12.6 28.3 30.9 3.1-23.2 20.7 6.7 30.3L50 72.6 23 88.4l6.7-30.3L6.5 37.4l30.9-3.1z' fill='%23e8b64c'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -241,6 +241,9 @@ canvas.fxcanvas{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:n
   display:flex;flex-direction:column;gap:5px;align-items:center}
 #tithe .t-label{font-family:var(--sans);font-weight:700;font-size:.66rem;letter-spacing:.2em;
   color:var(--dim-bright);padding-left:.2em}
+/* v0.12-exp: the King's mark rides his demand — a small crown before the label (CSS-only, so
+   titheLabelNode()'s first-text-node contract is untouched) */
+#tithe .t-label::before{content:'♛ ';color:#c9973f;text-shadow:0 0 8px rgba(232,182,76,.5)}
 #tithe .t-bar{position:relative;width:100%;height:10px;border-radius:6px;overflow:hidden;
   background:rgba(10,8,16,.7);border:1px solid rgba(232,182,76,.28);
   box-shadow:inset 0 1px 3px rgba(0,0,0,.6)}
@@ -1264,6 +1267,13 @@ body.boss-turn #tithe .t-label{color:var(--boss-c,#ff7a52)}
     radial-gradient(circle at 50% 30%, #241a0d 0%, #0b0a12 60%),
     #0b0a12;
   opacity:0;pointer-events:none;transition:opacity .55s ease}
+/* v0.12-exp: the key art (the chained smith under the king's shadow) breathes faintly behind the menu.
+   A missing file degrades to the gradient base — the ::before simply paints nothing. */
+#startmenu::before{content:'';position:absolute;inset:0;pointer-events:none;
+  background:url('art/cover.jpg') center 30%/cover no-repeat;opacity:.34;
+  -webkit-mask-image:radial-gradient(120% 90% at 50% 40%,#000 40%,transparent 78%);
+  mask-image:radial-gradient(120% 90% at 50% 40%,#000 40%,transparent 78%)}
+#startmenu .sm-inner{position:relative;z-index:2}
 #startmenu.on{opacity:1;pointer-events:auto}
 #startmenu.leaving{opacity:0;pointer-events:none;transition:opacity .42s ease}
 /* ── the forge behind the card: warm glow rising from below, drifting embers, a banked-anvil silhouette ── */
@@ -1301,6 +1311,33 @@ body.boss-turn #tithe .t-label{color:var(--boss-c,#ff7a52)}
   0%,100%{background-position:50% 8%;filter:drop-shadow(0 4px 20px rgba(232,182,76,.3))}
   50%{background-position:50% 100%;filter:drop-shadow(0 5px 34px rgba(255,150,70,.5))}}
 .sm-tag{font-family:var(--sans);letter-spacing:.55em;color:var(--dim);font-size:.78rem;padding-left:.55em;margin-top:.55rem}
+/* v0.12-exp: the one-line premise hook under the subtitle — the 5-second pitch */
+.sm-hook{font-family:var(--sans);font-weight:600;font-size:.86rem;color:var(--dim-bright);margin-top:.8rem;
+  font-style:italic;letter-spacing:.04em;text-shadow:0 1px 6px rgba(0,0,0,.8)}
+/* ═══ v0.12-exp: the cold-open (first PLAY only) — plants prisoner · forge · king · freedom in ~7s ═══ */
+#coldopen{position:fixed;inset:0;z-index:380;background:#050308;display:none;align-items:center;justify-content:center;
+  cursor:pointer;opacity:1;transition:opacity .45s ease}
+#coldopen.on{display:flex}
+#coldopen.fade{opacity:0}
+#coldopen .co-inner{position:relative;display:flex;flex-direction:column;align-items:center;gap:1rem;text-align:center;padding:2rem}
+#coldopen .co-line{font-family:'Grenze Gotisch',serif;font-weight:700;font-size:clamp(1.5rem,4vw,2.9rem);line-height:1.3;
+  color:var(--parchment);max-width:24ch;min-height:2.6em;opacity:0;transform:translateY(6px);transition:opacity .55s ease,transform .55s ease}
+#coldopen .co-line.show{opacity:1;transform:none}
+#coldopen .co-line.decree{color:#ff9a75;text-shadow:0 0 26px rgba(255,110,60,.4)}
+#coldopen .co-star{font-size:2.6rem;color:var(--gold-bright);opacity:0;transform:translateY(26px) scale(.5);
+  text-shadow:0 0 30px rgba(255,210,87,.9);transition:opacity .8s ease,transform 1.2s cubic-bezier(.2,1.4,.4,1)}
+#coldopen .co-star.rise{opacity:1;transform:translateY(0) scale(1)}
+#coldopen .co-title{opacity:0;transition:opacity .9s ease}
+#coldopen .co-title.show{opacity:1}
+#coldopen .co-title h1{font-family:'Grenze Gotisch',serif;font-weight:900;font-size:clamp(2.6rem,7vw,4.6rem);letter-spacing:.06em;
+  background:linear-gradient(180deg,#fff3cf 20%,#e8b64c 60%,#8a5a1a);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 4px 24px rgba(232,182,76,.35))}
+#coldopen .co-title p{font-family:var(--sans);letter-spacing:.55em;color:var(--dim-bright);font-size:.8rem;margin-top:.6rem;padding-left:.55em}
+#coldopen .co-skip{position:absolute;bottom:-15vh;left:50%;transform:translateX(-50%);font-family:var(--sans);
+  font-size:.68rem;letter-spacing:.22em;color:var(--dim);opacity:.55}
+@media (prefers-reduced-motion:reduce){
+  #coldopen .co-line,#coldopen .co-star,#coldopen .co-title{transition:none}
+}
 .sm-rule{width:120px;height:1px;margin:1.5rem 0 1.6rem;
   background:linear-gradient(90deg,transparent,rgba(232,182,76,.7),transparent)}
 .sm-nav{display:flex;flex-direction:column;gap:.6rem;width:min(360px,80vw)}
@@ -1452,7 +1489,7 @@ body.boss-turn #tithe .t-label{color:var(--boss-c,#ff7a52)}
   <canvas id="bgfx" class="fxcanvas"></canvas>
   <div id="app">
     <header id="hud">
-      <div id="brand"><h1>STARGILT</h1><p>FEED THE FORGE</p></div>
+      <div id="brand"><h1>STARGILT</h1><p>FORGED IN CHAINS</p></div>
       <div id="counters">
         <div class="counter"><span class="cicon gold">⬤</span>
           <span class="cbody"><span class="clabel">GOLD</span><span class="cval" id="v-gold">0</span></span></div>
@@ -1462,7 +1499,7 @@ body.boss-turn #tithe .t-label{color:var(--boss-c,#ff7a52)}
           <span class="cbody"><span class="clabel">FORGE</span><span class="cval" id="v-buys">1</span></span></div>
         <div class="counter primary"><span class="cicon glory">★</span>
           <span class="cbody"><span class="clabel">GLORY</span><span class="cval" id="v-glory">0</span></span>
-          <span id="rankwrap"><span id="rankname">Cinder Initiate</span>
+          <span id="rankwrap"><span id="rankname">The Shackled</span>
           <span id="rankbar"><span id="rankfill"></span></span></span></div>
         <div class="counter quiet"><span class="cbody"><span class="clabel">TURN</span><span class="cval" id="v-turn">1</span></span></div>
       </div>
@@ -1475,7 +1512,7 @@ body.boss-turn #tithe .t-label{color:var(--boss-c,#ff7a52)}
 
     <div id="main">
     <section id="market">
-      <div class="bazaar-title"><span class="rule"></span><h2>THE BAZAAR</h2><span class="rule"></span></div>
+      <div class="bazaar-title"><span class="rule"></span><h2>THE UNDERMARKET</h2><span class="rule"></span></div>
       <div id="mrow"></div>
     </section>
 
@@ -1485,7 +1522,7 @@ body.boss-turn #tithe .t-label{color:var(--boss-c,#ff7a52)}
     <section id="table">
       <div id="tablesigil"></div>
       <div id="tithe">
-        <div class="t-label">THE FORGE DEMANDS <span class="t-q"><span id="t-quota">6</span> ★</span></div>
+        <div class="t-label">THE KING DEMANDS <span class="t-q"><span id="t-quota">6</span> ★</span></div>
         <div class="t-score">
           <span class="ts-base"><b id="t-stars">0</b>★</span>
           <span class="ts-x">×</span>
@@ -1501,7 +1538,7 @@ body.boss-turn #tithe .t-label{color:var(--boss-c,#ff7a52)}
       </div>
       <div id="playanchor"></div>
       <div id="combobadge"><div class="cb-label">COMBO</div><div class="cb-num">×2</div></div>
-      <div id="hint">PLAY CARDS · BUY AT THE BAZAAR · END TURN</div>
+      <div id="hint">PLAY CARDS · BUY AT THE UNDERMARKET · END TURN</div>
     </section>
 
     <section id="bottom">
@@ -1537,7 +1574,7 @@ body.boss-turn #tithe .t-label{color:var(--boss-c,#ff7a52)}
   <canvas id="fx" class="fxcanvas"></canvas>
   <div id="overlays"></div>
   <div id="rankup"><div id="rays"></div><div id="rankcard">
-    <div class="ru-pre">RANK ASCENDED</div><div class="ru-name"></div><div class="ru-sub"></div></div></div>
+    <div class="ru-pre">A LINK BREAKS</div><div class="ru-name"></div><div class="ru-sub"></div></div></div>
   <div id="bossvignette"></div>
   <div id="bossintro"><div id="birays"></div><div id="bosscard">
     <div class="bi-pre"></div>
@@ -1574,7 +1611,7 @@ body.boss-turn #tithe .t-label{color:var(--boss-c,#ff7a52)}
     </div>
   </div>
   <div id="boon">
-    <div class="boon-pre">THE FORGE IS PLEASED</div>
+    <div class="boon-pre">THE KING IS IMPRESSED</div>
     <h2 class="boon-title">Claim a Boon</h2>
     <div class="boon-sub" id="boon-sub"></div>
     <div id="boon-row"></div>
@@ -1583,7 +1620,7 @@ body.boss-turn #tithe .t-label{color:var(--boss-c,#ff7a52)}
     <button id="boon-skip">DECLINE — KEEP IT LEAN</button>
   </div>
   <div id="confirmend"><div class="ce-card">
-    <div class="ce-pre">THE FORGE IS NOT SATED</div>
+    <div class="ce-pre">THE KING IS NOT PAID</div>
     <h2 class="ce-title">End the turn short?</h2>
     <p class="ce-msg" id="ce-msg"></p>
     <div class="ce-row">
@@ -1592,7 +1629,7 @@ body.boss-turn #tithe .t-label{color:var(--boss-c,#ff7a52)}
     </div>
   </div></div>
   <div id="mrdraft">
-    <div class="mr-pre">THE MASTERWORK IS PLEASED</div>
+    <div class="mr-pre">THE KING IS PLEASED</div>
     <h2 class="mr-title">Claim a Master Relic</h2>
     <div class="mr-sub" id="mr-sub"></div>
     <div id="mr-row"></div>
@@ -1607,8 +1644,8 @@ body.boss-turn #tithe .t-label{color:var(--boss-c,#ff7a52)}
     <button id="ti-begin">BEGIN</button>
   </div></div>
   <div id="gameover"><div id="gorays"></div><div class="go-card">
-    <div class="go-pre">THE TITHE UNPAID</div>
-    <h2>The Forge Grows Cold</h2>
+    <div class="go-pre">THE KING'S WRATH</div>
+    <h2>Your Chains Tighten</h2>
     <p class="go-stats"></p>
     <div id="go-scores"></div>
     <button id="again">NEW RUN</button>
@@ -1624,16 +1661,16 @@ body.boss-turn #tithe .t-label{color:var(--boss-c,#ff7a52)}
     </div>
     <div class="db-doc">
       <header class="db-mast">
-        <span class="db-class">STARGILT · FORGE INTELLIGENCE · EYES OF THE GUILD ONLY</span>
-        <span class="db-no" id="db-no">DOSSIER No. —</span>
-        <h2 class="db-title">You Are Forged — Master Smith</h2>
+        <span class="db-class">STARGILT · THE KING'S LEDGER · FINAL ENTRY</span>
+        <span class="db-no" id="db-no">ENTRY No. —</span>
+        <h2 class="db-title">You Are Forged — and Free</h2>
         <span class="db-sub" id="db-sub"></span>
-        <div class="db-seal" id="db-seal">MASTERWORK<br>COMPLETE</div>
+        <div class="db-seal" id="db-seal">PAID<br>IN FULL</div>
       </header>
       <section class="db-mod db-hero" id="db-hero"></section>
       <section class="db-mod"><h3 class="db-h">THE RUN CURVE · SCORE v DEMAND</h3><div id="db-curve"></div>
-        <div class="db-legend">— YOUR SCORE&ensp;·&ensp;– – THE FORGE'S DEMAND&ensp;·&ensp;◆ BOSS&ensp;·&ensp;◇ FORGIVEN</div></section>
-      <section class="db-mod"><h3 class="db-h">THE EIGHT TRIALS</h3><div id="db-acts"></div></section>
+        <div class="db-legend">— YOUR SCORE&ensp;·&ensp;– – THE KING'S DEMAND&ensp;·&ensp;◆ BOSS&ensp;·&ensp;◇ FORGIVEN</div></section>
+      <section class="db-mod"><h3 class="db-h">THE EIGHT LOCKS</h3><div id="db-acts"></div></section>
       <section class="db-mod"><h3 class="db-h">ENGINE AUTOPSY</h3><div id="db-engine-wrap"></div></section>
       <section class="db-mod"><h3 class="db-h">THE DECK, AS IT STOOD</h3><div id="db-deck"></div></section>
       <section class="db-mod"><h3 class="db-h" id="db-bench-h">THE BENCH</h3><div id="db-bench" class="db-bench"></div></section>
@@ -1681,7 +1718,8 @@ body.boss-turn #tithe .t-label{color:var(--boss-c,#ff7a52)}
     </div>
     <div class="sm-inner">
       <h1 class="sm-title">STARGILT</h1>
-      <p class="sm-tag">FEED THE FORGE</p>
+      <p class="sm-tag">FORGED IN CHAINS</p>
+      <p class="sm-hook">Feed the King. Break your chains.</p>
       <div class="sm-rule"></div>
       <nav class="sm-nav">
         <button id="sm-continue" class="sm-item primary" hidden><span class="sm-key">CONTINUE</span><span class="sm-note" id="sm-continue-note">resume your run</span></button>
@@ -1693,6 +1731,13 @@ body.boss-turn #tithe .t-label{color:var(--boss-c,#ff7a52)}
       </nav>
     </div>
   </div>
+  <!-- v0.12-exp: the cold-open — one skippable beat that plants the frame (prisoner · forge · the king · freedom) -->
+  <div id="coldopen"><div class="co-inner">
+    <div class="co-line" id="co-line"></div>
+    <div class="co-star">★</div>
+    <div class="co-title"><h1>STARGILT</h1><p>FORGED IN CHAINS</p></div>
+    <div class="co-skip">click to skip</div>
+  </div></div>
   <div id="hiscore"><div class="hs-card">
     <div class="hs-head">THE HONOR ROLL</div>
     <div class="hs-tabs">
@@ -1732,20 +1777,20 @@ body.boss-turn #tithe .t-label{color:var(--boss-c,#ff7a52)}
     </div>
   </div></div>
   <div id="nameentry"><div class="ne-card">
-    <div class="ne-pre">THE HONOR ROLL REMEMBERS</div>
+    <div class="ne-pre">SIGN YOUR WORK, SMITH</div>
     <h2 class="ne-title">Name Yourself, Smith</h2>
-    <input id="ne-input" type="text" maxlength="18" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="your name">
+    <input id="ne-input" type="text" maxlength="18" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="your mark">
     <button id="ne-go">ENTER THE FORGE</button>
   </div></div>
   <span id="buildstamp"></span>
   <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
-  <div id="intro"><h1>STARGILT</h1><p>FEED THE FORGE</p></div>
+  <div id="intro"><h1>STARGILT</h1><p>FORGED IN CHAINS</p></div>
 </div>
 
 <script>
 'use strict';
 /* ═══════════════════ utils ═══════════════════ */
-const BUILD='chapters · v0.11.13'; // v0.11.13 (HIGH-SCORE = ONE SLOT PER PLAYER): the honor roll kept a row per RUN (deduped only by rid/page-load), so one player could fill several slots. Now each player (cid) holds exactly ONE slot — their BEST run. A new run that BEATS your standing best REPLACES your slot (celebrated as a NEW BEST); a lesser run does NOT enter — it's shown BELOW the board with a "Your run · N ★ … X ★ short of your best (M ★) — it won't enter the roll" note (new .hs-reject). Server: store.addScore dedupes by cid keeping the max, returns {top, entered, best}, and dedupeByBest migrates any legacy multi-row-per-player data on read+write; /api/score passes entered/best through. Client: finishScores renders a one-per-player board (the server's, or your single best row offline) + the reject note when !entered, and returns {entered} so the death screen + Victory Debrief stay honest (the debrief adds the same note under its hero for a won-but-not-best run; no false NEW BEST). The MY RUNS tab (ch-af-scores top-10) is untouched — that's your personal run HISTORY, separate from the competitive board. Tests: tests/scores.test.mjs (node unit test of the store: enters/replaces/rejects + legacy collapse) + tests/hiscore.test.mjs (the reject note vs new-best presentation). // v0.11.12 (HOVER-TO-SPREAD hand): a recurring occlusion pain — a big hand fans with only a ~70px "peek" strip of each 164px card showing (the rest overlapped), so mid-hand cards' art/gains/synergy were unreadable at rest. Now hovering ANYWHERE in the hand splays the fan open: layoutHand reads state.handSpread and lifts the peek floor 70→124px (≈76% of a card shows) + widens the band 0.74→0.9, pulling occluded cards into readability; it snaps back on leave. Wiring: bindHandEvents' pointerenter sets state.handSpread=true (+ the existing single-card lift), pointerleave collapses it after a 110ms debounce (handCollapseTimer) so sliding between adjacent cards never flickers the fan. Free animation — the .cardo `transform .55s cubic-bezier` transition already animates the move. No new geometry constants beyond the spread pair; small hands (already at MAX_SP) are a visual no-op. Inspired by Amicro's "Scatter Spread" card layout (github.com/Subhan-code/Amicro), adapted to the zero-dep vanilla fan. Test: tests/hand.test.mjs (spreads on hover, collapses on leave). // v0.11.11 (3 playtest bugs): (1) CONTINUE didn't work after "new game → leave" — saveRun only wrote at a turn boundary AND guarded state.turn<2, and nothing saves on page-leave, so a run abandoned during turn 1 produced NO save → the CONTINUE button was simply absent. Fix: guard relaxed to state.turn<1 + the fresh-run boot path now seeds the first save PRE-DEAL (after revealReverie, before dealCards) — a brand-new run (its rolled market + starting bench) is resumable before the first END TURN. (2) FACE THE BOSS ate your glory — the current turn's score lived inside endTurn's if(!skip) block, so a skip discarded it; harmless pre-v0.11.9, but v0.11.9's gate now FORCES you to build a tithe-meeting score before leaping, then threw it away. Fix: the skip path now BANKS the earned glory (computeScore().final, guaranteed ≥ tithe by the gate) with a 'BANKED · +N ★' slam before jumping — you forgo the FUTURE build turns' glory, not the one you already secured. (3) SPELL SURGE read as "says 2, needs 4" — the syn:{kind:'types'} family only counts type:'Spell' cards played BEFORE it (a minority; excludes itself), so a mixed hand played 4 cards while 2 counted. Mechanic kept (per the design call); made LEGIBLE: synText reworded ('Needs N other Spells played first' — names the self-exclusion + order) and updateSynIndicators now shows a live '⚡ SPELLS n/N' counter on the hand card (only Spell-type cards tick it; a '.progress' building glow at 1/N; fires to the gold 'armed …now!' at N). Tests: v01111test (11) + a rebuilt full-play/CONTINUE smoke (6) — the scratchpad battery was rotated, so coverage was reconstructed for the touched paths. // v0.11.10 (DIFFICULTY — "too easy once the machine got going" = strong-player scores ran the whole mid at 4-10× the tithe; the ask was A+C, "raise the bar + slow the snowball"): (A) STEEPER MID DEMAND — DEMAND_RATE 1.30→1.335 tightens the geometric pre-knee climb where the engine outran demand (t18 1872→2941 +57%, t24 3975→5755 +45%); DEMAND_LATE_RATE 1.11→1.095 tapers harder past the knee so the summit stays reachable by a capped mult × ~linear base★ (t48 74142→77436, ~+4% — NOT re-creating the v0.9 geometric-vs-capped wall); Boss 1 demandMult 1.3→1.2 offsets the rate rise at the newcomer's first wall (t6 48→51, only +6%) since the mid, not the early, was too easy. (C) BOON THRESHOLD 2.4→3.2 — a build turn earns a free Boon card only above 3.2× the tithe (was 2.4×; the +0.2/claim escalation kept), so the runaway reward loop (a strong player scoring 4-10× took a free card almost every turn, snowballing the engine) needs a genuine spike; self-scales to skill — a newcomer at ~1.5× never triggered it, so C leaves them untouched. Self-registers via difficultyConfig() (demandRate/lateRate/bossMults + a NEW boonMult knob) so the admin Versions/Difficulty tabs diff it; admin CFG_FIELDS gains a 'boon threshold ×' row. NO scoring-engine change (the dopamine stays — you still score big, you just have to). Tests: baltune.mjs (10) + updated demand assertions in v0110/v090; full battery green. // v0.11.9 (playtest bugfix batch): (1) #tithe SCORE HUD stops overflowing/wrapping on big numbers — width 360px→max-content (min 360 / max 94vw) + .cap-hint white-space:nowrap, so 'CAP N' can't break to a 2nd line and collide with the 'THE FORGE DEMANDS' header. (2) FACE THE BOSS NOW is gated on meeting THIS turn's tithe (pledgedGlory()>=tithe, else deny 'MEET THE TITHE FIRST'): fixes v0.11.8's fail-end confirm firing on a legit skip AND closes the escape-hatch — you can't bail a turn you're failing by leaping to the boss; no endTurn change (its confirm guard is already false once the tithe is met). (3) BURN ANY CARD discoverability — the code already let you burn any owned card in a real run (proven headless: starters/Dross/forged/bought all burn from hand + pile view), but nothing signalled it; now body.burning flames every in-hand card's edge (burnready pulse; reduced-motion → static) + a pointer cursor + clearer burnbar copy ('burn ANY card … starters & Dross included'). No eligibility change. (4) DEBRIEF 'THE DECK, AS IT STOOD' bars now share ONE scale — was maxRC (largest single rarity) for the rarity+forged rows but a hardcoded 100% for total (two denominators, so forged=26 read shorter than total=35); all rows now divide by pool.length (den), so forged reads ~74% of a full total bar. Difficulty ('too easy once the machine gets going') deferred to a design memo, unchanged this build. // v0.11.8 (5 playtest items): (1) OMINOUS END TURN — the #endturn.danger state (already toggled when your projected score < the tithe) now THROBS a red glow (etdanger keyframe; reduced-motion → static glow) so 'you won't make it' clearly reads. (2) FAIL-END CONFIRM — clicking/Enter-ing End Turn while pledgedGlory()<tithe (real run only) pops #confirmend naming the cost ('you're N ★ short — ending shatters your Emberheart Charm' / '…ends your run') with KEEP PLAYING / END ANYWAY; Escape + scrim = keep playing; added to the ENTER overlay-guard. (3) THE IRON CAGE redesign — the impossible ≤3-play hard cap (handCap) becomes a SOFT CAP (softCap:{after:3,mult:0.4}): play as many cards as you like, but plays past the 3rd score 40% ★ (softCapFactor by play-index, applied identically in computeScore + the tally so projection===tally; capped plays show a ⛓ float; ledger + live + tag updated). (4) BOON: PEEK THE BOARD — a toggle on the boon overlay clears it (transparent, board un-dimmed) so you can see the Bazaar + your hand while choosing, with a floating '▲ BACK TO THE BOON' to return. (5) ADMIN /difficulty END BOSS — the demand curve now draws the FULL run to t48 (was clipped to the deepest data turn), so the whole 8-boss gauntlet always shows even when every run dies early; each boss is a named vertical marker and the End Boss (t48 Masterwork) is gold-flagged '★ Masterwork · END'. // v0.11.7 (polish): (1) FIX a misleading focus badge — a v0.11.5 free-focus-engine (e.g. Umbral Conclave, cost 0 ❖) still showed a '❖ 0' cost pill + the red 'needsfocus' ember edge, reading as if it cost focus. costsFocus now keys on the ACTUAL focusCostOf(def)>0, so free cards show no ❖ badge/edge; real-cost cards (incl. rare/mythic engines like Nightmare Vintner) still do. (2) The game-start Emberheart Charm message holds ~3.6s (slamText gains a `hold` option that lengthens the animation) so the one-time instruction is readable. // v0.11.6 START ARMED: the invisible free Act-1 mercy is replaced by a REAL, visible Emberheart Charm mounted on the bench from turn 1 (announced: 'THE FORGE ARMS YOU · AN EMBERHEART CHARM · IT FORGIVES YOUR FIRST MISSED TITHE'). It shatters to forgive the first missed tithe ANYWHERE (not Act-1-only), then you buy more at the Bazaar as before. Cleaner + more honest than a hidden flag, and it shows in the ch_turn 'charms' telemetry from t1. Wiring: boot mounts state.relics=[emberheart] for a fresh chapter run (a CONTINUE overwrites with the saved bench); the death path drops the act1Mercy free-pass branch and goes straight to the charm-shatter; state.act1Mercy removed from init/save/restore (difficultyConfig keeps a literal act1Mercy:true — still true: the run starts with a forgiveness). // v0.11.5 CONSISTENCY: the deaths were VARIANCE (dead hands + a focus-lock), not the curve — by Act 2 the tightness was already in the ideal band, so the fix is reliability, not difficulty. (1) FOCUS-LOCK FIXED: common/uncommon focus-engine cards (gains.focus>0) now play FREE (focusCostOf → freeFocusEngine) — you should never need ❖ to make ❖ (a focus-costed enabler was unplayable at 0 ❖, e.g. under The Sealed Hearth −1❖); rare/mythic engines keep their cost. focusCostOf also now respects an explicit focusCost:0. (2) 2ND EARLY DRAW: the starter gets a second Tidewake (TRIAL.starter ['tidewake','tidewake','kindling']) — was a SINGLE draw source, so a no-Tidewake opening = no dig; now ~halved. (3) DEAD-HAND MULLIGAN: after the opening deal, if the hand has NO draw/focus enabler (openSnap.enab===0 — the exact 'dead hand' that ended runs), it's shuffled back and redrawn ONCE (mulliganDeadHand, guarded by state.mulliganed per turn; 'A DEAD HAND — THE FORGE RELENTS'); wired at the new-turn deal, the resumed-run deal, and turn-1. (4) TIGHTER START: GRACE_FLOOR 0.5→0.62 — the loose t1-5 coast (5×) was too easy; this lifts ONLY the earliest turns (t1 ~6→7, converges to full demand by t8), the mid is untouched (self-registers via difficultyConfig.graceFloor). No demand-rate change (the mid is correct). // v0.11.4 BOSS ROSTER REDESIGN — mechanical variety (bosses were samey: 3 of 8 just cut ❖). Each of the 8 Aspects now has a DISTINCT bite; only bosses 1 & 8 keep a focus penalty. NEW/changed: (act 3) THE TARNISH — one RANDOM colour scores 50% this turn (new dampColor:{color,mult} mechanic, applied in starsFor so it shows on the per-card float and keeps projection===tally; the colour is picked at boss setup, excludes ash, and tints the whole board; replaces The Molten Vise's −2❖). (act 5, the too-hard t30) THE SILTING — dealt +2 Dross into hand, permanently silting the deck (drossSeed:2, demandMult 2.4→2.2; replaces The Guttering's chain-dead comboMult:0, which was a hard wall for combo decks). (act 6) THE HOLLOW FORGE reframed — every card's ★ worth 60% (allStarMult:0.6, the requested 'all cards score less'; was multDamp:0.6 — same net cut, clearer copy). Kept distinct: −1❖ (1), draw−2 (2), 15% ★ skim (4), ≤3 plays (7), capstone −2❖+skim (8). Retired: comboMult (chain-dead) and multDamp. bossLedger gains bite rows for allStarMult<1 and dampColor (names the colour); the new bosses get live-HUD strings. admin BOSS_BY_ACT mirror updated (act3 Tarnish, act5 Silting). The self-registered ch_config bossMults reflects act-5 2.4→2.2 so the Versions registry diffs it. (Note: 'too easy until 30' was a pre-v0.11.3 run — v0.11.3 already tightened mid demand; this pass is variety + the t30 ease, not a blanket bump.) // v0.11.3 DIFFICULTY: richer per-turn telemetry (design-vs-luck) + a mid-game tuning pass. The Difficulty tab could show a turn's tightness but not WHY (a 0.2× turn = dead hand? diluted deck? or genuinely hard?). (1) ch_turn now also logs, per turn: deckN + drossN (deck bloat/dilution), the OPENING-hand composition {openN,openEnab,openPlay,openDead} snapshotted at the deal seam via captureOpenHand() (openEnab===0 = the "dead hand" that ends runs), focusLeft/buysLeft (resource waste), played/combo (effort), charms (insurance remaining at judgment). difficultyConfig() extended is unaffected; storage automatic. (2) SERVER /api/admin/difficulty byTurn adds medDeckN/medDrossN/deadHandRate/avgFocusLeft + a miss-cause tally {dead,diluted,hard}; /api/admin/balance turns carry the raw fields. (3) ADMIN full variance analysis on the Difficulty tab: a 'Why — deck dilution & dead hands' panel (median deck-size + Dross curves, a dead-hand-rate bar row), run-strip cells tagged by CAUSE (dead hand / diluted / genuinely hard — so a t31 0.2× reads as bad luck, not bad balance), a post-boss-turn watch (the boss Dross-injection dilution spike, turns 7/13/19/25/31/37/43), and an opening-hand one-liner (% of hands with no enabler). (4) MID-GAME TUNING PASS (turns 1-29 read too-easy at 2-6×): DEMAND_RATE 1.28→1.30 steepens the geometric pre-knee climb — effect concentrates on the mid (t12 283→335, t18 1439→1872, ~+18-30%) while the early stays grace-cushioned (boss 1 only +8%); DEMAND_LATE_RATE 1.12→1.11 HOLDS the summit (t48 74,550→74,142). Partially offsets v0.11.1's give-back for strong players; newcomers keep mercy + star-boost. A first pass — the new telemetry drives the real per-skill tuning next. // v0.11.2 VERSION-AWARE DIFFICULTY ANALYTICS (admin) + the game self-registers its balance. The Forge Console conflated every balance version into single meaningless numbers (a v0.6 win = a v0.11 win; the Difficulty demand line was an arbitrary version's while median score pooled all). Now: (1) SELF-REGISTER — the game emits a ch_config beacon once per real run (Balance.config + difficultyConfig()) carrying every difficulty knob (demand base/rate/knee/late, MULT cap/+per-boss/x-cap, chain/echo/tribal rates, STAR_BOOST, start+boss gold, 8 boss demand-mults, Act-1 mercy), so future versions auto-document their balance; BEACON_OFF-gated, fires at boot in chapterMode. (2) SERVER — new GET /api/admin/difficulty groups ch_turn/ch_run BY BUILD and returns per-version {byTurn(median/p25/p75/cleared/alive), runCount, wins, deaths, config} (aggregated → no run cap); GET /api/admin/balance gains ?build= for the run strips. (3) DIFFICULTY TAB is now a single-version deep dive — defaults to the LATEST build (semantic-sorted dropdown of all versions), draws the demand curve EXACTLY from that version's config (killing the old last-writer demand bug), and shows a difficulty-settings panel with a delta-vs-previous highlight. (4) NEW VERSIONS TAB — a registry table of every build's knobs (git-exact for v0.8.3+, prose-backfilled + 'approx' for v0.7.x, HISTORICAL_VERSIONS const; live telemetry wins when present) with changed cells highlighted, plus a tightness overlay (median score ÷ that version's demand, per turn — version-normalized difficulty, 1.0=just cleared) comparing any picked builds. (5) PULSE — engagement stays global (players/active/playtime/sessions/countries: version-invariant), but the version-DEPENDENT stats (Forged/win %, median depth, the Game funnel — now per-RUN) scope to a build selector defaulting to latest (aggregate.js overview.byBuild). Also: playerDetail runs carry build. Tests: /api/admin/difficulty + balance?build=, difficultyConfig shape, version-aware Difficulty/Versions/Pulse driven headless, admintest updated (6 tabs, per-run game funnel) — full battery green. // v0.11.1 (playtest tuning + polish): (1) THE VICTORY DEBRIEF gains a mystical animated backdrop — a slowly-wheeling star-chart (#db-cosmos canvas): three counter-rotating forge-sigil rings + a twinkling gold constellation that drifts gently upward, drawn on its own self-sleeping RAF (sleeps when the dossier closes), deliberately faint (opacity .6, low per-element alpha) so it never competes with the figures; reduced-motion → one still frame. (2) BALANCE — the v0.11 mult nerf left it slightly too hard, so a TINY star + slight gold give-back (NOT via mult, keeping the capped-mult tension): STAR_BOOST=1.06 — each PLAYED card scores 6% hotter, applied per-card in BOTH computeScore and the end-turn tally (climbing meter, floats, and the base×mult=final equation stay in lockstep — projection===tally invariant intact; the ⚡ synergy flag still checks the raw pre-boost value); per-boss gold reward +5→+6. (3) OPENING BAZAAR now GUARANTEES a strong Dross-for-power ware up front (cheap ≤4 or low-focus, gains a Dross — Pyre Bloom / Silt Dredger / Ashgilt Idol) so the burn loop is offerable from turn 1; it's one of the 7 guaranteed food groups (market stays 7 wide). (4) START WITH 6 GOLD (was 3). // v0.11.0 NINE PLAYTEST FIXES + ENDLESS REMOVED + THE VICTORY DEBRIEF. (1) VIEW YOUR CARDS on the Boon + Master-Relic overlays — the pile view opens READ-ONLY above a suspended reward (pvReadonly: no forge/burn rows; Esc closes it first, the reward survives; #pileview z 165→172). (2) Deck/discard piles moved down (top 76→96px) clear of END TURN. (3) burnMode: clicking a pile-view card BODY now zooms WITH the burn button (shared zoom() honors pvReadonly/burnMode/forge — was forge-only, the burn-less-zoom bug). (4) Boon/mrdraft backdrops opaque + blurred (alpha .5/.66→.78/.82 + backdrop-filter) — testers tried to read the board through them. (5) The phantom CLOSE: #inspect (z170, earlier in DOM) rendered BURIED under #mrdraft (also z170) — a right-click relic zoom showed only its CLOSE through the translucent backdrop and clicks landed on the draft; #inspect → z175. Plus an explicit SKIP CLAIM button (mrResolve; click-only, deliberately not Escape). (6-7 admin) LIVE≠abandoned: won===null now checks recency (STALE_MS 10min → gray ABANDONED tN badge) and live rows show Σturns[].score (was endGlory=0★); WATCH button on fresh-LIVE rows → spectate panel fed by a new per-turn ch_board beacon (self-contained card chips ≤8KB, boardSnap()) + GET /api/admin/board?cid= (own route — the events route whitelists extra); 12s poll, zero animation. (8) MULT NERF for tension: CHAIN_RATE .2→.18, ECHO_RATE .12→.10, TRIBAL_RATE .25→.20 (constants shared by computeScore AND the reveal — no desync), multDouble +3→+2.5, card m shaved ~17-25% (Verdant Bloom .15, Grove Warden .10, Compound .25, Prism .20, Catalyst .15, Second Sun 1.2), relicMult −20% (reliquary .15/monument .25/trophy .25/aethercrown .4/furnaceheart .65/crowns .8/1.2/2), emberBloom .12/.25/.4; COMPENSATION: DEMAND_LATE_RATE 1.13→1.12 (t48 97,333→74,550) — net: t9-18 ~15-18% harder (the ask), t36+ neutral; Acts 1-2 nearly untouched (mercy intact). (9) THE BAZAAR RESTOCKS: every boss clear runs evolveMarket (+evolveRack if a shelf emptied) — max rank hits ~Act 3-4 and the old rank-up-only restock left the late game permanently SOLD; SOLD slots now read 'new wares after the boss'. ENDLESS REMOVED (design: beating the Masterwork ENDS the game): state.endless/pendingVictory/endlessDemand/ENDLESS_GROWTH/Heat saw-tooth deleted; the t48 kill plays the hard-stop + slam, silently syncs final rank, and fires runVictory() WITHOUT resolving the turn (no sweep/turn-49/redeal/save); pre-v0.11 endless saves retired in loadSave (their score is already on the roll). THE VICTORY DEBRIEF (#debrief z265, dossier register: mono tabular figures, micro-labels, display font only on title+seal): captures Balance.rows/cards BEFORE Balance.end wipes them; modules — hero tiles (glory count-up, rank, active time, honor-roll placement upgraded async), THE RUN CURVE (hand-rolled log-Y SVG, boss diamonds filled/hollow=forgiven, act numerals), THE EIGHT TRIALS ledger (asked/paid/margin, THE CLOSEST SHAVE), ENGINE AUTOPSY (peak turn, longest chain via new state.maxCombo, final base×mult, log-share bar + MULT ENGINE/TWIN-HAMMERED/STAR-WROUGHT verdict), THE DECK AS IT STOOD (rarity/⁂ histogram + most played/bought/forged/burned), THE BENCH (SPENT strikethrough), NEW RUN + VIEW HONOR ROLL; MASTERWORK COMPLETE seal stamps in with one sub-thud; new game_won telemetry event; #gameover is death/trial-only now. // v0.10.0 THE DOPAMINE & JUICE OVERHAUL (tasks/dopamine-plan.md, all 6 sections + critique fixes B1-B4): §0 HEAT SPINE — a global Heat signal (run: slow 0-1 recomputed at turn/boss/rank milestones; surge: fast, spiked by big turns; timeScale: hit-stop) with its OWN self-sleeping RAF (B1: no always-on loop existed); Endless breathes per 6-turn cycle instead of pinning at max (B4). §1 EVOLVING MUSIC — Music.onHeat opens the pad/bass filters (500→4000Hz) with the run, density gates scale (hats .5+.42r, stabs .35+.4r, noodle .04+.14r), BPM ramps 104→146 by act (~3/min via Heat's RAF), a lead-arp layer gates on above Heat .6 (hysteresis .6/.55), BOSS MODE swaps the chord tables to a Phrygian-dark ALT set by REFERENCE at the bar seam (never mutates CH) and reverts exactly on bossDefeat, quantized stingers (boss-clear triad swell) land on the next bar, duckNow is locked out during fadeOut (a stinger can't cancel a farewell), muted = scheduler idles (§6.6). §2 SCALED FX — the multiply-reveal is magnitude-aware via canonical scalars mag=log10(final)/5 and over=final/tithe (B3: apex tiers gate on BOTH — easy early dumps can't fake greatness); hit-stop freeze() before the boom (rush-aware, routed through tw); slamText overshoot + chromatic aberration (tier-3, short-eqn only); feast is CONTINUOUS (TITHE PAID→FEEDS→FEASTS→THE FORGE GORGES); shake() rewritten to a TRAUMA model (trauma², summed-sine sway + up to ~2.5° roll, dip() channel for directional thumps) keeping the old power scale at all ~30 call sites; particle pool hard-capped at 300; boss-clear/rank-up escalate by act/rank. §3 CARDS LAND HEAVIER — weight=RARITY_JUICE×(1+tier·.4)×(1+min(glory,8)·.06) (a forged rare out-lands a vanilla mythic); landing squash keyframe (common imperceptible); anticipation lift/hold scale with weight; per-rarity bass registers (mythic/master sub-sines, forged metal rings deeper); buy/forge stop being rarity-flat. §4 BIG-WIN TIERS (categorical) — tier-3 apex: slow-mo + chroma + the reserved CHANT (transposed by turn so it never becomes a ringtone) + A NEW PEAK via state.bestTurnGlory (B2: recordScore() mutates localStorage, never called per turn); tier-4 record-shatter (glory>old best×1.5): gold desaturate-and-rebloom, reserved; personal best is a first-class interrupt on death AND victory screens; column of fire BEHIND the mult glyph (digit stays legible); final-boss kill = HARD-STOP (music cuts, 400ms blackout-and-silence, THEN the fanfare); first-encounter novelty flags (first boss/mythic/record) in ch-sg-firsts. §5 DEATH FEEL — filters slam shut, colour drains (deathgray), the crash decays into true silence, then the verdict sub-tone; a new best outshines the death. §6 RESTRAINT — baseline demoted throughout (routine turns whisper); prefers-reduced-motion gates the WHOLE layer (shake→border pulse, freeze→0, particles ×.3, music starts calm stays calm — colour/sound/number channels preserved); SCREEN FX slider in the sound menu (Heat.fxScale, persisted in ch-af-vol); coach protection — inTrial() pins Heat low, forbids freeze, caps juice ≤.35. PLUS: honor roll gets THE WORLD / MY RUNS tabs (race yourself); ANALYTICS on the main menu — the player's OWN ledger from ch-bal-log/ch-af-scores (runs, wins, streaks, best run/turn, deepest turn, most played/bought/forged/burned wares, last-12-runs bars) — local data only, nothing leaves the machine. // v0.9.1 BUGFIX: deck/discard piles jumped when playing a card — v0.9.0 made them position:fixed inside #app, and shake() transforms #app, so a fixed element re-anchors to #app's box (spec: a transformed ancestor becomes the containing block for fixed descendants), snapping the piles to a different spot each shake. Fixed: piles are now position:absolute + direct children of #app, so they ride the shake with the board. // v0.9.0 (6-item pass): (1) Deck+Discard moved to the upper-right HUD (fixed, below END TURN) so a big hand fan no longer occludes them. (2) Pile view gains tabs — ALL / DRAW / DISCARD / PLAYED. (3) ENTER ends the turn (guarded vs typing/overlays/disabled). (4) LATE-GAME MATH: demand tapers past the Act-3 boss (knee t19, rate 1.28→1.13) so the geometric curve stops outrunning a capped score — t48 4.1M→97k (was mathematically impossible, now ~676 base★); the MULT cap now RISES +3 per boss cleared (15→36) via effMultCap(), and two optional stacking cap relics (Furnace Regulator +4 T2, Unbound Forge +8 T3) let a MULT build push higher without being mandatory. (5) Menu 'back' links restyled from dotted-underline text (old-HTML look) to gold ghost pills. (6) Playtime now counts ACTIVE (foreground) time only — the clock pauses on tab-hidden, so idle open-tab time no longer inflates it; admin relabelled 'Active time'. // v0.8.6: FIX CONTINUE — the resume rebuilt the market DATA but not the market DOM, so the Bazaar showed phantom un-clickable cards (turn/glory/deck/hand resumed fine). initMarket's DOM loop extracted into buildMarketDOM(); the boot() restore block now calls it after restoreRun() so the resumed Bazaar is real. (v0.8.5's test kept sessionStorage across reload → never hit the real reopen path where askName fires; test corrected.) // v0.8.5: RUN PERSISTENCE — a run autosaves to localStorage (ch-sg-save) at each turn boundary; the start menu shows CONTINUE (resume · Act N, turn T, NNN★) when a save exists for this device's player, and PLAY drops to 'a new run'. Restores deck/discard/relics(+shattered)/market/commissions/counters; forged cards (coin_f) rebuilt via defFromId. Cleared on death + RESTART; kept on QUIT-to-menu (leave & resume). TALLY SPEED: the end-turn ceremony auto-scales ~2.2× faster from Act 3 on (Acts 1-2 keep the full show), fixing the long-chain drag; click-to-rush still works. // v0.8.4 (playtest pass): FREE Act-1 first-miss mercy — the Forge forgives an apprentice once (prod data: Boss 1 killed 44% of Erik's runs, once by 2★, while barely touching Hampus); does NOT count as clearing. BUGFIX: opening market ignored afterBoss (Twin Pyre seeded turn 1) — pickReverie now filters both gates. POLISH: game-over backdrop opaque (was competing with the bright board), MULT cap reads 'cap 15' not '/15' (slash misread as a fraction), start menu PLAY primary+first above LEARN (optional tutorial). SECURITY: static-file guard requires ROOT+sep (sibling-prefix dir couldn't leak, now can't at all). // v0.8.3: BURN needs a CONFIRM — the picked card zooms to centre wearing a big BURN button (+★ shown), CANCEL keeps the prompt armed, SKIP BURN spares everything; coach follows in ('BURN IT'). Fixes mis-click incinerations from a crowded hand. Relic mounts (rack buys + master drafts) now ride the ch_run card tally (cards.relics) for the admin Compare tab. // v0.8.2: card-corner wedges fixed — the .foot/.nameplate scrims and the .cardo hot-glow shadow painted SQUARE corners past the 12px cardface radius (face can't clip: badges must overflow); all three now carry the matching radius. // v0.8.1: removed the stranded 'PLAYED ×N' pill (v0.3 tight-stack relic left floating in empty space after the v0.7.2 cluster move; COMBO ×N already shows the chain). v0.8.0 BALANCE (v0.7.0 overshot — too easy): the six ungated mythics now gate properly — leviathan/abyss deep (rank 2), dragon/incarnate/mirrortwin deep+afterBoss:2 (t12+), THE GILDED FRACTAL (the ×1.5 xMult exploder that landed in Act 1-2) deep+afterBoss:3 (t18+). DEMAND_BASE 10.4→11.7 (half the v0.7 cut restored, −10% vs original). NEW Dross-for-power T1 wares (strong + 1❖ to play, each play silts a Dross): Pyre Bloom (c4, 4★), Silt Dredger (c5, 3★ +draw2), Ashgilt Idol (c5, 3★ +2⬤). NEW mid burn-engine The Twin Pyre (c5 cantrip, +1❖, burn 1, afterBoss:1) — Altar → Twin Pyre → Great Kiln. v0.7.2: the played-card cluster occludes less — anchor 45%→55% (sits low on the board) and rows are 8 wide (was 5), so a 15-card chain is 2 short rows instead of a 3-row wall across the centre. v0.7.1: § debug is keyboard-only — removed the corner tap element (no clickable trace on screen). v0.7.0 BALANCE: MULT_CAP 7→15 (the ×7 ceiling could not answer the late-boss curve), DEMAND_BASE 13→10.4 (flat −20%, playtest verdict), and three SCALING star engines so base ★ can grow with the run — Ashfall Reliquary (rare, +1★/card burned this run), Crown of Hours (mythic, +1★×turn number), Anvil of the Green World (mythic, +1★/card played); new syn kinds starPerBurn/starPerTurn in starsFor(). Admin: Forge Console redesign (funnels, demand-vs-score chart, clear-rate bars, live feed, per-player run timelines via /api/admin/balance?cid= + /api/admin/events). v0.6.9: (1) pile-view recede fixed — dim/pop now keyed to the card actually under the pointer via JS classes (.receding/.hot), not container :hover; resting the mouse between cards (or a forge re-render under a still pointer) no longer washes out every card with nothing popped. (2) § secret debug — press § or click the faint corner § → copyable JSON dump of the exact game state (build, run, piles, score, overlays, ch-* storage, recent errors via an early error ring buffer) for bug reports. (3) admin: "Furthest" split into Learn (tutorial funnel: skipped/started/Trial N/Graduated) and Game (real-run depth: just looked/started/Act N·turn/Forged ★) so tutorial adoption is visible. v0.6.8: SHARED honor roll — run scores post to /api/score (cid+per-run rid; a win that rolls into an Endless death keeps ONE slot at its peak) and the HIGHSCORE panel + game-over board show the global top 10 from /api/scores, own rows highlighted via a server-computed `me` flag (raw cids never leave the server). localStorage board unchanged as the offline/test fallback; net is gated by Telemetry.off so :5713/file:// stay silent. v0.6.7 (test-player fixes): (1) a Boon is a free reward — a stray backdrop click no longer discards it; only a card or DECLINE dismisses. (2) the end-turn MULT reveal no longer overshoots the cap then snaps down (showed ×58=13456 → ×14=3262); the meter now climbs only to the true capped total, AND the ×7 MULT cap is made legible — a persistent "/7 max" on the MULT meter that turns gold "MAX" at the cap, a "★ MULT MAXED · ×7" callout the instant you hit it, and the keystone (× bucket) shown as its own ⚡×N chip. v0.6.6 (pile view): hovering a card now recedes its neighbours (opacity .38) so their gold forge buttons / count badges stop peeking past the enlarged card's corners (the "yellow corner"), and the popped card wears a tighter gold lift-shadow (negative spread) with a softer count-badge drop — fixes the black-box/yellow-corner hover-zoom artifacts. v0.6.5 (pile view): hover-zoom no longer clips an edge card (grid overflow visible while the deck fits, real scroll box only on genuine overflow); cards vertically centred when the deck fits; removed the redundant forge-preview eye button; dropped the dark card-name scrim that read as a black frame across the top of the enlarged pile-view cards. v0.6.4: PLAY is open from the first visit — removed the Learn-before-Play lock (LEARN is now an optional tutorial). v0.6.3: server-side "Mellon" password gate for the private playtest (removed the misbuilt invite button). v0.6.2: full-screen pile view, Ledger buff, card-usage telemetry, Learn gate + deep sweep
+const BUILD='chapters-story · v0.12.0-exp'; // v0.12.0-exp FORGED IN CHAINS (EXPERIMENT branch forged-in-chains — rollback: deploy main / tag stable-v0.11.13). The narrative legibility pass from tasks/story-and-legibility-plan.md: the game rents an instantly-readable frame — A MASTER SMITH IMPRISONED BY A TYRANT KING, chained to a magical forge; every work FEEDS THE KING and LOOSENS A LINK (★ = his greed AND your freedom). DISPLAY STRINGS + LIGHT ART ONLY — zero mechanics; internal ids (state.tithe, #tithe, BOSSES keys, class names) untouched. Voice rule: the FORGE is your ally (craft — FEED THE FURNACE, BACK TO THE COALS, THE FORGE REMEMBERS YOU stay); the KING is the demander (every antagonist string moved to him). The deck: THE KING DEMANDS (HUD label + slam + ♛ CSS crown mark; boss turns keep '<LOCK> DEMANDS'), feast ladder THE KING IS PAID/FEEDS/FEASTS/GORGES (tuned verbs kept, subject swapped), bosses = THE EIGHT LOCKS (names kept; intro pre 'ACT N · THE <ORDINAL> LOCK' via LOCK_ORD, act 8 = THE LAST LOCK; 'THE FIRST LOCK BREAKS'), THE BAZAAR → THE UNDERMARKET everywhere incl. tutor popups ('SMUGGLED IN — X' restock), fail-confirm THE KING IS NOT PAID + 'The King forgives nothing', death THE KING'S WRATH / Your Chains Tighten, victory debrief = THE KING'S LEDGER · FINAL ENTRY stamped PAID/IN FULL, title 'You Are Forged — and Free', THE EIGHT LOCKS ledger, ENTRY No., 'N LOCKS BROKEN · YOU WALK FREE', relic draft THE KING IS PLEASED, boon THE KING IS IMPRESSED, charm 'A FRIEND IN THE DARK · IT FORGIVES THE KING'S DEMAND, ONCE', mercy death line BUY ANOTHER AT THE UNDERMARKET, mulligan 'A DEAD HAND — BACK TO THE COALS', face-deny 'PAY THE KING FIRST', rank-up 'A LINK BREAKS', name entry 'SIGN YOUR WORK, SMITH' / 'your mark'. RANKS = the FREEDOM LADDER (10 names, thresholds untouched): The Shackled → One Link Broken → The Rattling Chain → Half-Unbound → The Last Shackle → The Unchained → The Fugitive Smith → Ghost of the Forge → The Kingbreaker → The Unbound Eternal. MENU: subtitle FORGED IN CHAINS + hook 'Feed the King. Break your chains.' + the key art (art/cover.jpg, gpt-image-1 — chained smith striking a star under the king's shadow) masked behind the menu; <title> updated; server MIME gains .jpg/.webp. COLD-OPEN: first real PLAY (post-gesture → audio allowed) runs a ~7s skippable #coldopen — THE CELL DOOR SLAMS → CHAINED TO THE KING'S FORGE → FORGE, OR ROT (decree) → BUT EVERY MASTERWORK LOOSENS A LINK (star rises) → title card; Firsts-gated ('coldopen'), reduced-motion = one static frame, click skips. Kept Forge-voiced: trials/tutorial pre-lines (the apprenticeship), farewell, analytics, boot-error. // v0.11.13 (prior stable): high-score one slot per player. // v0.11.13 (HIGH-SCORE = ONE SLOT PER PLAYER): the honor roll kept a row per RUN (deduped only by rid/page-load), so one player could fill several slots. Now each player (cid) holds exactly ONE slot — their BEST run. A new run that BEATS your standing best REPLACES your slot (celebrated as a NEW BEST); a lesser run does NOT enter — it's shown BELOW the board with a "Your run · N ★ … X ★ short of your best (M ★) — it won't enter the roll" note (new .hs-reject). Server: store.addScore dedupes by cid keeping the max, returns {top, entered, best}, and dedupeByBest migrates any legacy multi-row-per-player data on read+write; /api/score passes entered/best through. Client: finishScores renders a one-per-player board (the server's, or your single best row offline) + the reject note when !entered, and returns {entered} so the death screen + Victory Debrief stay honest (the debrief adds the same note under its hero for a won-but-not-best run; no false NEW BEST). The MY RUNS tab (ch-af-scores top-10) is untouched — that's your personal run HISTORY, separate from the competitive board. Tests: tests/scores.test.mjs (node unit test of the store: enters/replaces/rejects + legacy collapse) + tests/hiscore.test.mjs (the reject note vs new-best presentation). // v0.11.12 (HOVER-TO-SPREAD hand): a recurring occlusion pain — a big hand fans with only a ~70px "peek" strip of each 164px card showing (the rest overlapped), so mid-hand cards' art/gains/synergy were unreadable at rest. Now hovering ANYWHERE in the hand splays the fan open: layoutHand reads state.handSpread and lifts the peek floor 70→124px (≈76% of a card shows) + widens the band 0.74→0.9, pulling occluded cards into readability; it snaps back on leave. Wiring: bindHandEvents' pointerenter sets state.handSpread=true (+ the existing single-card lift), pointerleave collapses it after a 110ms debounce (handCollapseTimer) so sliding between adjacent cards never flickers the fan. Free animation — the .cardo `transform .55s cubic-bezier` transition already animates the move. No new geometry constants beyond the spread pair; small hands (already at MAX_SP) are a visual no-op. Inspired by Amicro's "Scatter Spread" card layout (github.com/Subhan-code/Amicro), adapted to the zero-dep vanilla fan. Test: tests/hand.test.mjs (spreads on hover, collapses on leave). // v0.11.11 (3 playtest bugs): (1) CONTINUE didn't work after "new game → leave" — saveRun only wrote at a turn boundary AND guarded state.turn<2, and nothing saves on page-leave, so a run abandoned during turn 1 produced NO save → the CONTINUE button was simply absent. Fix: guard relaxed to state.turn<1 + the fresh-run boot path now seeds the first save PRE-DEAL (after revealReverie, before dealCards) — a brand-new run (its rolled market + starting bench) is resumable before the first END TURN. (2) FACE THE BOSS ate your glory — the current turn's score lived inside endTurn's if(!skip) block, so a skip discarded it; harmless pre-v0.11.9, but v0.11.9's gate now FORCES you to build a tithe-meeting score before leaping, then threw it away. Fix: the skip path now BANKS the earned glory (computeScore().final, guaranteed ≥ tithe by the gate) with a 'BANKED · +N ★' slam before jumping — you forgo the FUTURE build turns' glory, not the one you already secured. (3) SPELL SURGE read as "says 2, needs 4" — the syn:{kind:'types'} family only counts type:'Spell' cards played BEFORE it (a minority; excludes itself), so a mixed hand played 4 cards while 2 counted. Mechanic kept (per the design call); made LEGIBLE: synText reworded ('Needs N other Spells played first' — names the self-exclusion + order) and updateSynIndicators now shows a live '⚡ SPELLS n/N' counter on the hand card (only Spell-type cards tick it; a '.progress' building glow at 1/N; fires to the gold 'armed …now!' at N). Tests: v01111test (11) + a rebuilt full-play/CONTINUE smoke (6) — the scratchpad battery was rotated, so coverage was reconstructed for the touched paths. // v0.11.10 (DIFFICULTY — "too easy once the machine got going" = strong-player scores ran the whole mid at 4-10× the tithe; the ask was A+C, "raise the bar + slow the snowball"): (A) STEEPER MID DEMAND — DEMAND_RATE 1.30→1.335 tightens the geometric pre-knee climb where the engine outran demand (t18 1872→2941 +57%, t24 3975→5755 +45%); DEMAND_LATE_RATE 1.11→1.095 tapers harder past the knee so the summit stays reachable by a capped mult × ~linear base★ (t48 74142→77436, ~+4% — NOT re-creating the v0.9 geometric-vs-capped wall); Boss 1 demandMult 1.3→1.2 offsets the rate rise at the newcomer's first wall (t6 48→51, only +6%) since the mid, not the early, was too easy. (C) BOON THRESHOLD 2.4→3.2 — a build turn earns a free Boon card only above 3.2× the tithe (was 2.4×; the +0.2/claim escalation kept), so the runaway reward loop (a strong player scoring 4-10× took a free card almost every turn, snowballing the engine) needs a genuine spike; self-scales to skill — a newcomer at ~1.5× never triggered it, so C leaves them untouched. Self-registers via difficultyConfig() (demandRate/lateRate/bossMults + a NEW boonMult knob) so the admin Versions/Difficulty tabs diff it; admin CFG_FIELDS gains a 'boon threshold ×' row. NO scoring-engine change (the dopamine stays — you still score big, you just have to). Tests: baltune.mjs (10) + updated demand assertions in v0110/v090; full battery green. // v0.11.9 (playtest bugfix batch): (1) #tithe SCORE HUD stops overflowing/wrapping on big numbers — width 360px→max-content (min 360 / max 94vw) + .cap-hint white-space:nowrap, so 'CAP N' can't break to a 2nd line and collide with the 'THE FORGE DEMANDS' header. (2) FACE THE BOSS NOW is gated on meeting THIS turn's tithe (pledgedGlory()>=tithe, else deny 'MEET THE TITHE FIRST'): fixes v0.11.8's fail-end confirm firing on a legit skip AND closes the escape-hatch — you can't bail a turn you're failing by leaping to the boss; no endTurn change (its confirm guard is already false once the tithe is met). (3) BURN ANY CARD discoverability — the code already let you burn any owned card in a real run (proven headless: starters/Dross/forged/bought all burn from hand + pile view), but nothing signalled it; now body.burning flames every in-hand card's edge (burnready pulse; reduced-motion → static) + a pointer cursor + clearer burnbar copy ('burn ANY card … starters & Dross included'). No eligibility change. (4) DEBRIEF 'THE DECK, AS IT STOOD' bars now share ONE scale — was maxRC (largest single rarity) for the rarity+forged rows but a hardcoded 100% for total (two denominators, so forged=26 read shorter than total=35); all rows now divide by pool.length (den), so forged reads ~74% of a full total bar. Difficulty ('too easy once the machine gets going') deferred to a design memo, unchanged this build. // v0.11.8 (5 playtest items): (1) OMINOUS END TURN — the #endturn.danger state (already toggled when your projected score < the tithe) now THROBS a red glow (etdanger keyframe; reduced-motion → static glow) so 'you won't make it' clearly reads. (2) FAIL-END CONFIRM — clicking/Enter-ing End Turn while pledgedGlory()<tithe (real run only) pops #confirmend naming the cost ('you're N ★ short — ending shatters your Emberheart Charm' / '…ends your run') with KEEP PLAYING / END ANYWAY; Escape + scrim = keep playing; added to the ENTER overlay-guard. (3) THE IRON CAGE redesign — the impossible ≤3-play hard cap (handCap) becomes a SOFT CAP (softCap:{after:3,mult:0.4}): play as many cards as you like, but plays past the 3rd score 40% ★ (softCapFactor by play-index, applied identically in computeScore + the tally so projection===tally; capped plays show a ⛓ float; ledger + live + tag updated). (4) BOON: PEEK THE BOARD — a toggle on the boon overlay clears it (transparent, board un-dimmed) so you can see the Bazaar + your hand while choosing, with a floating '▲ BACK TO THE BOON' to return. (5) ADMIN /difficulty END BOSS — the demand curve now draws the FULL run to t48 (was clipped to the deepest data turn), so the whole 8-boss gauntlet always shows even when every run dies early; each boss is a named vertical marker and the End Boss (t48 Masterwork) is gold-flagged '★ Masterwork · END'. // v0.11.7 (polish): (1) FIX a misleading focus badge — a v0.11.5 free-focus-engine (e.g. Umbral Conclave, cost 0 ❖) still showed a '❖ 0' cost pill + the red 'needsfocus' ember edge, reading as if it cost focus. costsFocus now keys on the ACTUAL focusCostOf(def)>0, so free cards show no ❖ badge/edge; real-cost cards (incl. rare/mythic engines like Nightmare Vintner) still do. (2) The game-start Emberheart Charm message holds ~3.6s (slamText gains a `hold` option that lengthens the animation) so the one-time instruction is readable. // v0.11.6 START ARMED: the invisible free Act-1 mercy is replaced by a REAL, visible Emberheart Charm mounted on the bench from turn 1 (announced: 'THE FORGE ARMS YOU · AN EMBERHEART CHARM · IT FORGIVES YOUR FIRST MISSED TITHE'). It shatters to forgive the first missed tithe ANYWHERE (not Act-1-only), then you buy more at the Bazaar as before. Cleaner + more honest than a hidden flag, and it shows in the ch_turn 'charms' telemetry from t1. Wiring: boot mounts state.relics=[emberheart] for a fresh chapter run (a CONTINUE overwrites with the saved bench); the death path drops the act1Mercy free-pass branch and goes straight to the charm-shatter; state.act1Mercy removed from init/save/restore (difficultyConfig keeps a literal act1Mercy:true — still true: the run starts with a forgiveness). // v0.11.5 CONSISTENCY: the deaths were VARIANCE (dead hands + a focus-lock), not the curve — by Act 2 the tightness was already in the ideal band, so the fix is reliability, not difficulty. (1) FOCUS-LOCK FIXED: common/uncommon focus-engine cards (gains.focus>0) now play FREE (focusCostOf → freeFocusEngine) — you should never need ❖ to make ❖ (a focus-costed enabler was unplayable at 0 ❖, e.g. under The Sealed Hearth −1❖); rare/mythic engines keep their cost. focusCostOf also now respects an explicit focusCost:0. (2) 2ND EARLY DRAW: the starter gets a second Tidewake (TRIAL.starter ['tidewake','tidewake','kindling']) — was a SINGLE draw source, so a no-Tidewake opening = no dig; now ~halved. (3) DEAD-HAND MULLIGAN: after the opening deal, if the hand has NO draw/focus enabler (openSnap.enab===0 — the exact 'dead hand' that ended runs), it's shuffled back and redrawn ONCE (mulliganDeadHand, guarded by state.mulliganed per turn; 'A DEAD HAND — THE FORGE RELENTS'); wired at the new-turn deal, the resumed-run deal, and turn-1. (4) TIGHTER START: GRACE_FLOOR 0.5→0.62 — the loose t1-5 coast (5×) was too easy; this lifts ONLY the earliest turns (t1 ~6→7, converges to full demand by t8), the mid is untouched (self-registers via difficultyConfig.graceFloor). No demand-rate change (the mid is correct). // v0.11.4 BOSS ROSTER REDESIGN — mechanical variety (bosses were samey: 3 of 8 just cut ❖). Each of the 8 Aspects now has a DISTINCT bite; only bosses 1 & 8 keep a focus penalty. NEW/changed: (act 3) THE TARNISH — one RANDOM colour scores 50% this turn (new dampColor:{color,mult} mechanic, applied in starsFor so it shows on the per-card float and keeps projection===tally; the colour is picked at boss setup, excludes ash, and tints the whole board; replaces The Molten Vise's −2❖). (act 5, the too-hard t30) THE SILTING — dealt +2 Dross into hand, permanently silting the deck (drossSeed:2, demandMult 2.4→2.2; replaces The Guttering's chain-dead comboMult:0, which was a hard wall for combo decks). (act 6) THE HOLLOW FORGE reframed — every card's ★ worth 60% (allStarMult:0.6, the requested 'all cards score less'; was multDamp:0.6 — same net cut, clearer copy). Kept distinct: −1❖ (1), draw−2 (2), 15% ★ skim (4), ≤3 plays (7), capstone −2❖+skim (8). Retired: comboMult (chain-dead) and multDamp. bossLedger gains bite rows for allStarMult<1 and dampColor (names the colour); the new bosses get live-HUD strings. admin BOSS_BY_ACT mirror updated (act3 Tarnish, act5 Silting). The self-registered ch_config bossMults reflects act-5 2.4→2.2 so the Versions registry diffs it. (Note: 'too easy until 30' was a pre-v0.11.3 run — v0.11.3 already tightened mid demand; this pass is variety + the t30 ease, not a blanket bump.) // v0.11.3 DIFFICULTY: richer per-turn telemetry (design-vs-luck) + a mid-game tuning pass. The Difficulty tab could show a turn's tightness but not WHY (a 0.2× turn = dead hand? diluted deck? or genuinely hard?). (1) ch_turn now also logs, per turn: deckN + drossN (deck bloat/dilution), the OPENING-hand composition {openN,openEnab,openPlay,openDead} snapshotted at the deal seam via captureOpenHand() (openEnab===0 = the "dead hand" that ends runs), focusLeft/buysLeft (resource waste), played/combo (effort), charms (insurance remaining at judgment). difficultyConfig() extended is unaffected; storage automatic. (2) SERVER /api/admin/difficulty byTurn adds medDeckN/medDrossN/deadHandRate/avgFocusLeft + a miss-cause tally {dead,diluted,hard}; /api/admin/balance turns carry the raw fields. (3) ADMIN full variance analysis on the Difficulty tab: a 'Why — deck dilution & dead hands' panel (median deck-size + Dross curves, a dead-hand-rate bar row), run-strip cells tagged by CAUSE (dead hand / diluted / genuinely hard — so a t31 0.2× reads as bad luck, not bad balance), a post-boss-turn watch (the boss Dross-injection dilution spike, turns 7/13/19/25/31/37/43), and an opening-hand one-liner (% of hands with no enabler). (4) MID-GAME TUNING PASS (turns 1-29 read too-easy at 2-6×): DEMAND_RATE 1.28→1.30 steepens the geometric pre-knee climb — effect concentrates on the mid (t12 283→335, t18 1439→1872, ~+18-30%) while the early stays grace-cushioned (boss 1 only +8%); DEMAND_LATE_RATE 1.12→1.11 HOLDS the summit (t48 74,550→74,142). Partially offsets v0.11.1's give-back for strong players; newcomers keep mercy + star-boost. A first pass — the new telemetry drives the real per-skill tuning next. // v0.11.2 VERSION-AWARE DIFFICULTY ANALYTICS (admin) + the game self-registers its balance. The Forge Console conflated every balance version into single meaningless numbers (a v0.6 win = a v0.11 win; the Difficulty demand line was an arbitrary version's while median score pooled all). Now: (1) SELF-REGISTER — the game emits a ch_config beacon once per real run (Balance.config + difficultyConfig()) carrying every difficulty knob (demand base/rate/knee/late, MULT cap/+per-boss/x-cap, chain/echo/tribal rates, STAR_BOOST, start+boss gold, 8 boss demand-mults, Act-1 mercy), so future versions auto-document their balance; BEACON_OFF-gated, fires at boot in chapterMode. (2) SERVER — new GET /api/admin/difficulty groups ch_turn/ch_run BY BUILD and returns per-version {byTurn(median/p25/p75/cleared/alive), runCount, wins, deaths, config} (aggregated → no run cap); GET /api/admin/balance gains ?build= for the run strips. (3) DIFFICULTY TAB is now a single-version deep dive — defaults to the LATEST build (semantic-sorted dropdown of all versions), draws the demand curve EXACTLY from that version's config (killing the old last-writer demand bug), and shows a difficulty-settings panel with a delta-vs-previous highlight. (4) NEW VERSIONS TAB — a registry table of every build's knobs (git-exact for v0.8.3+, prose-backfilled + 'approx' for v0.7.x, HISTORICAL_VERSIONS const; live telemetry wins when present) with changed cells highlighted, plus a tightness overlay (median score ÷ that version's demand, per turn — version-normalized difficulty, 1.0=just cleared) comparing any picked builds. (5) PULSE — engagement stays global (players/active/playtime/sessions/countries: version-invariant), but the version-DEPENDENT stats (Forged/win %, median depth, the Game funnel — now per-RUN) scope to a build selector defaulting to latest (aggregate.js overview.byBuild). Also: playerDetail runs carry build. Tests: /api/admin/difficulty + balance?build=, difficultyConfig shape, version-aware Difficulty/Versions/Pulse driven headless, admintest updated (6 tabs, per-run game funnel) — full battery green. // v0.11.1 (playtest tuning + polish): (1) THE VICTORY DEBRIEF gains a mystical animated backdrop — a slowly-wheeling star-chart (#db-cosmos canvas): three counter-rotating forge-sigil rings + a twinkling gold constellation that drifts gently upward, drawn on its own self-sleeping RAF (sleeps when the dossier closes), deliberately faint (opacity .6, low per-element alpha) so it never competes with the figures; reduced-motion → one still frame. (2) BALANCE — the v0.11 mult nerf left it slightly too hard, so a TINY star + slight gold give-back (NOT via mult, keeping the capped-mult tension): STAR_BOOST=1.06 — each PLAYED card scores 6% hotter, applied per-card in BOTH computeScore and the end-turn tally (climbing meter, floats, and the base×mult=final equation stay in lockstep — projection===tally invariant intact; the ⚡ synergy flag still checks the raw pre-boost value); per-boss gold reward +5→+6. (3) OPENING BAZAAR now GUARANTEES a strong Dross-for-power ware up front (cheap ≤4 or low-focus, gains a Dross — Pyre Bloom / Silt Dredger / Ashgilt Idol) so the burn loop is offerable from turn 1; it's one of the 7 guaranteed food groups (market stays 7 wide). (4) START WITH 6 GOLD (was 3). // v0.11.0 NINE PLAYTEST FIXES + ENDLESS REMOVED + THE VICTORY DEBRIEF. (1) VIEW YOUR CARDS on the Boon + Master-Relic overlays — the pile view opens READ-ONLY above a suspended reward (pvReadonly: no forge/burn rows; Esc closes it first, the reward survives; #pileview z 165→172). (2) Deck/discard piles moved down (top 76→96px) clear of END TURN. (3) burnMode: clicking a pile-view card BODY now zooms WITH the burn button (shared zoom() honors pvReadonly/burnMode/forge — was forge-only, the burn-less-zoom bug). (4) Boon/mrdraft backdrops opaque + blurred (alpha .5/.66→.78/.82 + backdrop-filter) — testers tried to read the board through them. (5) The phantom CLOSE: #inspect (z170, earlier in DOM) rendered BURIED under #mrdraft (also z170) — a right-click relic zoom showed only its CLOSE through the translucent backdrop and clicks landed on the draft; #inspect → z175. Plus an explicit SKIP CLAIM button (mrResolve; click-only, deliberately not Escape). (6-7 admin) LIVE≠abandoned: won===null now checks recency (STALE_MS 10min → gray ABANDONED tN badge) and live rows show Σturns[].score (was endGlory=0★); WATCH button on fresh-LIVE rows → spectate panel fed by a new per-turn ch_board beacon (self-contained card chips ≤8KB, boardSnap()) + GET /api/admin/board?cid= (own route — the events route whitelists extra); 12s poll, zero animation. (8) MULT NERF for tension: CHAIN_RATE .2→.18, ECHO_RATE .12→.10, TRIBAL_RATE .25→.20 (constants shared by computeScore AND the reveal — no desync), multDouble +3→+2.5, card m shaved ~17-25% (Verdant Bloom .15, Grove Warden .10, Compound .25, Prism .20, Catalyst .15, Second Sun 1.2), relicMult −20% (reliquary .15/monument .25/trophy .25/aethercrown .4/furnaceheart .65/crowns .8/1.2/2), emberBloom .12/.25/.4; COMPENSATION: DEMAND_LATE_RATE 1.13→1.12 (t48 97,333→74,550) — net: t9-18 ~15-18% harder (the ask), t36+ neutral; Acts 1-2 nearly untouched (mercy intact). (9) THE BAZAAR RESTOCKS: every boss clear runs evolveMarket (+evolveRack if a shelf emptied) — max rank hits ~Act 3-4 and the old rank-up-only restock left the late game permanently SOLD; SOLD slots now read 'new wares after the boss'. ENDLESS REMOVED (design: beating the Masterwork ENDS the game): state.endless/pendingVictory/endlessDemand/ENDLESS_GROWTH/Heat saw-tooth deleted; the t48 kill plays the hard-stop + slam, silently syncs final rank, and fires runVictory() WITHOUT resolving the turn (no sweep/turn-49/redeal/save); pre-v0.11 endless saves retired in loadSave (their score is already on the roll). THE VICTORY DEBRIEF (#debrief z265, dossier register: mono tabular figures, micro-labels, display font only on title+seal): captures Balance.rows/cards BEFORE Balance.end wipes them; modules — hero tiles (glory count-up, rank, active time, honor-roll placement upgraded async), THE RUN CURVE (hand-rolled log-Y SVG, boss diamonds filled/hollow=forgiven, act numerals), THE EIGHT TRIALS ledger (asked/paid/margin, THE CLOSEST SHAVE), ENGINE AUTOPSY (peak turn, longest chain via new state.maxCombo, final base×mult, log-share bar + MULT ENGINE/TWIN-HAMMERED/STAR-WROUGHT verdict), THE DECK AS IT STOOD (rarity/⁂ histogram + most played/bought/forged/burned), THE BENCH (SPENT strikethrough), NEW RUN + VIEW HONOR ROLL; MASTERWORK COMPLETE seal stamps in with one sub-thud; new game_won telemetry event; #gameover is death/trial-only now. // v0.10.0 THE DOPAMINE & JUICE OVERHAUL (tasks/dopamine-plan.md, all 6 sections + critique fixes B1-B4): §0 HEAT SPINE — a global Heat signal (run: slow 0-1 recomputed at turn/boss/rank milestones; surge: fast, spiked by big turns; timeScale: hit-stop) with its OWN self-sleeping RAF (B1: no always-on loop existed); Endless breathes per 6-turn cycle instead of pinning at max (B4). §1 EVOLVING MUSIC — Music.onHeat opens the pad/bass filters (500→4000Hz) with the run, density gates scale (hats .5+.42r, stabs .35+.4r, noodle .04+.14r), BPM ramps 104→146 by act (~3/min via Heat's RAF), a lead-arp layer gates on above Heat .6 (hysteresis .6/.55), BOSS MODE swaps the chord tables to a Phrygian-dark ALT set by REFERENCE at the bar seam (never mutates CH) and reverts exactly on bossDefeat, quantized stingers (boss-clear triad swell) land on the next bar, duckNow is locked out during fadeOut (a stinger can't cancel a farewell), muted = scheduler idles (§6.6). §2 SCALED FX — the multiply-reveal is magnitude-aware via canonical scalars mag=log10(final)/5 and over=final/tithe (B3: apex tiers gate on BOTH — easy early dumps can't fake greatness); hit-stop freeze() before the boom (rush-aware, routed through tw); slamText overshoot + chromatic aberration (tier-3, short-eqn only); feast is CONTINUOUS (TITHE PAID→FEEDS→FEASTS→THE FORGE GORGES); shake() rewritten to a TRAUMA model (trauma², summed-sine sway + up to ~2.5° roll, dip() channel for directional thumps) keeping the old power scale at all ~30 call sites; particle pool hard-capped at 300; boss-clear/rank-up escalate by act/rank. §3 CARDS LAND HEAVIER — weight=RARITY_JUICE×(1+tier·.4)×(1+min(glory,8)·.06) (a forged rare out-lands a vanilla mythic); landing squash keyframe (common imperceptible); anticipation lift/hold scale with weight; per-rarity bass registers (mythic/master sub-sines, forged metal rings deeper); buy/forge stop being rarity-flat. §4 BIG-WIN TIERS (categorical) — tier-3 apex: slow-mo + chroma + the reserved CHANT (transposed by turn so it never becomes a ringtone) + A NEW PEAK via state.bestTurnGlory (B2: recordScore() mutates localStorage, never called per turn); tier-4 record-shatter (glory>old best×1.5): gold desaturate-and-rebloom, reserved; personal best is a first-class interrupt on death AND victory screens; column of fire BEHIND the mult glyph (digit stays legible); final-boss kill = HARD-STOP (music cuts, 400ms blackout-and-silence, THEN the fanfare); first-encounter novelty flags (first boss/mythic/record) in ch-sg-firsts. §5 DEATH FEEL — filters slam shut, colour drains (deathgray), the crash decays into true silence, then the verdict sub-tone; a new best outshines the death. §6 RESTRAINT — baseline demoted throughout (routine turns whisper); prefers-reduced-motion gates the WHOLE layer (shake→border pulse, freeze→0, particles ×.3, music starts calm stays calm — colour/sound/number channels preserved); SCREEN FX slider in the sound menu (Heat.fxScale, persisted in ch-af-vol); coach protection — inTrial() pins Heat low, forbids freeze, caps juice ≤.35. PLUS: honor roll gets THE WORLD / MY RUNS tabs (race yourself); ANALYTICS on the main menu — the player's OWN ledger from ch-bal-log/ch-af-scores (runs, wins, streaks, best run/turn, deepest turn, most played/bought/forged/burned wares, last-12-runs bars) — local data only, nothing leaves the machine. // v0.9.1 BUGFIX: deck/discard piles jumped when playing a card — v0.9.0 made them position:fixed inside #app, and shake() transforms #app, so a fixed element re-anchors to #app's box (spec: a transformed ancestor becomes the containing block for fixed descendants), snapping the piles to a different spot each shake. Fixed: piles are now position:absolute + direct children of #app, so they ride the shake with the board. // v0.9.0 (6-item pass): (1) Deck+Discard moved to the upper-right HUD (fixed, below END TURN) so a big hand fan no longer occludes them. (2) Pile view gains tabs — ALL / DRAW / DISCARD / PLAYED. (3) ENTER ends the turn (guarded vs typing/overlays/disabled). (4) LATE-GAME MATH: demand tapers past the Act-3 boss (knee t19, rate 1.28→1.13) so the geometric curve stops outrunning a capped score — t48 4.1M→97k (was mathematically impossible, now ~676 base★); the MULT cap now RISES +3 per boss cleared (15→36) via effMultCap(), and two optional stacking cap relics (Furnace Regulator +4 T2, Unbound Forge +8 T3) let a MULT build push higher without being mandatory. (5) Menu 'back' links restyled from dotted-underline text (old-HTML look) to gold ghost pills. (6) Playtime now counts ACTIVE (foreground) time only — the clock pauses on tab-hidden, so idle open-tab time no longer inflates it; admin relabelled 'Active time'. // v0.8.6: FIX CONTINUE — the resume rebuilt the market DATA but not the market DOM, so the Bazaar showed phantom un-clickable cards (turn/glory/deck/hand resumed fine). initMarket's DOM loop extracted into buildMarketDOM(); the boot() restore block now calls it after restoreRun() so the resumed Bazaar is real. (v0.8.5's test kept sessionStorage across reload → never hit the real reopen path where askName fires; test corrected.) // v0.8.5: RUN PERSISTENCE — a run autosaves to localStorage (ch-sg-save) at each turn boundary; the start menu shows CONTINUE (resume · Act N, turn T, NNN★) when a save exists for this device's player, and PLAY drops to 'a new run'. Restores deck/discard/relics(+shattered)/market/commissions/counters; forged cards (coin_f) rebuilt via defFromId. Cleared on death + RESTART; kept on QUIT-to-menu (leave & resume). TALLY SPEED: the end-turn ceremony auto-scales ~2.2× faster from Act 3 on (Acts 1-2 keep the full show), fixing the long-chain drag; click-to-rush still works. // v0.8.4 (playtest pass): FREE Act-1 first-miss mercy — the Forge forgives an apprentice once (prod data: Boss 1 killed 44% of Erik's runs, once by 2★, while barely touching Hampus); does NOT count as clearing. BUGFIX: opening market ignored afterBoss (Twin Pyre seeded turn 1) — pickReverie now filters both gates. POLISH: game-over backdrop opaque (was competing with the bright board), MULT cap reads 'cap 15' not '/15' (slash misread as a fraction), start menu PLAY primary+first above LEARN (optional tutorial). SECURITY: static-file guard requires ROOT+sep (sibling-prefix dir couldn't leak, now can't at all). // v0.8.3: BURN needs a CONFIRM — the picked card zooms to centre wearing a big BURN button (+★ shown), CANCEL keeps the prompt armed, SKIP BURN spares everything; coach follows in ('BURN IT'). Fixes mis-click incinerations from a crowded hand. Relic mounts (rack buys + master drafts) now ride the ch_run card tally (cards.relics) for the admin Compare tab. // v0.8.2: card-corner wedges fixed — the .foot/.nameplate scrims and the .cardo hot-glow shadow painted SQUARE corners past the 12px cardface radius (face can't clip: badges must overflow); all three now carry the matching radius. // v0.8.1: removed the stranded 'PLAYED ×N' pill (v0.3 tight-stack relic left floating in empty space after the v0.7.2 cluster move; COMBO ×N already shows the chain). v0.8.0 BALANCE (v0.7.0 overshot — too easy): the six ungated mythics now gate properly — leviathan/abyss deep (rank 2), dragon/incarnate/mirrortwin deep+afterBoss:2 (t12+), THE GILDED FRACTAL (the ×1.5 xMult exploder that landed in Act 1-2) deep+afterBoss:3 (t18+). DEMAND_BASE 10.4→11.7 (half the v0.7 cut restored, −10% vs original). NEW Dross-for-power T1 wares (strong + 1❖ to play, each play silts a Dross): Pyre Bloom (c4, 4★), Silt Dredger (c5, 3★ +draw2), Ashgilt Idol (c5, 3★ +2⬤). NEW mid burn-engine The Twin Pyre (c5 cantrip, +1❖, burn 1, afterBoss:1) — Altar → Twin Pyre → Great Kiln. v0.7.2: the played-card cluster occludes less — anchor 45%→55% (sits low on the board) and rows are 8 wide (was 5), so a 15-card chain is 2 short rows instead of a 3-row wall across the centre. v0.7.1: § debug is keyboard-only — removed the corner tap element (no clickable trace on screen). v0.7.0 BALANCE: MULT_CAP 7→15 (the ×7 ceiling could not answer the late-boss curve), DEMAND_BASE 13→10.4 (flat −20%, playtest verdict), and three SCALING star engines so base ★ can grow with the run — Ashfall Reliquary (rare, +1★/card burned this run), Crown of Hours (mythic, +1★×turn number), Anvil of the Green World (mythic, +1★/card played); new syn kinds starPerBurn/starPerTurn in starsFor(). Admin: Forge Console redesign (funnels, demand-vs-score chart, clear-rate bars, live feed, per-player run timelines via /api/admin/balance?cid= + /api/admin/events). v0.6.9: (1) pile-view recede fixed — dim/pop now keyed to the card actually under the pointer via JS classes (.receding/.hot), not container :hover; resting the mouse between cards (or a forge re-render under a still pointer) no longer washes out every card with nothing popped. (2) § secret debug — press § or click the faint corner § → copyable JSON dump of the exact game state (build, run, piles, score, overlays, ch-* storage, recent errors via an early error ring buffer) for bug reports. (3) admin: "Furthest" split into Learn (tutorial funnel: skipped/started/Trial N/Graduated) and Game (real-run depth: just looked/started/Act N·turn/Forged ★) so tutorial adoption is visible. v0.6.8: SHARED honor roll — run scores post to /api/score (cid+per-run rid; a win that rolls into an Endless death keeps ONE slot at its peak) and the HIGHSCORE panel + game-over board show the global top 10 from /api/scores, own rows highlighted via a server-computed `me` flag (raw cids never leave the server). localStorage board unchanged as the offline/test fallback; net is gated by Telemetry.off so :5713/file:// stay silent. v0.6.7 (test-player fixes): (1) a Boon is a free reward — a stray backdrop click no longer discards it; only a card or DECLINE dismisses. (2) the end-turn MULT reveal no longer overshoots the cap then snaps down (showed ×58=13456 → ×14=3262); the meter now climbs only to the true capped total, AND the ×7 MULT cap is made legible — a persistent "/7 max" on the MULT meter that turns gold "MAX" at the cap, a "★ MULT MAXED · ×7" callout the instant you hit it, and the keystone (× bucket) shown as its own ⚡×N chip. v0.6.6 (pile view): hovering a card now recedes its neighbours (opacity .38) so their gold forge buttons / count badges stop peeking past the enlarged card's corners (the "yellow corner"), and the popped card wears a tighter gold lift-shadow (negative spread) with a softer count-badge drop — fixes the black-box/yellow-corner hover-zoom artifacts. v0.6.5 (pile view): hover-zoom no longer clips an edge card (grid overflow visible while the deck fits, real scroll box only on genuine overflow); cards vertically centred when the deck fits; removed the redundant forge-preview eye button; dropped the dark card-name scrim that read as a black frame across the top of the enlarged pile-view cards. v0.6.4: PLAY is open from the first visit — removed the Learn-before-Play lock (LEARN is now an optional tutorial). v0.6.3: server-side "Mellon" password gate for the private playtest (removed the misbuilt invite button). v0.6.2: full-screen pile view, Ledger buff, card-usage telemetry, Learn gate + deep sweep
 const $=s=>document.querySelector(s);
 /* ── error ring buffer (feeds the § debug dump) — installed first so nothing escapes it ── */
 window.__sgErrLog=[];
@@ -2643,7 +2688,7 @@ const MARKET_POOL=Object.values(DB).filter(d=>d.cost>0&&!d.dead&&!d.slag);
 /* ═══ THE THREE TRIALS — playable onboarding: learn by doing, one feature ladder ═══ */
 const TRIALS={
   1:{name:'TRIAL I — LIGHT IT',icons:['PLAY ★','BUY ⬤','⚡ CHAIN'],goal:50,
-     brief:['Play cards to raise ★ and meet the demand','Buy stronger cards at the Bazaar','Play same-tribe cards in a row for a ⚡ bonus'],
+     brief:['Play cards to raise ★ and meet the demand','Buy stronger cards at the Undermarket','Play same-tribe cards in a row for a ⚡ bonus'],
      kingdomIds:['tithe','emberling','emberhound'],rackOn:false,anvilOn:false,
      // a seeded opening hand lets the coach demonstrate the chain: sparks first, Emberling last
      seed:['emberling','spark','spark'],
@@ -3081,7 +3126,7 @@ const BOSSES={
   1 :{name:'The Sealed Hearth', epithet:'the withheld breath',  sigil:'moon',   color:'umbra',   tag:'−1 ❖',        demandMult:1.2, focusBonus:-1, live:s=>`1 FEWER CARD · ${s.focus} ❖ LEFT`, blurb:'The Forge withholds a breath: −1 ❖, so you can play one fewer card this turn.'}, // v0.11.10: demandMult 1.3→1.2 offsets the steeper 1.335 pre-knee rate at the newcomer's first wall (net boss-1 only ~+5%) while the mid still tightens
   2 :{name:'The Starved Flue',  epithet:'the choked draw',      sigil:'vortex', color:'tide',    tag:'DRAW −2',     demandMult:1.6, drawBonus:-2, live:_=>`DREW 2 FEWER CARDS`, blurb:'The coal-feed is choked: you draw 2 fewer cards to answer a bigger demand.'},
   3 :{name:'The Tarnish',       epithet:'the colour-thief',     sigil:'moon',   color:'umbra',   tag:'TRIBE DIMMED', demandMult:1.85, dampColor:{color:null,mult:0.5}, live:s=>`${(s.twist&&s.twist.dampColor&&s.twist.dampColor.color)?COLORS[s.twist.dampColor.color].name.toUpperCase()+' SCORES HALF':'A TRIBE SCORES HALF'}`, blurb:'One colour is tarnished — its cards score half this turn. Which colour is revealed as the Aspect rises; the board takes its hue.'},
-  4 :{name:'The Skimming',      epithet:'the tithe-taker',      sigil:'coin',   color:'aurel',   tag:'★ SKIM',      demandMult:2.1, drainFrac:0.15, live:s=>`SKIMS ${-(s.twist&&s.twist.flatStarSwing||0)} ★ OFF YOUR TOTAL`, blurb:'The Forge skims 15% off your total this turn. Beat the demand AND the skim.'},
+  4 :{name:'The Skimming',      epithet:"the King's cut",       sigil:'coin',   color:'aurel',   tag:'★ SKIM',      demandMult:2.1, drainFrac:0.15, live:s=>`SKIMS ${-(s.twist&&s.twist.flatStarSwing||0)} ★ OFF YOUR TOTAL`, blurb:'The King skims 15% off your total this turn. Beat the demand AND the skim.'},
   5 :{name:'The Silting',       epithet:'the choking silt',     sigil:'wave',   color:'ash',     tag:'+2 DROSS',    demandMult:2.2, drossSeed:2, live:_=>`YOUR HAND SILTS · +2 DROSS`, blurb:'The tide silts your deck: 2 Dross dealt into your hand — clogging this turn, and every hand after.'},
   6 :{name:'The Hollow Forge',  epithet:'the hollowed core',    sigil:'eye',    color:'umbra',   tag:'★ ×0.6',      demandMult:2.6, allStarMult:0.6, live:_=>`EVERY CARD'S ★ WORTH 60%`, blurb:'The core is hollow: every card you play scores 60% of its ★ this turn.'},
   7 :{name:'The Iron Cage',     epithet:'the barred anvil',     sigil:'shield', color:'verdant', tag:'3 FULL PLAYS', demandMult:2.8, softCap:{after:3,mult:0.4}, live:_=>`PLAYS 4+ SCORE 40% ★`, blurb:'The anvil bars your reach: your first 3 plays score full ★, every play after scores 40%. Front-load your strongest.'}, // v0.11.8: soft cap (the old ≤3 hard cap was impossible)
@@ -3110,7 +3155,7 @@ async function mulliganDeadHand(dealN){
   for(const h of state.hand){ if(h.el)h.el.remove(); h.inst.fresh=false; state.deck.push(h.inst); } // hand → deck
   state.hand=[];
   for(let i=state.deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[state.deck[i],state.deck[j]]=[state.deck[j],state.deck[i]]} // reshuffle
-  slamText('A DEAD HAND — THE FORGE RELENTS',{color:'#ffd98a',size:1.8});
+  slamText('A DEAD HAND — BACK TO THE COALS',{color:'#ffd98a',size:1.8});
   AudioFX.riffle();
   await dealCards(dealN);
   captureOpenHand(); // re-snapshot the redrawn hand (so the telemetry reflects what the player actually plays)
@@ -3298,7 +3343,7 @@ function updateTitheMeter(sc){
   el.classList.toggle('safe',safe);
   const boonAt=boonThreshold(); // shared with the fire test in endTurn + the overlay sub-text (no drift)
   $('#t-short').textContent=safe
-    ?(!TRIAL.boonsOn?(v>state.tithe?`+${v-state.tithe} OVER THE TITHE`:'TITHE MET')
+    ?(!TRIAL.boonsOn?(v>state.tithe?`+${v-state.tithe} OVER THE DEMAND`:'DEMAND MET')
       :v>=boonAt?'★ BOON EARNED — CLAIM IT AT THE TALLY'
       :`${v>state.tithe?`+${v-state.tithe} OVER THE TITHE`:'TITHE MET'} · BOON AT ${boonAt} ★`)
     // climbing is progress, not failure — red 'SHORT' is reserved for an actual shortfall at the tally
@@ -3312,17 +3357,19 @@ function updateTitheMeter(sc){
   titheWasSafe=safe;
   if(inTrial())updateRankbar(); // the goal pill tracks the live projection
 }
+// v0.12-exp (Forged in Chains): the noble ladder becomes a FREEDOM ladder — rising rank IS the escape
+// fiction (chained → free → legend). Only the display names changed; thresholds + array length untouched.
 const RANKS=[
-  {at:0,name:'Cinder Initiate'},
-  {at:80,name:'Gilded Apprentice'},
-  {at:240,name:'Arcane Broker'},
-  {at:600,name:'Baron of Embers'},
-  {at:1300,name:'Magnate of the Vault'},
-  {at:2400,name:'Aetherlord'},
-  {at:4400,name:'Sovereign of Sigils'},
-  {at:8000,name:'Mythic Ascendant'},
-  {at:15000,name:'Avatar of the Forge'},
-  {at:30000,name:'The Forge Eternal'},
+  {at:0,name:'The Shackled'},
+  {at:80,name:'One Link Broken'},
+  {at:240,name:'The Rattling Chain'},
+  {at:600,name:'Half-Unbound'},
+  {at:1300,name:'The Last Shackle'},
+  {at:2400,name:'The Unchained'},
+  {at:4400,name:'The Fugitive Smith'},
+  {at:8000,name:'Ghost of the Forge'},
+  {at:15000,name:'The Kingbreaker'},
+  {at:30000,name:'The Unbound Eternal'},
 ];
 
 /* counters with animated tick */
@@ -3798,7 +3845,7 @@ function updatePlayable(){
 }
 /* ── card inspector: click to zoom ── */
 const ANNOTATIONS=[
-  {side:'right',top:'4%',text:'⬤ COST <i>to buy at the Bazaar</i>'},
+  {side:'right',top:'4%',text:'⬤ COST <i>to buy at the Undermarket</i>'},
   {side:'right',top:'16%',text:'❖ FOCUS <i>spends 1 to play</i>'},
   {side:'left',top:'4%',text:'TRIBE <i>its color &amp; kin</i>'},
   {side:'left',top:'42%',text:'PAYS — <i>★ joins BASE at the tally,<br>the rest arrives the moment you play it</i>'},
@@ -4275,8 +4322,8 @@ let ceResolve=null;
 function confirmFailEnd(){
   return new Promise(res=>{
     const need=state.tithe-pledgedGlory(), charm=state.relics.some(r=>r.def.mercyCharge&&!r.shattered);
-    $('#ce-msg').innerHTML=`You're <b>${need} ★</b> short of the ${state.tithe} demanded. `+
-      (charm?`Ending now <b>shatters your Emberheart Charm</b> to forgive it.`:`With no charm left, ending now <b>ends your run</b>.`);
+    $('#ce-msg').innerHTML=`You're <b>${need} ★</b> short of the ${state.tithe} he demands. `+
+      (charm?`Ending now <b>shatters your Emberheart Charm</b> to stay his wrath.`:`With no charm left, ending now <b>ends your run</b>. The King forgives nothing.`);
     $('#confirmend').classList.add('on');
     ceResolve=v=>{ceResolve=null;$('#confirmend').classList.remove('on');res(v)};
   });
@@ -4294,7 +4341,7 @@ function masterRelicDraft(count=3){
   return new Promise(resolve=>{
     const row=$('#mr-row');row.innerHTML='';
     $('#mr-sub').textContent=count>3
-      ?'You faced the Aspect early — the Forge offers a richer draft. Take one.'
+      ?'You faced the lock early — the spoils are richer. Take one.'
       :'One relic. It mounts to your bench and powers every turn from here on.';
     const done=()=>{mrResolve=null;$('#mrdraft').classList.remove('on');resolve()};
     mrResolve=()=>{AudioFX.click();done()};
@@ -4366,7 +4413,7 @@ function faceBossNow(){
   if(bt<=state.turn)return;
   // v0.11.9: you may only leap once THIS turn is secured — never a hatch to escape a tithe you're failing.
   // (this also keeps the skip clear of endTurn's fail-end confirm, which only fires below the tithe.)
-  if(pledgedGlory()<state.tithe){deny($('#facebossbtn'),'MEET THE TITHE FIRST');return;}
+  if(pledgedGlory()<state.tithe){deny($('#facebossbtn'),'PAY THE KING FIRST');return;}
   state.skipToBoss=true;
   endTurn();
 }
@@ -4403,7 +4450,7 @@ function bossLedger(b){ // derive the ▲gift / ▼bite / ◆demand rows from th
   if(b.comboMult===0)rows.push({sign:'bite',text:`Your chain counts for nothing this turn.`});
   if(b.handCap!=null)rows.push({sign:'bite',text:`You may play at most ${b.handCap} cards this turn.`});
   if(b.drossSeed)rows.push({sign:'bite',text:`You are dealt ${b.drossSeed} dross cards.`});
-  if(b.flatStarSwing<0)rows.push({sign:'bite',text:`The Forge skims ${-b.flatStarSwing} ★ off your total.`});
+  if(b.flatStarSwing<0)rows.push({sign:'bite',text:`The King skims ${-b.flatStarSwing} ★ off your total.`});
   return rows;
 }
 function titheLabelNode(){ const l=$('#tithe')&&$('#tithe').querySelector('.t-label'); return l&&l.firstChild&&l.firstChild.nodeType===3?l.firstChild:null; }
@@ -4420,13 +4467,14 @@ function clearBossState(){
   document.body.classList.remove('boss-turn');
   delete document.body.dataset.boss;
   document.body.style.removeProperty('--boss-c');
-  const tn=titheLabelNode(); if(tn)tn.nodeValue='THE FORGE DEMANDS ';
+  const tn=titheLabelNode(); if(tn)tn.nodeValue='THE KING DEMANDS ';
 }
 function bossIntro(b){ // the full-screen arrival — REQUIRES a click, never auto-dismisses
   return new Promise(res=>{
     const hex=COLORS[b.color].hex, ov=$('#bossintro');
     ov.style.setProperty('--bc',hex);
-    ov.querySelector('.bi-pre').textContent=`ACT ${ROMAN[actOf(state.turn)-1]} · THE FORGE TESTS YOU`;
+    const LOCK_ORD=['FIRST','SECOND','THIRD','FOURTH','FIFTH','SIXTH','SEVENTH','LAST']; // v0.12-exp: the eight locks, counted
+    ov.querySelector('.bi-pre').textContent=`ACT ${ROMAN[actOf(state.turn)-1]} · THE ${LOCK_ORD[actOf(state.turn)-1]||'NEXT'} LOCK`;
     ov.querySelector('.bi-medallion').innerHTML=sigilSVG(b.sigil,hex);
     ov.querySelector('.bi-medallion').classList.remove('crack');
     ov.querySelector('.bi-name').textContent=b.name;
@@ -4461,7 +4509,7 @@ async function bossDefeat(b){ // the Aspect shatters into ash; the board's colou
   AudioFX.strum(523,5);
   await wait(850);
   if(!Firsts.seen('boss')){ // §4.4: the FIRST Aspect ever felled gets one extra breath of ceremony
-    slamText('THE FIRST ASPECT FALLS',{color:'#ffe9b0',size:1.7});
+    slamText('THE FIRST LOCK BREAKS',{color:'#ffe9b0',size:1.7});
     AudioFX.chant(0);
     await wait(600);
   }
@@ -4826,7 +4874,7 @@ async function revealReverie(){
     await wait(105);
   }
   await wait(250);
-  slamText('THE BAZAAR IS SET',{color:'#ffd98a',size:2.2});
+  slamText('THE UNDERMARKET OPENS',{color:'#ffd98a',size:2.2});
   AudioFX.shimmer();
 }
 // a one-glyph hint of what a relic does, for its icon badge (full detail on hover/tap)
@@ -5079,7 +5127,7 @@ async function evolveMarket(){
   const r2=slot.slotEl.getBoundingClientRect();
   FX.burst(r2.left+r2.width/2,r2.top+r2.height/2,COLORS[pick.color].hex,20,4.5);
   AudioFX.strum(587,4);
-  slamText(old?`THE BAZAAR DEEPENS — ${pick.name.toUpperCase()} ARRIVES`:`FRESH WARES — ${pick.name.toUpperCase()}`,
+  slamText(old?`THE UNDERMARKET DEEPENS — ${pick.name.toUpperCase()} ARRIVES`:`SMUGGLED IN — ${pick.name.toUpperCase()}`,
     {color:'#ffd98a',size:1.7});
   await wait(700);
 }
@@ -5335,16 +5383,16 @@ async function endTurn(){
     slamText('THE EMBERHEART SHATTERS',{color:'#ff9a75',size:2.6});
     AudioFX.strum(392,3);
     await wait(1000);
-    slamText(state.relics.some(r=>r.def.mercyCharge&&!r.shattered)?'IT FORGIVES THE MISS':'BUY ANOTHER AT THE BAZAAR',{color:'#c07a5a',size:1.6});
+    slamText(state.relics.some(r=>r.def.mercyCharge&&!r.shattered)?'IT FORGIVES THE MISS':'BUY ANOTHER AT THE UNDERMARKET',{color:'#c07a5a',size:1.6});
     AudioFX.tone({f:66,f2:24,type:'sine',dur:1.2,g:.4});
     await wait(500);
   }else{
     const surplus=turnGlory-state.tithe;
     // v0.10: the feast is CONTINUOUS, not a binary threshold — and GORGES is a reserved apex string
     // gated on absolute magnitude too (an easy Act-1 hand-dump trivially "overshoots" a tiny tithe).
-    const feast=over>=3.5&&mag>=.6?`THE FORGE GORGES · ${surplus} ★ OVER`
-      :over>=2?`THE FORGE FEASTS · ${surplus} ★ OVER`
-      :over>=1.3?'THE FORGE FEEDS':'TITHE PAID';
+    const feast=over>=3.5&&mag>=.6?`THE KING GORGES · ${surplus} ★ OVER` // v0.12-exp: the ladder is the KING's appetite now (GORGES stays the reserved apex word)
+      :over>=2?`THE KING FEASTS · ${surplus} ★ OVER`
+      :over>=1.3?'THE KING FEEDS':'THE KING IS PAID';
     slamText(feast,{color:over>=3.5&&mag>=.6?'#ffe9b0':'#ffd98a',size:2.2+.9*over01,punch:over01});
     AudioFX.strum(523,over>=2?5:4);
     flashWash(`rgba(232,182,76,${(.14+.18*over01)*jl})`);
@@ -5475,7 +5523,7 @@ async function endTurn(){
   titheWasSafe=true; // suppress the "safe" chime on the reset that follows
   updateTitheMeter();
   floatText(innerWidth/2,$('#tithe').getBoundingClientRect().bottom+30,
-    `THE FORGE DEMANDS ${state.tithe} ★`,{color:'#ff9a75',size:1.15});
+    `THE KING DEMANDS ${state.tithe} ★`,{color:'#ff9a75',size:1.15});
   AudioFX.tone({f:98,type:'sawtooth',dur:.5,g:.1});
 }
 $('#endturn').addEventListener('click',endTurn);
@@ -5701,8 +5749,8 @@ function openDebrief(snap){
   const fmtDur=ms=>{const m=Math.max(1,Math.round(ms/60000));return m>=60?`${Math.floor(m/60)}h ${m%60}m`:`${m}m`};
   const byT=new Map(rows.map(r=>[r.t,r]));
   // masthead
-  $('#db-no').textContent=`DOSSIER No. ${loadBalLog().length||1}`;
-  $('#db-sub').textContent=`${ACTS} CHAPTERS · ${FINAL_TURN} TURNS · ${state.bossesCleared+1} ASPECTS BROKEN · THE FORGE IS SATED`;
+  $('#db-no').textContent=`ENTRY No. ${loadBalLog().length||1}`;
+  $('#db-sub').textContent=`${ACTS} CHAPTERS · ${FINAL_TURN} TURNS · ${state.bossesCleared+1} LOCKS BROKEN · YOU WALK FREE`;
   // (a) hero tiles
   const tile=(num,lab,id)=>`<div class="db-tile"><div class="db-num"${id?` id="${id}"`:''}>${num}</div><div class="db-lab">${lab}</div></div>`;
   const localPlace=top.indexOf(entry)+1;
@@ -5915,8 +5963,8 @@ async function gameOverSequence(turnGlory){
   // reset the shared overlay's title/button to the death defaults — trialVictory may have left win copy
   // (v0.11: real victories moved to their own #debrief overlay and never touch #gameover)
   ov.classList.remove('win');
-  ov.querySelector('.go-pre').textContent='THE TITHE UNPAID';
-  ov.querySelector('h2').textContent='The Forge Grows Cold';
+  ov.querySelector('.go-pre').textContent="THE KING'S WRATH";
+  ov.querySelector('h2').textContent='Your Chains Tighten';
   $('#again').textContent='NEW RUN';
   ov.classList.add('show');
   if(best){ // §4.1 the personal best outshines the death — a first-class interrupt, Tier-3 vocabulary
@@ -5960,21 +6008,21 @@ const Tutor={
     {n:'IV',title:'Reading a Card',btn:'NEXT',target:()=>Tutor.annoRect(),panelSide:'right',
      onEnter:()=>openInspect({def:DB.emberhound,annotate:true}),
      onExit:()=>closeInspect(),
-     body:`The gem: price in <span class="tp-gold">⬤ <b>Gold</b></span>. The dot: tribe. ❖: cost to play. Tokens on the art are what it pays — <b>★</b> at the tally, ⬤ and draws instantly. The <b>⚡ line</b> is its synergy; it glows when armed. <b>Click any Bazaar tile to inspect.</b>`},
+     body:`The gem: price in <span class="tp-gold">⬤ <b>Gold</b></span>. The dot: tribe. ❖: cost to play. Tokens on the art are what it pays — <b>★</b> at the tally, ⬤ and draws instantly. The <b>⚡ line</b> is its synergy; it glows when armed. <b>Click any Undermarket tile to inspect.</b>`},
     {n:'V',title:'One ❖, One ⚒',btn:'NEXT',target:()=>Tutor.rectOf('#counters'),
-     body:`<b>1 ❖</b> per turn — one big card, unless cards grant more (<b>Warrens</b>, <b>Wardens</b>, <b>Conclaves</b>). <b>1</b> <span style="color:#8fc7ff">⚒ <b>Forge</b></span> per turn — <b>one action</b>: buy at the <b>Bazaar</b> <i>or</i> forge at the <b>Anvil</b>. Both cost it. +❖ and +⚒ build engines.`},
+     body:`<b>1 ❖</b> per turn — one big card, unless cards grant more (<b>Warrens</b>, <b>Wardens</b>, <b>Conclaves</b>). <b>1</b> <span style="color:#8fc7ff">⚒ <b>Forge</b></span> per turn — <b>one action</b>: buy at the <b>Undermarket</b> <i>or</i> forge at the <b>Anvil</b>. Both cost it. +❖ and +⚒ build engines.`},
     {n:'VI',title:'The Ledger',btn:'NEXT',target:()=>Tutor.rectOf('#counters'),
      body:`<span class="tp-gold">⬤</span> <b>carries over</b>. <b>★</b> resets each turn — played cards pay it, <b>⚡ strikes</b> add more. Tally: <b>★ × MULT</b> + ★ paid from hand (relics, Dross) = <span class="tp-glory">Glory</span>. Glory is <b>forever</b> — score and rank.`},
-    {n:'VII',title:'The Bazaar',btn:'NEXT',advanceOn:'buy',target:()=>Tutor.rectOf('#market'),
+    {n:'VII',title:'The Undermarket',btn:'NEXT',advanceOn:'buy',target:()=>Tutor.rectOf('#market'),
      body:`Eight wares, different every run. Buying spends your ⚒ — the same ⚒ the Anvil wants. Purchases land <b>on top of your deck</b>, drawn next turn. <b>Click a tile</b> to inspect and buy. Each <b>rank up</b> swaps the cheapest pile for deeper wares.`},
     {n:'VIII',title:'The Relic Rack',btn:'NEXT',target:()=>Tutor.rackRect(),
      body:`<b>Relics are permanent.</b> Buy one and it mounts beside your hand for the whole run — never shuffled in, always on: <b>×MULT</b> every turn, +❖ / <span class="tp-gold">⬤</span> / <span style="color:#8fc7ff">⚒</span> every turn, or purchases straight to hand. The cheapest cycles out each rank up. Grey <b>Cinder Dross</b>: 1 ★ from hand — Altar fuel.`},
     {n:'IX',title:'The Anvil & the Altar',btn:'NEXT',target:()=>Tutor.rectOf('#pv-panel'),
      onEnter:()=>openPileView(),
      onExit:()=>closePileView(),
-     body:`Your deck — click a pile to open it; when it empties, the discard <b>reshuffles</b>. Own a <b>pair</b>? <b>⚒ FORGE</b> it — costs your ⚒, same as buying; the Anvil strikes <b>at the sweep</b> and the ⁂ card tops your deck. <b>The Ashen Altar</b> (a Bazaar card — play it like any other) burns a card from your hand for <b>★ 2 + its cost</b>. Thin ruthlessly.`},
+     body:`Your deck — click a pile to open it; when it empties, the discard <b>reshuffles</b>. Own a <b>pair</b>? <b>⚒ FORGE</b> it — costs your ⚒, same as buying; the Anvil strikes <b>at the sweep</b> and the ⁂ card tops your deck. <b>The Ashen Altar</b> (an Undermarket card — play it like any other) burns a card from your hand for <b>★ 2 + its cost</b>. Thin ruthlessly.`},
     {n:'X',title:'The Tithe',btn:'NEXT',target:()=>Tutor.rectOf('#tithe'),
-     body:`Every turn the Forge <b>demands ★</b> — a bar to clear, never a payment: <b>Glory is never spent</b>. MULT grows from your <b>chain</b>, <b>same-tribe</b> cards and <b>⚡ engines</b>. Hit the <b>BOON AT</b> figure → a free card. Miss the demand and the run is over — unless you've bought an <span style="color:#ff8a9a">♥ <b>Emberheart Charm</b></span> at the Bazaar, which shatters to forgive one miss.`},
+     body:`Every turn the King <b>demands ★</b> — a bar to clear, never a payment: <b>Glory is never spent</b>. MULT grows from your <b>chain</b>, <b>same-tribe</b> cards and <b>⚡ engines</b>. Hit the <b>BOON AT</b> figure → a free card. Miss the demand and the run is over — unless you've bought an <span style="color:#ff8a9a">♥ <b>Emberheart Charm</b></span> at the Undermarket, which shatters to forgive one miss.`},
     {n:'XI',title:'The Tally',btn:'FINISH',advanceOn:'endturn',target:()=>Tutor.rectOf('#endturn'),
      body:`End the turn: BASE fills, MULT charges, they <b>multiply</b> — one strike against the demand (fractions round; <b>≈</b> marks it). Clear it, draw five, go again.`},
   ],
@@ -6083,6 +6131,44 @@ function reloadContinue(){try{sessionStorage.setItem('ch-af-restart','1')}catch(
 let _smResolve=null;
 function startMenuChoice(){return new Promise(res=>{_smResolve=res})}
 function resolveStartMenu(){const r=_smResolve;_smResolve=null;if(r)r()}
+/* v0.12-exp: the cold-open — a ~7s skippable beat on the FIRST real PLAY (post-gesture, so it may speak).
+   Its whole job is to plant the frame: prisoner · magical forge · the king's greed · each work buys freedom. */
+function coldOpen(){
+  return new Promise(res=>{
+    const ov=$('#coldopen'),line=$('#co-line'),star=ov.querySelector('.co-star'),title=ov.querySelector('.co-title');
+    ov.classList.add('on');
+    let done=false,timer=0;
+    const finish=()=>{if(done)return;done=true;clearTimeout(timer);
+      ov.classList.add('fade');setTimeout(()=>{ov.classList.remove('on','fade');res()},460);};
+    ov.addEventListener('pointerdown',finish);
+    const w=ms=>new Promise(r=>{timer=setTimeout(r,ms)});
+    const BEATS=[
+      {t:'THE CELL DOOR SLAMS.',snd:()=>AudioFX.boom()},
+      {t:'CHAINED TO THE KING&rsquo;S FORGE.',snd:()=>AudioFX.strum(196,2)},
+      {t:'FORGE, OR ROT.',cls:'decree',snd:()=>AudioFX.noise({dur:.6,g:.14,f:420,fTo:110,type:'lowpass'})},
+      {t:'BUT EVERY MASTERWORK<br>LOOSENS A LINK.',star:true,snd:()=>AudioFX.shimmer()},
+    ];
+    (async()=>{
+      if(REDUCED_MOTION){ // one static frame, click to continue — no motion, no timers racing the reader
+        line.innerHTML=BEATS.map(b=>b.t).join('<br><br>');line.style.fontSize='1.1rem';line.classList.add('show');
+        star.classList.add('rise');title.classList.add('show');
+        return; // finish() on click
+      }
+      for(const b of BEATS){
+        if(done)return;
+        line.className='co-line'+(b.cls?' '+b.cls:'');line.innerHTML=b.t;
+        void line.offsetWidth;line.classList.add('show');
+        try{b.snd&&b.snd()}catch(e){}
+        if(b.star)star.classList.add('rise');
+        await w(1500);if(done)return;
+        line.classList.remove('show');await w(320);
+      }
+      if(done)return;
+      title.classList.add('show');try{AudioFX.power()}catch(e){}
+      await w(1900);finish();
+    })();
+  });
+}
 
 function openStartMenu(){
   $('#startmenu').classList.add('on'); // PLAY is open from the first visit; LEARN is an optional tutorial
@@ -6107,9 +6193,12 @@ function initStartMenu(){
     if(inTrial())resolveStartMenu();        // already primed for a trial → just reveal it
     else{setTrial('1');reloadContinue()}     // graduated → begin the trials afresh (reload re-derives TRIAL)
   });
-  $('#sm-play').addEventListener('click',()=>{
+  $('#sm-play').addEventListener('click',async()=>{
     AudioFX.click();
-    if(!inTrial())resolveStartMenu();        // fresh visit or full game already loaded → reveal it
+    if(!inTrial()){
+      if(!Firsts.seen('coldopen'))await coldOpen(); // v0.12-exp: first real PLAY → the cold-open plants the frame
+      resolveStartMenu();                      // fresh visit or full game already loaded → reveal it
+    }
     else{setTrial('done');reloadContinue()}   // sitting in a trial → jump straight to the full game
   });
   $('#sm-scores').addEventListener('click',()=>{AudioFX.click();openHiscore()});
@@ -6366,12 +6455,12 @@ async function boot(){
   updateTitheMeter();
   if(chapterMode()&&!wantRestore){ // v0.11.6: tell the player about the gifted charm — a one-time game-start beat
     await wait(350);
-    slamText('THE FORGE ARMS YOU',{color:'#ffd98a',size:2.4});
+    slamText('A FRIEND IN THE DARK',{color:'#ffd98a',size:2.4});
     AudioFX.shimmer();
     {const rc=state.relics[0]&&state.relics[0].el&&state.relics[0].el.getBoundingClientRect();
      if(rc){FX.burst(rc.left+rc.width/2,rc.top+rc.height/2,'#ff9a75',30,5);floatText(rc.left+rc.width/2,rc.top-14,'♥',{color:'#ff9a75',size:1.4})}}
     await wait(950);
-    slamText('AN EMBERHEART CHARM · IT FORGIVES YOUR FIRST MISSED TITHE',{color:'#ff9a75',size:1.45,hold:3.6}); // linger — it's a one-time instruction worth reading
+    slamText("AN EMBERHEART CHARM · IT FORGIVES THE KING'S DEMAND, ONCE",{color:'#ff9a75',size:1.45,hold:3.6}); // linger — it's a one-time instruction worth reading
     AudioFX.strum(392,3);
   }
 }

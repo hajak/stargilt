@@ -1,8 +1,8 @@
 # StarGilt — Story & Legibility Spec
 
-> **STATUS: DESIGN ONLY. DO NOT BUILD FROM THIS YET.** This documents the *problem*, the
-> agreed *story*, and the exact *places in the code* to change, so a future session can plan and
-> execute it. Nothing here is mechanics — only graphics, text, and narrative framing.
+> **STATUS: PARTS 1 + 2 + KEY ART BUILT** as `chapters-story · v0.12.0-exp` on this branch
+> (2026-08-04; full test suite 70/70 green). Part 3 (card flavor, warden/lock one-liners, deeper
+> interstitials) remains open — see §9. Rollback: deploy `main` (tag `stable-v0.11.13`).
 > Author: design conversation with Hampus, 2026-08-04.
 
 ---
@@ -181,16 +181,19 @@ before play):
 1. ~~**RANKS**~~ ✅ **RESOLVED (2026-08-04): a FREEDOM ladder** — the 10 noble titles become the
    chained→free→legend arc (proposed names in §3/#12; exact copy still refinable). Rising rank now *is*
    the freedom fiction.
-2. **Title:** keep "StarGilt" (domain/brand set at stargilt.com), add a subtitle ("Forged in Chains"),
-   or something else? Recommend: keep StarGilt + subtitle.
-3. **Tone:** grim-and-mythic (Monte Cristo), or a touch of dark-fairytale wit (Rumpelstiltskin)?
-   Sets the voice for all copy.
-4. **The king's presence:** a *named* king with a recurring voice/portrait, or an unseen dread (only
-   his demands)? Unseen is cheaper and often scarier; a face is more marketable.
-5. **Aspects = wardens vs. locks:** are the 8 bosses the king's *champions* (characters) or the 8 *locks*
-   on the door (obstacles)? Changes the boss-intro copy + art direction.
-6. **Scope of the first pass:** legibility-only (rename map §3, ~1 focused version), or legibility +
-   intro + first flavor together (a bigger "narrative update" version)?
+2. ✅ **Title (built as):** StarGilt + subtitle **FORGED IN CHAINS**; menu hook *"Feed the King. Break
+   your chains."* (`<title>` updated too).
+3. ✅ **Tone (built as):** grim-mythic, TERSE — short declaratives in the existing all-caps HUD register;
+   never purple, never jokey.
+4. ✅ **The king (built as): UNSEEN.** Only his demands and appetites are felt (DEMANDS / IS PAID / FEEDS /
+   FEASTS / GORGES / WRATH); his silhouette appears only in the key art. A CSS `♛` mark rides the demand label.
+5. ✅ **Bosses (built as): THE EIGHT LOCKS.** Existing boss NAMES kept (Sealed Hearth … Iron Cage read
+   perfectly as locks; keeps admin BOSS_BY_ACT + tests intact); the wrapper copy counts them — boss intro
+   `ACT N · THE <ORDINAL> LOCK` (act 8 = THE LAST LOCK), "THE FIRST LOCK BREAKS", debrief "THE EIGHT LOCKS" /
+   "N LOCKS BROKEN". **Voice rule that made it all cohere: the FORGE is your ally (your craft — FEED THE
+   FURNACE / BACK TO THE COALS / THE FORGE REMEMBERS YOU stay); the KING is the demander.**
+6. ✅ **Scope (built as):** legibility + cold-open + key art in ONE experiment version (`v0.12.0-exp`);
+   card flavor + deeper story beats deferred (§9).
 
 ---
 
@@ -204,9 +207,46 @@ before play):
 - **`tasks/dopamine-plan.md`** — the precedent design doc (the juice overhaul) — same spirit as this file.
 - **CONTEXT.md** — the running project log; the theme vocabulary + all prior versions are described there.
 
+## 7b. KEY ART (generated 2026-08-04, gpt-image-1 via the OpenAI API)
+
+Files in `art/` (served statically; `.jpg`/`.webp` added to server.js MIME):
+- **`art/cover.png`** (1536×1024 master) + **`art/cover.jpg`** (328KB web version, used as the start-menu
+  backdrop via `#startmenu::before` with a radial mask — a missing file degrades to the gradient base).
+  The chained smith striking a radiant star on the anvil; the crowned king's silhouette looming above.
+- **`art/emblem.png`** (1024 master) + **`art/emblem-512.png`** — hammer breaking a chain link, star at the
+  break, crown behind. Usable as favicon/OG/store badge (not yet wired anywhere).
+
+**Regeneration prompts** (for Midjourney/higher-quality redo — both landed on the first attempt with
+gpt-image-1, so these are proven):
+1. *Cover*: "Painterly dark-fantasy key art for a card game, landscape composition. Inside a cavernous
+   dungeon forge, a powerful master blacksmith — wrists shackled by glowing chains, one link freshly broken
+   and sparking — raises his hammer over an anvil where a radiant golden four-pointed star of molten metal
+   blazes. High above and behind, the immense shadowed silhouette of a tyrant king with a jagged crown
+   watches from a dark stone gallery. Drifting ember sparks, deep charcoal and umber palette with
+   molten-gold and ember-orange highlights, dramatic chiaroscuro, oil-painting texture, cinematic. No text."
+2. *Emblem*: "Minimalist dark-fantasy game emblem centered on a near-black background: a golden blacksmith's
+   hammer crossed over a single broken chain link, a small radiant four-pointed star at the crossing point,
+   the faint jagged silhouette of a crown behind. Embossed molten-gold metal on dark iron, clean badge
+   composition, symmetrical. No text."
+3. *(unbuilt, for later)* Boss/lock crest set: "Eight dark-fantasy lock sigils, embossed iron and gold …" —
+   one per Aspect, replacing the procedural sigils if ever wanted.
+4. *(unbuilt)* Death panel: "A massive dungeon door slamming, chains pulling taut, embers dying — the smith
+   dragged back into darkness"; Victory panel: "Broken shackles on an anvil in morning light, the cell door
+   open, a star-bright masterwork left behind on the anvil."
+
 ## 8. Recommended sequence (when it's time to build)
-1. Resolve §6 decisions + write/approve final copy (the rename map is *suggestions*).
-2. **Legibility pass** (§3) — the rename map + light king/chain graphics. Ship as one version. This alone attacks the recognizability problem.
-3. **Intro cold-open** (§4) — small, skippable, first-visit-gated.
-4. **Story depth** (§5) — menu/debrief/warden lines, then card flavor over time.
+1. ✅ Resolve §6 decisions + final copy.
+2. ✅ **Legibility pass** (§3) — shipped in `v0.12.0-exp` (full deck + ♛ mark + freedom RANKS).
+3. ✅ **Intro cold-open** (§4) — `#coldopen`, first real PLAY, Firsts-gated (`'coldopen'`), skippable,
+   reduced-motion static. Beats: THE CELL DOOR SLAMS → CHAINED TO THE KING'S FORGE → FORGE, OR ROT →
+   BUT EVERY MASTERWORK LOOSENS A LINK → title card. (Tests: `tests/harness.mjs` bootGame dismisses it.)
+4. **Story depth** (§5) — REMAINING, see §9.
 Each step: edit index.html → `cp` chapters.html → `cmp` → `cd tests && npm test` → deploy → prod-verify → commit.
+
+## 9. Remaining work (Part 3 — story depth; open on this branch)
+- **Card flavor** (`DB[*].flavor`, ~60 one-liners) — thread the prison/king/freedom world through over time.
+- **Per-lock menace lines** — one short line per Aspect in the boss intro (the lock "speaking").
+- **Death/victory art panels** (§7b prompts 4) if wanted; wire `emblem` as favicon/OG.
+- **The gate page** (server.js "Doors of Durin") could become the cell door — outside the game, optional.
+- **Playtest verdict**: run the experiment with testers; watch /admin (build `chapters-story · v0.12.0-exp`
+  separates its telemetry). Then merge → main or roll back per §0.
