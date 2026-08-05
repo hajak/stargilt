@@ -1066,3 +1066,9 @@ The full tasks/story-depth-proposal.html build, everything except the END TURN r
 - [x] MEMORY: #smwall — last 7 runs scratched into the start menu, ☀ where a run walked free.
 - [x] King's hand creeps on boss intros; rank-ups = parchment woodcut notice; 19 flavors rewritten to name the world.
 - [x] Tests 70/70 green; chapters.html synced; deployed.
+
+## Round 63 — v0.13.1-exp: playtest trim (2026-08-05)
+- [x] THE FRIEND CUT (user call: second speaker diluted King↔player + stacked text) — whispers/portrait/arc beats/signed line removed; charm reverts to "THE FORGE ARMS YOU" + keeps the music-box chime; decree 5 rewritten, decree 7 loses the scrawl; art/friend.jpg removed.
+- [x] TEXT PACING — barks fire 1.9s after the feast slam (one voice at a time), gorge always / feast 60% / else 20%, never two days in a row.
+- [x] GRAPHICS VISIBLE — window no longer hidden <1020px (78×102, scales ≤1200); locks 12→16px; king-hand opacity .28→.36.
+- [x] Review page (~/.agent/options/story-layer-feedback.html) rebuilt: every card now carries a LIVE PROTOTYPE (window slider, clickable chain, king-hand stage, decree letter, epitaph slider, wall scratches, all sound/music demos). 23 cards. Tests 70/70.
