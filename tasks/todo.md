@@ -1072,3 +1072,9 @@ The full tasks/story-depth-proposal.html build, everything except the END TURN r
 - [x] TEXT PACING — barks fire 1.9s after the feast slam (one voice at a time), gorge always / feast 60% / else 20%, never two days in a row.
 - [x] GRAPHICS VISIBLE — window no longer hidden <1020px (78×102, scales ≤1200); locks 12→16px; king-hand opacity .28→.36.
 - [x] Review page (~/.agent/options/story-layer-feedback.html) rebuilt: every card now carries a LIVE PROTOTYPE (window slider, clickable chain, king-hand stage, decree letter, epitaph slider, wall scratches, all sound/music demos). 23 cards. Tests 70/70.
+
+## Round 64 — v0.13.2-exp + v0.13.3-exp: review-page verdicts applied (2026-08-05)
+From the feedback JSON (15 keep / 5 tweak / 2 cut / 1 solo test):
+- [x] v0.13.2: bark holds 7.5s; knock louder + boss boom waits 2.3s (knocks land in silence); chain-break foley reworked (clunk + shear + ringing links, no noise burst); king's hand .36→.52 + deeper creep; cell frame + tithe links visibly stronger. CUT: per-lock timbres (bossAccent), menu wall (#smwall).
+- [x] v0.13.3: SOLO commit — END TURN → PRESENT THE WORK (button, resets, coach, hint, Grimoire XI). Revert this one commit to restore.
+- [x] 70/70 green both builds; deployed v0.13.3.
