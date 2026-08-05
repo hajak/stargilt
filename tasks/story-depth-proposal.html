@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deepening the Fiction — Forged in Chains, Story Expansion Proposal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@700;900&family=Alegreya:ital,wght@0,400;0,500;0,700;1,400;1,500&family=Alegreya+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+/* ══════════ StarGilt register: the proposal wears the game's own skin ══════════ */
+:root{
+  --bg:#0e0a16; --surface:#1a1226; --surface2:#221831; --ink:#efe6d6; --dim:#8d8299; --dim-bright:#b3a8bf;
+  --gold:#e8b64c; --gold-bright:#ffd98a; --gold-dim:rgba(232,182,76,.12);
+  --ember:#ff8a5c; --ember-dim:rgba(255,138,92,.12);
+  --tide:#5fb7d4; --tide-dim:rgba(95,183,212,.12);
+  --verdant:#7fc76f; --verdant-dim:rgba(127,199,111,.12);
+  --umbra:#b58aff; --umbra-dim:rgba(181,138,255,.12);
+  --red:#e0645c; --red-dim:rgba(224,100,92,.12);
+  --border:rgba(232,182,76,.14); --border-bright:rgba(232,182,76,.35);
+  --disp:'Grenze Gotisch',serif; --serif:'Alegreya',Georgia,serif; --sans:'Alegreya Sans',system-ui,sans-serif;
+}
+@media (prefers-color-scheme: light){:root{
+  --bg:#f4ecdd; --surface:#fbf6ea; --surface2:#efe5d2; --ink:#2a2033; --dim:#6f6478; --dim-bright:#544a5e;
+  --gold:#9a6d14; --gold-bright:#7a5306; --gold-dim:rgba(154,109,20,.1);
+  --border:rgba(90,60,10,.18); --border-bright:rgba(90,60,10,.4);
+}}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--serif);font-size:16px;line-height:1.65;
+  background-image:radial-gradient(ellipse at 50% -10%,rgba(232,182,76,.08),transparent 55%),
+    radial-gradient(ellipse at 85% 110%,rgba(255,138,92,.05),transparent 50%);
+  overflow-wrap:break-word}
+main{max-width:1060px;margin:0 auto;padding:0 28px 120px}
+a{color:var(--gold);text-decoration:none}
+a:hover{color:var(--gold-bright)}
+
+/* nav */
+nav{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--border);display:flex;gap:2px;overflow-x:auto;padding:10px 20px;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+nav a{font-family:var(--sans);font-weight:700;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--dim);padding:6px 12px;border-radius:6px;white-space:nowrap}
+nav a:hover{color:var(--gold-bright);background:var(--gold-dim)}
+
+/* hero */
+header.hero{padding:72px 0 30px;text-align:center;position:relative}
+.hero-kicker{font-family:var(--sans);font-weight:800;font-size:.68rem;letter-spacing:.5em;color:var(--dim-bright);padding-left:.5em}
+h1{font-family:var(--disp);font-weight:900;font-size:clamp(2.6rem,6vw,4.4rem);line-height:1.02;margin:.35rem 0 .8rem;
+  background:linear-gradient(175deg,#fff3cf 5%,var(--gold) 55%,#b0801f 95%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 6px 30px rgba(232,182,76,.25))}
+@media (prefers-color-scheme: light){h1{background:linear-gradient(175deg,#6d4c08,#9a6d14);-webkit-background-clip:text;background-clip:text;filter:none}}
+.hero-sub{font-size:1.12rem;color:var(--dim-bright);max-width:62ch;margin:0 auto;font-style:italic}
+.hero-thesis{max-width:74ch;margin:2.2rem auto 0;text-align:left;font-size:1.05rem;
+  background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:12px;padding:1.4rem 1.7rem}
+.hero-thesis p+p{margin-top:.8em}
+.hero-thesis b{color:var(--gold-bright)}
+
+/* sections */
+section{margin-top:84px}
+.sec-kicker{font-family:var(--sans);font-weight:800;font-size:.64rem;letter-spacing:.34em;color:var(--gold);text-transform:uppercase}
+h2{font-family:var(--disp);font-weight:700;font-size:2.3rem;line-height:1.1;margin:.2rem 0 .5rem;color:var(--ink)}
+.sec-lede{color:var(--dim-bright);max-width:72ch;font-size:1.02rem;margin-bottom:1.6rem}
+h3{font-family:var(--sans);font-weight:800;font-size:.82rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-bright);margin:2.2rem 0 .7rem}
+h3 .h3-note{font-weight:500;letter-spacing:.02em;text-transform:none;color:var(--dim);font-size:.8rem;margin-left:.6em}
+
+/* cards & grids */
+.grid{display:grid;gap:16px}
+.grid>*{min-width:0}
+.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:1fr 1fr 1fr}
+@media (max-width:820px){.g2,.g3{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.2rem 1.35rem;position:relative}
+.card.hero-card{background:color-mix(in srgb,var(--surface) 90%,var(--gold) 10%);border-color:var(--border-bright);
+  box-shadow:0 8px 40px rgba(0,0,0,.35)}
+.card-label{font-family:var(--sans);font-weight:800;font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--gold);display:flex;align-items:center;gap:8px;margin-bottom:.6rem}
+.card-label::before{content:'';width:7px;height:7px;border-radius:50%;background:currentColor;flex-shrink:0}
+.card p{font-size:.94rem;color:var(--ink)}
+.card p+p{margin-top:.6em}
+.card .why{margin-top:.75em;font-size:.85rem;color:var(--dim-bright);font-style:italic;border-top:1px dashed var(--border);padding-top:.6em}
+.tag{font-family:var(--sans);font-size:.62rem;font-weight:700;letter-spacing:.08em;padding:2px 8px;border-radius:5px;
+  background:var(--gold-dim);color:var(--gold);white-space:nowrap;vertical-align:middle}
+.tag.ember{background:var(--ember-dim);color:var(--ember)}
+.tag.tide{background:var(--tide-dim);color:var(--tide)}
+.tag.umbra{background:var(--umbra-dim);color:var(--umbra)}
+.tag.verdant{background:var(--verdant-dim);color:var(--verdant)}
+.tag.red{background:var(--red-dim);color:var(--red)}
+
+/* voice quotes */
+.q{font-family:var(--serif);font-style:italic;color:var(--gold-bright);font-size:.98rem}
+blockquote.kingsay{border-left:2px solid var(--red);padding:.15rem .9rem;margin:.5rem 0;color:var(--ink);font-style:italic;font-size:.95rem}
+blockquote.kingsay cite{display:block;font-style:normal;font-family:var(--sans);font-size:.64rem;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--dim);margin-top:.25rem}
+
+/* prototype frames */
+.proto{background:linear-gradient(170deg,#191024,#0d0916);border:1px solid var(--border-bright);border-radius:14px;
+  padding:1.4rem;margin:1rem 0;box-shadow:inset 0 0 60px rgba(0,0,0,.5), 0 12px 44px rgba(0,0,0,.4);position:relative;overflow:hidden}
+@media (prefers-color-scheme: light){.proto{background:linear-gradient(170deg,#241a33,#151020);color:#efe6d6}}
+.proto-tab{position:absolute;top:0;left:0;font-family:var(--sans);font-weight:800;font-size:.58rem;letter-spacing:.22em;
+  text-transform:uppercase;color:#0e0a16;background:var(--gold);padding:3px 12px;border-radius:0 0 8px 0}
+.proto-inner{margin-top:1.2rem}
+.proto .hint{font-family:var(--sans);font-size:.72rem;color:#8d8299;letter-spacing:.06em;margin-top:.8rem}
+button.pbtn{font-family:var(--sans);font-weight:800;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;
+  color:#241703;background:linear-gradient(172deg,#ffe3a0 0%,#e8b64c 55%,#c8923a 100%);
+  border:1px solid #f5d78e;border-radius:8px;padding:.5rem 1rem;transition:filter .15s, transform .1s}
+button.pbtn:hover{filter:brightness(1.08)}
+button.pbtn:active{transform:scale(.96)}
+button.pbtn.ghost{background:transparent;color:#e8b64c;border-color:rgba(232,182,76,.4)}
+button.pbtn.ghost:hover{color:#ffd98a;border-color:rgba(232,182,76,.8)}
+button.pbtn[aria-pressed="true"]{background:linear-gradient(172deg,#ffefc4,#ffd257);box-shadow:0 0 14px rgba(255,210,87,.4)}
+.pbtn-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+input[type=range]{accent-color:#e8b64c}
+
+/* ── window prototype ── */
+.cellwrap{display:flex;gap:26px;align-items:center;flex-wrap:wrap}
+.window{width:230px;height:290px;border-radius:110px 110px 8px 8px;position:relative;flex-shrink:0;
+  border:10px solid #201724;box-shadow:inset 0 0 40px rgba(0,0,0,.75), 0 0 60px var(--wglow,rgba(120,140,180,.12));
+  overflow:hidden;transition:box-shadow 1s}
+.window .sky{position:absolute;inset:0;transition:background 1.2s}
+.window .celestial{position:absolute;width:34px;height:34px;border-radius:50%;transition:all 1.2s;filter:blur(1px)}
+.window .bar{position:absolute;top:0;bottom:0;width:9px;background:linear-gradient(90deg,#0a070d,#241a28 45%,#0a070d);border-radius:4px}
+.window .bar.b1{left:22%}.window .bar.b2{left:47%}.window .bar.b3{left:72%}
+.window .bar.h{top:52%;bottom:auto;height:9px;width:100%;left:0;background:linear-gradient(180deg,#0a070d,#241a28 45%,#0a070d)}
+.winmeta{flex:1;min-width:240px}
+.winmeta .act-name{font-family:var(--disp);font-weight:700;font-size:1.7rem;color:#ffd98a}
+.winmeta .act-line{font-style:italic;color:#b3a8bf;margin:.3rem 0 .9rem;min-height:3em}
+
+/* ── chain prototype ── */
+.chainrow{display:flex;align-items:flex-start;justify-content:center;gap:0;padding:1.4rem 0 .4rem;flex-wrap:wrap}
+.lock{display:flex;flex-direction:column;align-items:center;width:86px;cursor:pointer;user-select:none}
+.lock svg{width:46px;height:58px;transition:transform .5s cubic-bezier(.3,1.5,.4,1), filter .4s}
+.lock .lname{font-family:var(--sans);font-size:.56rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:#8d8299;text-align:center;margin-top:6px;transition:color .4s}
+.lock .shackle{transition:transform .45s cubic-bezier(.4,1.6,.5,1);transform-origin:34px 16px}
+.lock.broken svg{transform:translateY(7px) rotate(9deg);filter:drop-shadow(0 0 8px rgba(255,217,138,.5))}
+.lock.broken .shackle{transform:rotate(38deg)}
+.lock.broken .lname{color:#ffd98a}
+.linkbar{height:5px;background:linear-gradient(90deg,transparent,#3a2c44 20%,#3a2c44 80%,transparent);flex:1;min-width:10px;margin-top:26px}
+
+/* ── king's hand ── */
+.handstage{position:relative;height:280px;border-radius:10px;overflow:hidden;background:
+  radial-gradient(circle at 50% 80%,rgba(60,38,10,.55),rgba(8,5,12,.98));cursor:pointer}
+.handstage .boardmock{position:absolute;inset:auto 0 0 0;height:110px;display:flex;gap:8px;justify-content:center;align-items:flex-end;padding-bottom:14px}
+.handstage .mockcard{width:64px;height:88px;border-radius:7px;background:linear-gradient(170deg,#2c2038,#1a1226);
+  border:1px solid rgba(232,182,76,.35);box-shadow:0 6px 18px rgba(0,0,0,.5)}
+.handstage .kingimg{position:absolute;top:-105%;left:0;right:0;height:150%;object-fit:cover;object-position:center 12%;
+  transition:top 1.6s cubic-bezier(.3,.7,.3,1);opacity:.85;
+  -webkit-mask-image:linear-gradient(180deg,#000 55%,transparent 96%);mask-image:linear-gradient(180deg,#000 55%,transparent 96%)}
+.handstage.reach .kingimg{top:-42%}
+.handstage .stagecap{position:absolute;left:0;right:0;top:12px;text-align:center;font-family:var(--sans);
+  font-weight:800;font-size:.66rem;letter-spacing:.4em;color:#ffd98a;text-shadow:0 2px 12px #000;transition:opacity .5s}
+
+/* ── decree ── */
+.decree-stage{min-height:290px;display:flex;align-items:center;justify-content:center;position:relative}
+.letter{width:min(430px,92%);background:linear-gradient(172deg,#e9dcC0,#d9c69d);color:#33251a;border-radius:4px;
+  padding:1.6rem 1.8rem 1.4rem;box-shadow:0 24px 60px rgba(0,0,0,.65);position:relative;
+  transform:translateY(140%) rotate(-1deg);transition:transform .9s cubic-bezier(.2,1.1,.3,1);font-family:var(--serif)}
+.letter.in{transform:translateY(0) rotate(-1deg)}
+.letter .l-head{font-family:var(--sans);font-weight:800;font-size:.6rem;letter-spacing:.34em;text-transform:uppercase;color:#7a5a25}
+.letter .l-body{font-size:1.06rem;font-style:italic;margin:.7rem 0 .4rem;min-height:4.6em;line-height:1.5}
+.letter .seal{position:absolute;right:1.2rem;bottom:1rem;width:52px;height:52px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#a13a2c,#6e1f16 70%);display:flex;align-items:center;justify-content:center;
+  color:#e9c78f;font-size:1.4rem;box-shadow:inset 0 2px 6px rgba(255,200,150,.35), 0 3px 10px rgba(0,0,0,.4)}
+
+/* ── the wall ── */
+.wall{background:
+  radial-gradient(ellipse at 30% 20%,rgba(255,255,255,.03),transparent 40%),
+  repeating-linear-gradient(94deg,#241b2e 0 90px,#211829 90px 91px,#251c30 91px 180px,#1f1727 180px 181px),
+  #221931;border-radius:10px;min-height:210px;padding:1.4rem 1.6rem;position:relative;overflow:hidden}
+.scratchgrp{display:inline-flex;align-items:flex-end;gap:3px;margin:10px 18px 4px 0;position:relative;transform:rotate(var(--rot,0deg))}
+.scratch{width:2.5px;height:26px;background:linear-gradient(180deg,rgba(233,220,192,.7),rgba(233,220,192,.28));border-radius:2px;transform:rotate(2deg)}
+.scratch.slash{position:absolute;left:-2px;top:2px;width:34px;height:2.5px;transform:rotate(-24deg);transform-origin:left}
+.scratchgrp .who{position:absolute;left:0;top:100%;font-family:var(--serif);font-style:italic;font-size:.62rem;color:rgba(233,220,192,.42);white-space:nowrap}
+.scratchgrp.free .who{color:rgba(255,217,138,.8)}
+.scratchgrp .sun{color:#ffd98a;font-size:.95rem;margin-left:5px;filter:drop-shadow(0 0 6px rgba(255,217,138,.6))}
+
+/* ── soundboard ── */
+.sboard{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+.sb{background:rgba(232,182,76,.05);border:1px solid rgba(232,182,76,.2);border-radius:10px;padding:.9rem 1rem}
+.sb .sb-name{font-family:var(--sans);font-weight:800;font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:#ffd98a;margin-bottom:.15rem}
+.sb .sb-what{font-size:.8rem;color:#b3a8bf;font-style:italic;margin-bottom:.6rem;min-height:2.4em}
+
+/* music map */
+.mmap{overflow-x:auto}
+.mmap table{border-collapse:collapse;width:100%;min-width:760px;font-size:.82rem}
+.mmap th{font-family:var(--sans);font-size:.6rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);
+  text-align:left;padding:8px 10px;border-bottom:2px solid var(--border-bright)}
+.mmap td{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:top}
+.mmap td:first-child{font-family:var(--disp);font-size:1.05rem;color:var(--gold-bright);white-space:nowrap}
+
+/* data table */
+.table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:1rem}
+.table-scroll{overflow-x:auto}
+table.dt{width:100%;border-collapse:collapse;font-size:.86rem}
+table.dt th{position:sticky;top:0;background:var(--surface2);font-family:var(--sans);font-size:.6rem;font-weight:800;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--dim);text-align:left;padding:11px 14px;border-bottom:2px solid var(--border-bright);white-space:nowrap;z-index:2}
+table.dt td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+table.dt tbody tr:hover{background:var(--gold-dim)}
+table.dt tbody tr:last-child td{border-bottom:none}
+table.dt small{display:block;color:var(--dim);font-size:.72rem;margin-top:2px}
+table.dt .wide{min-width:230px}
+.pill{display:inline-block;font-family:var(--sans);font-size:.62rem;font-weight:800;letter-spacing:.08em;padding:2px 9px;border-radius:6px;white-space:nowrap}
+.pill.hi{background:var(--verdant-dim);color:var(--verdant)}
+.pill.mid{background:var(--gold-dim);color:var(--gold)}
+.pill.lo{background:rgba(141,130,153,.14);color:var(--dim-bright)}
+.pill.s{background:var(--tide-dim);color:var(--tide)}
+.pill.m{background:var(--gold-dim);color:var(--gold)}
+.pill.l{background:var(--red-dim);color:var(--red)}
+
+/* before/after strings */
+.strings{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.strings>*{min-width:0;padding:.55rem 1rem;font-size:.88rem;border-bottom:1px solid var(--border)}
+.strings .h{font-family:var(--sans);font-weight:800;font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;padding:.7rem 1rem}
+.strings .h.b{color:var(--red);background:var(--red-dim)}
+.strings .h.a{color:var(--verdant);background:var(--verdant-dim)}
+.strings .b{color:var(--dim-bright);background:color-mix(in srgb,var(--surface) 60%,transparent)}
+.strings .a{color:var(--ink);background:var(--surface)}
+.strings .a b{color:var(--gold-bright)}
+
+/* epitaph */
+.epi{min-height:5.4em;display:flex;flex-direction:column;justify-content:center;text-align:center}
+.epi .e-line{font-family:var(--disp);font-weight:700;font-size:1.7rem;color:#ffd98a;line-height:1.2}
+.epi .e-sub{font-family:var(--sans);font-size:.66rem;letter-spacing:.3em;color:#8d8299;text-transform:uppercase;margin-top:.5rem}
+
+/* bark generator */
+.barkbox{background:rgba(0,0,0,.35);border:1px solid rgba(232,182,76,.25);border-radius:10px;padding:1.2rem 1.4rem;min-height:6.2em;
+  display:flex;flex-direction:column;justify-content:center}
+.barkbox .bq{font-family:var(--serif);font-style:italic;font-size:1.22rem;color:#efe6d6;line-height:1.45}
+.barkbox .bwho{font-family:var(--sans);font-size:.62rem;letter-spacing:.26em;text-transform:uppercase;color:#c9564a;margin-top:.6rem}
+select.psel{font-family:var(--sans);font-weight:700;font-size:.76rem;background:#1a1226;color:#efe6d6;
+  border:1px solid rgba(232,182,76,.35);border-radius:7px;padding:.42rem .6rem}
+
+/* imgs */
+.artrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:.8rem 0}
+.artrow figure{margin:0;border-radius:10px;overflow:hidden;border:1px solid var(--border);position:relative}
+.artrow img{width:100%;height:150px;object-fit:cover;display:block;filter:saturate(.95)}
+.artrow figcaption{position:absolute;left:0;right:0;bottom:0;padding:1.4rem .7rem .45rem;font-family:var(--sans);
+  font-size:.62rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#ffd98a;
+  background:linear-gradient(180deg,transparent,rgba(5,3,10,.9))}
+
+.foot-note{margin-top:70px;border-top:1px solid var(--border);padding-top:1.2rem;font-size:.8rem;color:var(--dim);font-style:italic}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+section, header.hero{animation:fadeUp .5s ease-out both}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+@media (max-width:768px){main{padding:0 16px 90px}.strings{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav>
+  <a href="#gaps">The Gaps</a><a href="#voices">Three Voices</a><a href="#graphics">Graphics</a>
+  <a href="#text">Text</a><a href="#sound">Sound</a><a href="#music">Music</a><a href="#meta">Memory</a>
+  <a href="#plan">The Plan</a><a href="#laws">Laws</a>
+</nav>
+<main>
+
+<header class="hero">
+  <div class="hero-kicker">STARGILT · FORGED IN CHAINS</div>
+  <h1>Deepening the Fiction</h1>
+  <p class="hero-sub">A proposal for the next story layer — graphics, text, sound, music, and memory — with working prototypes. Nothing here changes a mechanic.</p>
+  <div class="hero-thesis">
+    <p><b>Where we are.</b> The frame is planted and it works: a smith in chains, a king who demands, eight locks, a legend that grows. A newcomer feels the premise in ten seconds. That was the legibility pass — <i>renting</i> a story everyone already knows.</p>
+    <p><b>What's missing is depth</b> — and depth is not more lore text. It is <b>characters that change</b>, <b>a place that breathes</b>, <b>an arc inside each run</b>, and <b>memory that accumulates across runs</b>. Story should ride the beats the player already touches (the deal, the tally, the boss, the death) — it should never add a click.</p>
+    <p><b>The one structural idea underneath everything below:</b> the game currently has one character — the King. Great fiction in this genre runs on <i>triangles</i>. Give the run three voices: the King (pressure), the Friend (hope), and the Forge itself (a fellow prisoner). Every channel — art, barks, sound, music — then has someone to speak <i>for</i>.</p>
+  </div>
+</header>
+
+<!-- ══════════════════ THE GAPS ══════════════════ -->
+<section id="gaps">
+  <div class="sec-kicker">Diagnosis</div>
+  <h2>Five gaps between "a frame" and "a story"</h2>
+  <p class="sec-lede">Each proposal that follows exists to close one of these. If an idea doesn't close a gap, it didn't make this page.</p>
+  <div class="grid g3">
+    <div class="card"><div class="card-label" style="color:var(--red)">Gap 1 · One character</div>
+      <p>Only the King speaks. No ally, no witness, no rival. Dread with no warmth flattens into noise.</p></div>
+    <div class="card"><div class="card-label" style="color:var(--red)">Gap 2 · No place</div>
+      <p>The board is abstract space. You are told you're in a cell; you never <i>see</i> a wall, a window, the passage of days.</p></div>
+    <div class="card"><div class="card-label" style="color:var(--red)">Gap 3 · No arc in a run</div>
+      <p>Turn 40 <i>feels</i> like turn 4, only harder. The King never changes his attitude as you go from Shackled to Kingbreaker — but he should be getting nervous.</p></div>
+    <div class="card"><div class="card-label" style="color:var(--red)">Gap 4 · No memory</div>
+      <p>Every run is amnesiac. Past deaths and escapes leave no visible trace except a number on a roll.</p></div>
+    <div class="card"><div class="card-label" style="color:var(--red)">Gap 5 · Sound has intensity, not meaning</div>
+      <p>The audio layer signals <i>how big</i>, never <i>who</i> or <i>what</i>. No motif belongs to the King, the Friend, or the chains.</p></div>
+    <div class="card hero-card"><div class="card-label">The standing constraint</div>
+      <p>The dopamine engine and the coach are load-bearing. Story must ride existing beats, respect the reserved-vocabulary rule (GORGES-class moments stay rare), and pin itself low during trials.</p></div>
+  </div>
+</section>
+
+<!-- ══════════════════ THREE VOICES ══════════════════ -->
+<section id="voices">
+  <div class="sec-kicker">The character system</div>
+  <h2>Three voices in the dark</h2>
+  <p class="sec-lede">One writing system powers most of the text ideas below. Three speakers, each with hard voice rules, each owning specific UI surfaces — so every string in the game is <i>someone talking</i>, never a system message.</p>
+  <div class="grid g3">
+    <div class="card">
+      <div class="card-label" style="color:var(--red)">♛ The King — pressure</div>
+      <p><b>Voice:</b> cold court language. Short. Possessive. Never explains, never apologizes. Speaks in decrees and appetites.</p>
+      <p><b>Owns:</b> the demand HUD, boss intros &amp; taunts, the feast ladder, the fail-confirm, death.</p>
+      <p><b>His arc (the new part):</b> he <i>changes as your legend grows</i>. Act I he hasn't learned your name. By "The Throne's Rival" his taunts turn brittle — greed curdling into fear. The player reads their own progress in his tone.</p>
+      <blockquote class="kingsay">"Another day, another trinket. Do not bore me, smith."<cite>Act I · rank: unknown</cite></blockquote>
+      <blockquote class="kingsay">"They sing about you in the kitchens. I had the cook flogged."<cite>Act V · rank: noticed</cite></blockquote>
+      <blockquote class="kingsay">"Guards at your door are for <i>your</i> protection. Naturally."<cite>Act VII · rank: feared</cite></blockquote>
+    </div>
+    <div class="card">
+      <div class="card-label" style="color:var(--tide)">🕯 The Friend — hope</div>
+      <p><b>Voice:</b> whispers. Practical, warm, hurried — always about to be caught. Never named; signs nothing.</p>
+      <p><b>Owns:</b> the Undermarket (it is <i>theirs</i>), the Emberheart Charm, restock notes, one-time "first" moments.</p>
+      <p><b>Their arc:</b> present early, quieter in the dark middle acts (a scripted silence after Lock V — "the guards doubled; I can't come for a while"), and back before the last lock. One relationship, felt through absence.</p>
+      <blockquote class="kingsay" style="border-color:var(--tide)">"Under the loose stone. Paid for with the King's own coin — I thought you'd like that."<cite>Undermarket restock</cite></blockquote>
+      <blockquote class="kingsay" style="border-color:var(--tide)">"It was my mother's. It forgives one failure. Don't waste it being brave."<cite>The charm, turn 1</cite></blockquote>
+    </div>
+    <div class="card">
+      <div class="card-label" style="color:var(--ember)">🔥 The Forge — the fellow prisoner</div>
+      <p><b>Voice:</b> old, patient, elemental. Speaks in craft — heat, iron, breath.</p>
+      <p><b>Owns:</b> the anvil, the mulligan relent, the tutorial trials, CONTINUE ("THE FORGE REMEMBERS YOU").</p>
+      <p><b>The twist that reframes everything:</b> the Forge is <i>also chained</i> — a magical being the King enslaved long before you. Late-act lines let it say so. Victory frees you <b>both</b>, which retroactively explains why it helps you, relents on dead hands, and remembers you between sessions.</p>
+      <blockquote class="kingsay" style="border-color:var(--ember)">"I was old when his grandfather's grandfather stole me. Strike well, and we both see the sky."<cite>Act VII, one-time</cite></blockquote>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ GRAPHICS ══════════════════ -->
+<section id="graphics">
+  <div class="sec-kicker">Channel · Graphics</div>
+  <h2>A place that breathes</h2>
+  <p class="sec-lede">The board earns a <i>where</i> and a <i>when</i> — persistent, ambient, never in the way of cards. Two of these are prototyped live below.</p>
+
+  <h3>G1 · The barred window <span class="h3-note">a corner of sky = the passage of days, and freedom kept visible</span></h3>
+  <div class="proto"><div class="proto-tab">Interactive prototype</div>
+    <div class="proto-inner cellwrap">
+      <div class="window" id="win">
+        <div class="sky" id="winsky"></div>
+        <div class="celestial" id="wincel"></div>
+        <div class="bar b1"></div><div class="bar b2"></div><div class="bar b3"></div><div class="bar h"></div>
+      </div>
+      <div class="winmeta">
+        <div class="act-name" id="winname">Act I — Grey Dawn</div>
+        <div class="act-line" id="winline"></div>
+        <input type="range" min="1" max="8" value="1" id="winrange" style="width:100%">
+        <div class="hint">Drag through the acts. In-game this sits small in a top corner (~90×110px), sky shifting once per act — a season passing outside a cell you cannot leave. On the final act the dawn comes up <i>red</i>. Reduced-motion safe (it's a crossfade). Pure CSS gradients — no art needed.</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>G2 · The chain of eight <span class="h3-note">the act tracker becomes the literal object of the story</span></h3>
+  <div class="proto"><div class="proto-tab">Interactive prototype · click the locks</div>
+    <div class="proto-inner">
+      <div class="chainrow" id="chainrow"></div>
+      <div class="hint">Replaces the abstract act dots under the boss banner. The cold open promises "EIGHT LOCKS HOLD YOUR CHAINS" — this makes that promise a persistent object you can watch break, lock by lock, with the chain-break foley from the Sound section. Broken shackles hang open and glow faintly. (SVG, ~40 lines; the defeat beat already exists.)</div>
+    </div>
+  </div>
+
+  <h3>G3 · The King's hand <span class="h3-note">reserved apex visual — the demand embodied</span></h3>
+  <div class="proto"><div class="proto-tab">Interactive prototype · click the stage</div>
+    <div class="proto-inner">
+      <div class="handstage" id="handstage">
+        <img class="kingimg" src="../art/king.jpg" alt="The King reaches down from shadow">
+        <div class="stagecap" id="stagecap">A BOSS TURN BEGINS</div>
+        <div class="boardmock"><div class="mockcard"></div><div class="mockcard"></div><div class="mockcard"></div><div class="mockcard"></div><div class="mockcard"></div></div>
+      </div>
+      <div class="hint">On boss turns (and only there — this is GORGES-class vocabulary), the existing king art creeps down from the top edge behind the boss intro, tinted to the lock's colour. It must never appear on ordinary turns; scarcity is what makes it dread.</div>
+    </div>
+  </div>
+
+  <h3>G4 · Cast portraits &amp; set dressing <span class="h3-note">one new image, several reuses</span></h3>
+  <div class="grid g2">
+    <div class="card"><div class="card-label" style="color:var(--tide)">The Friend — one new artwork</div>
+      <p>A hooded figure at a floor grate, candle-lit, passing a small bundle through the bars. Used on: Undermarket restocks, the charm's arrival, the charm's shatter, and the Act-VI "silence" beat.</p>
+      <p class="why">gpt-image-1 prompt, same palette as king.jpg: <span class="q">"hooded figure kneeling at an iron floor-grate in a dungeon corridor, passing a small wrapped bundle down through the bars, single candle, warm ember light against near-black plum darkness, painterly dark fantasy, no text"</span></p></div>
+    <div class="card"><div class="card-label">The cell frame</div>
+      <p>A whisper-faint stone vignette at the screen's edges (multiply-blended CSS, opacity ~.05–.08) plus a chain motif anchoring the score HUD — the tithe plaque <i>hangs from links</i>. The board reads as a room without a single pixel competing with the cards.</p>
+      <p class="why">Also: rank-ups restyled as the guards' <b>notice board woodcut</b> — "TALK OF THE GUARDROOM" pinned like a wanted poster. Text-only change to the existing overlay plus a paper texture.</p></div>
+  </div>
+  <div class="artrow">
+    <figure><img src="../art/king.jpg" alt="the King"><figcaption>Have — the King</figcaption></figure>
+    <figure><img src="../art/cover.jpg" alt="the smith"><figcaption>Have — the Smith</figcaption></figure>
+    <figure><img src="../art/victory.jpg" alt="broken shackles"><figcaption>Have — Freedom</figcaption></figure>
+    <figure><img src="../art/death.jpg" alt="the cell door"><figcaption>Have — the Cell</figcaption></figure>
+  </div>
+</section>
+
+<!-- ══════════════════ TEXT ══════════════════ -->
+<section id="text">
+  <div class="sec-kicker">Channel · Text</div>
+  <h2>Words that know who's speaking</h2>
+  <p class="sec-lede">Text is the cheapest channel and the one that carries the arc. Everything here is string tables — zero mechanics.</p>
+
+  <h3>T1 · The King's dynamic barks <span class="h3-note">~60 lines that make him a character instead of a label</span></h3>
+  <div class="proto"><div class="proto-tab">Interactive prototype · a grammar, not a script</div>
+    <div class="proto-inner">
+      <div class="pbtn-row" style="margin-bottom:12px">
+        <select class="psel" id="barkAct"><option value="0">Acts I–II (you are nobody)</option><option value="1">Acts III–V (he has noticed)</option><option value="2">Acts VI–VIII (he is afraid)</option></select>
+        <select class="psel" id="barkPerf"><option value="0">Scraped by</option><option value="1">Paid clean</option><option value="2">Feasted (2×)</option><option value="3">Gorged (3.5×+)</option></select>
+        <button class="pbtn" id="barkGo">Speak, tyrant</button>
+      </div>
+      <div class="barkbox"><div class="bq" id="barkQ">"…"</div><div class="bwho">THE KING · AFTER THE TALLY</div></div>
+      <div class="hint">Keyed on (act band × performance), one line drawn per tally from a pool of 4–6 per cell — cheap to write, and the mid-run tone shift (greed → suspicion → fear) gives every run a three-act arc for free. Delivered through the existing feast-ladder slam slot; no new UI.</div>
+    </div>
+  </div>
+
+  <h3>T2 · Days, not turns <span class="h3-note">the single cheapest world-building string in the game</span></h3>
+  <div class="strings">
+    <div class="h b">Now</div><div class="h a">Proposed</div>
+    <div class="b">TURN 14</div><div class="a"><b>DAY 14</b> — a run is <b>a season in chains</b>; victory literally reads "48 days. Then the door."</div>
+    <div class="b">THE KING DEMANDS 1,872 ★</div><div class="a">DAY 14 · THE KING DEMANDS 1,872 ★ <small style="color:var(--dim)">(the day count rides the existing float)</small></div>
+    <div class="b">Fell on turn 31</div><div class="a">Fell on <b>day 31</b> of a possible 48</div>
+    <div class="b">deck / discard piles</div><div class="a">unchanged — tool words stay tool words (legibility beats theme at the table)</div>
+    <div class="b">END TURN</div><div class="a">unchanged (candidate "PRESENT THE WORK" — <i>flagged risky</i>: the button is muscle memory; test last, alone)</div>
+  </div>
+
+  <h3>T3 · Decrees under the door <span class="h3-note">the one new surface — 2.5s, skippable, after each boss</span></h3>
+  <div class="proto"><div class="proto-tab">Interactive prototype</div>
+    <div class="proto-inner">
+      <div class="pbtn-row" style="margin-bottom:8px">
+        <select class="psel" id="decreeSel">
+          <option value="0">After Lock I</option><option value="1">After Lock IV</option><option value="2">After Lock VII</option>
+        </select>
+        <button class="pbtn" id="decreeGo">A letter slides under the door</button>
+      </div>
+      <div class="decree-stage"><div class="letter" id="letter">
+        <div class="l-head">By decree of His Radiance</div>
+        <div class="l-body" id="letterBody"></div>
+        <div class="seal">♛</div>
+      </div></div>
+      <div class="hint">Rides the existing boss-clear → relic-draft seam (the one place the game already pauses). One line each, escalating: pride → suspicion → open threat, with the Friend's pencil scrawl on the back of the last one. Click-through, Escape-safe, never in trials.</div>
+    </div>
+  </div>
+
+  <h3>T4 · Death epitaphs by depth <span class="h3-note">the death screen learns how far you got</span></h3>
+  <div class="proto"><div class="proto-tab">Interactive prototype</div>
+    <div class="proto-inner">
+      <div class="epi"><div class="e-line" id="epiLine">—</div><div class="e-sub" id="epiSub">FELL IN ACT I</div></div>
+      <input type="range" min="1" max="8" value="1" id="epiRange" style="width:100%;margin-top:10px">
+      <div class="hint">One line under "Your Chains Tighten", chosen by act of death. Eight strings. The late ones should hurt.</div>
+    </div>
+  </div>
+
+  <h3>T5 · The rest of the text batch</h3>
+  <div class="grid g2">
+    <div class="card"><div class="card-label">Card flavor, batch 2 <span class="tag">~50 cards</span></div>
+      <p>Ten cards carry the prison fiction; the rest still speak generic fantasy. Finish the sweep with a rule: every flavor line names <b>the world outside the cell</b> — the kitchens, the mines, the old kingdom, the guards' debts. The deck becomes the world-building.</p>
+      <p class="why">e.g. Coin of the Vale → <span class="q">"The Vale still mints them with the old queen's face. The King melts every one he finds."</span></p></div>
+    <div class="card"><div class="card-label">Your signed name, paid off <span class="tag">3 uses, reserved</span></div>
+      <p>"SIGN YOUR WORK, SMITH" already collects a name. Use it exactly three times: the Act-V decree (<span class="q">"I know your name now, ____."</span>), the final boss intro, and the victory ledger. Rarity keeps it chilling instead of gimmicky.</p></div>
+  </div>
+</section>
+
+<!-- ══════════════════ SOUND ══════════════════ -->
+<section id="sound">
+  <div class="sec-kicker">Channel · Sound</div>
+  <h2>Sound that means someone</h2>
+  <p class="sec-lede">The engine already scales <i>intensity</i> beautifully. This layer attaches <i>identity</i>: a motif per voice, a foley family for the chains, and a room tone for the cell. Every prototype below is synthesized live — click to hear. <b>All of it fits the existing zero-dependency WebAudio module.</b></p>
+  <div class="proto"><div class="proto-tab">Interactive soundboard · headphones recommended</div>
+    <div class="proto-inner sboard">
+      <div class="sb"><div class="sb-name" style="color:var(--red)">♛ King · demand</div><div class="sb-what">Three falling notes — greed descending. Rides the demand float each day.</div><button class="pbtn ghost" data-snd="kingDemand">Play</button></div>
+      <div class="sb"><div class="sb-name" style="color:var(--red)">♛ King · boss</div><div class="sb-what">Same motif, slower, ground flat — the lock version, under the intro.</div><button class="pbtn ghost" data-snd="kingBoss">Play</button></div>
+      <div class="sb"><div class="sb-name" style="color:var(--red)">♛ King · death</div><div class="sb-what">The motif ends on a cruel major third — he smiles.</div><button class="pbtn ghost" data-snd="kingDeath">Play</button></div>
+      <div class="sb"><div class="sb-name">♛ King · inverted (victory)</div><div class="sb-what">The same three notes, ascending and bright — his theme taken from him. The oldest trick in leitmotif, because it works.</div><button class="pbtn ghost" data-snd="kingFree">Play</button></div>
+      <div class="sb"><div class="sb-name" style="color:var(--tide)">🕯 The Friend · music box</div><div class="sb-what">Two fragile notes and an echo. Charm arrival, restock, the shatter (slowed, detuned).</div><button class="pbtn ghost" data-snd="friend">Play</button></div>
+      <div class="sb"><div class="sb-name">⛓ Chain-break foley</div><div class="sb-what">The lock shears, links fall. Every boss defeat — pairs with the chain tracker.</div><button class="pbtn ghost" data-snd="chain">Play</button></div>
+      <div class="sb"><div class="sb-name">✊ The knock</div><div class="sb-what">Three slow knocks before a boss turn — the collector at the door. Reserved dread ritual.</div><button class="pbtn ghost" data-snd="knock">Play</button></div>
+      <div class="sb"><div class="sb-name" style="color:var(--ember)">🔨 Anvil as percussion</div><div class="sb-what">During big tallies the hammer strikes <i>are</i> the beat — the smith's work becomes the groove.</div><button class="pbtn ghost" data-snd="anvil" data-toggle="1" aria-pressed="false">Toggle loop</button></div>
+      <div class="sb"><div class="sb-name">💧 Cell ambience</div><div class="sb-what">Wind at the window + far drips, whisper-quiet under everything. The cheapest "place" in game audio.</div><button class="pbtn ghost" data-snd="ambience" data-toggle="1" aria-pressed="false">Toggle</button></div>
+    </div>
+    <div class="hint">Rules of engagement: motifs live at −18dB relative to FX (identity, not fanfare); ambience ducks fully during tallies; the knock and the death-third are once-per-run-class events; everything obeys the existing MASTER/EFFECTS sliders and mutes with them. Reduced-motion players keep all of this — it's the channel that doesn't flash.</div>
+  </div>
+</section>
+
+<!-- ══════════════════ MUSIC ══════════════════ -->
+<section id="music">
+  <div class="sec-kicker">Channel · Music</div>
+  <h2>A score with an arc</h2>
+  <p class="sec-lede">The music already ramps BPM and density with Heat. What it lacks is <i>harmonic story</i> — the same run-arc the King's barks carry, told in mode and colour. And one signature idea: the worksong.</p>
+
+  <h3>M1 · The harmonic map of a run</h3>
+  <div class="card mmap"><table>
+    <tr><th>Acts</th><th>Feel</th><th>Harmony</th><th>What enters</th><th>Story job</th></tr>
+    <tr><td>I–II</td><td>Hopeless routine</td><td>Sparse aeolian, open fifths</td><td>Pad + heartbeat pulse only</td><td>The cell. Cold. Nothing promised.</td></tr>
+    <tr><td>III–IV</td><td>The work takes hold</td><td>Dorian (current groove)</td><td>Bass unlocks, hats, first stabs</td><td>Craft as defiance — hands find rhythm.</td></tr>
+    <tr><td>V–VI</td><td>The dark middle</td><td>Dorian with phrygian bleed</td><td>Detuned doubles, longer reverbs</td><td>The Friend goes quiet. Doubt.</td></tr>
+    <tr><td>VII–VIII</td><td>Defiance</td><td>Raised 6th, lydian flashes</td><td>Lead arp brightens, worksong hum</td><td>You are not hiding anymore.</td></tr>
+    <tr><td>Victory</td><td>Release</td><td>The King's motif inverted, major</td><td>Worksong sung "free", full voice</td><td>His theme becomes your anthem.</td></tr>
+  </table>
+  <p class="why" style="padding:0 .3rem .6rem">Implementation-wise this is chord-table swaps at bar seams — exactly the mechanism the boss mode-swap already uses (<code style="font-family:monospace">Music.ALT</code> by reference), extended to an act index. Each of the eight locks additionally gets one <b>signature timbre</b> stacked on the phrygian swap (The Silting = waterlogged detune, The Iron Cage = choked mutes, The Skimming = coins-on-marble percussion…), so bosses are recognizable with eyes closed.</p></div>
+
+  <h3>M2 · The worksong <span class="h3-note">the smith hums when the work is going well — the player's own melody</span></h3>
+  <div class="proto"><div class="proto-tab">Interactive prototype</div>
+    <div class="proto-inner">
+      <div class="pbtn-row">
+        <button class="pbtn ghost" data-snd="worksong">The hum (Heat &gt; 0.7, in chains)</button>
+        <button class="pbtn ghost" data-snd="worksongFree">Sung free (the victory debrief)</button>
+      </div>
+      <div class="hint">A five-note pentatonic hum that only ever appears when Heat crosses ~0.7 — the engine roaring <i>is</i> the smith's good day, so players learn the melody as the sound of their own mastery. At the victory it returns unmuffled and resolved. Emotional payoff built from a motif the player taught themselves.</div>
+    </div>
+  </div>
+
+  <h3>M3 · Through the wall</h3>
+  <div class="proto"><div class="proto-tab">Interactive prototype</div>
+    <div class="proto-inner">
+      <div class="pbtn-row">
+        <button class="pbtn ghost" data-snd="pad" data-toggle="1" aria-pressed="false">Play the pad</button>
+        <button class="pbtn ghost" id="wallBtn" aria-pressed="true">You are: <b id="wallState">BEHIND THE WALL</b></button>
+      </div>
+      <div class="hint">Menus, decrees, and the pause screen hear the score lowpassed — music from <i>somewhere else in the keep</i>. Stepping back to the board opens the filter. One filter node, and suddenly the menu is a place too. (Toggle while the pad plays.)</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ META ══════════════════ -->
+<section id="meta">
+  <div class="sec-kicker">Channel · Memory</div>
+  <h2>The wall remembers</h2>
+  <p class="sec-lede">Roguelike story lives <i>between</i> runs. The game already has the data — the run history and the honor roll — it just never draws it as fiction.</p>
+
+  <h3>X1 · Scratches on the cell wall <span class="h3-note">your run history as prisoner tallies on the start menu</span></h3>
+  <div class="proto"><div class="proto-tab">Interactive prototype · rendered from mock run data</div>
+    <div class="proto-inner">
+      <div class="wall" id="wall"></div>
+      <div class="hint">Each group of scratches = one past run, one mark per day survived (groups of five, prisoner-style). A run that <i>walked free</i> ends in a small sun. Rendered from <code style="font-family:monospace">ch-af-scores</code> — data the client already holds. The menu quietly becomes: <i>you have been here before, and someone got out.</i></div>
+    </div>
+  </div>
+
+  <div class="grid g2" style="margin-top:1rem">
+    <div class="card"><div class="card-label">X2 · Predecessors <span class="tag tide">uses the global roll</span></div>
+      <p>The honor roll is already framed as "smiths who forged their freedom." Pull one line of it into the fiction: on death, a faint scratched note under the stats — <span class="q">"Dag of the North walked free in 48 days. The wall remembers."</span> Real player, real number, already public on the roll.</p>
+      <p class="why">Hope delivered by another player's actual victory — multiplayer storytelling with zero new data.</p></div>
+    <div class="card"><div class="card-label">X3 · Firsts as story beats <span class="tag">extends ch-sg-firsts</span></div>
+      <p>The one-time-flag system already exists (first boss, first mythic, first record, now first forge). Extend it to the Friend: first charm shatter (<span class="q">"I can get another. Give me time."</span>), first Act V (<span class="q">"No one I know has seen the fifth lock."</span>), first victory — the Friend's only signed line.</p></div>
+  </div>
+</section>
+
+<!-- ══════════════════ PLAN ══════════════════ -->
+<section id="plan">
+  <div class="sec-kicker">Prioritization</div>
+  <h2>What to build, in what order</h2>
+  <p class="sec-lede">Scored on story-per-effort. Tier 1 is roughly one build day total and closes gaps 2, 3 and 5; nothing in it touches a mechanic or a test.</p>
+  <div class="table-wrap"><div class="table-scroll"><table class="dt">
+    <thead><tr><th>#</th><th class="wide">Idea</th><th>Channel</th><th>Closes gap</th><th>Impact</th><th>Effort</th><th>Risk</th><th>Tier</th></tr></thead>
+    <tbody>
+      <tr><td>T1</td><td>King's dynamic barks<small>string tables on the feast-ladder slot</small></td><td>Text</td><td>3 · arc</td><td><span class="pill hi">High</span></td><td><span class="pill s">S</span></td><td>none</td><td><b>1</b></td></tr>
+      <tr><td>T4</td><td>Death epitaphs by act<small>8 strings on the death screen</small></td><td>Text</td><td>3 · arc</td><td><span class="pill hi">High</span></td><td><span class="pill s">S</span></td><td>none</td><td><b>1</b></td></tr>
+      <tr><td>T2</td><td>Days, not turns<small>display strings only; internals stay `turn`</small></td><td>Text</td><td>2 · place</td><td><span class="pill mid">Med</span></td><td><span class="pill s">S</span></td><td>none</td><td><b>1</b></td></tr>
+      <tr><td>G2</td><td>Chain-of-eight act tracker<small>+ chain-break foley on defeat</small></td><td>Gfx+Snd</td><td>2, 5</td><td><span class="pill hi">High</span></td><td><span class="pill m">M</span></td><td>HUD space</td><td><b>1</b></td></tr>
+      <tr><td>S-a</td><td>King + Friend motifs, chain foley<small>extends AudioFX; ~120 lines</small></td><td>Sound</td><td>5 · meaning</td><td><span class="pill hi">High</span></td><td><span class="pill m">M</span></td><td>mix balance</td><td><b>1</b></td></tr>
+      <tr><td>G1</td><td>The barred window<small>pure CSS, one corner</small></td><td>Gfx</td><td>2 · place</td><td><span class="pill mid">Med</span></td><td><span class="pill m">M</span></td><td>clutter — keep small</td><td><b>2</b></td></tr>
+      <tr><td>T3</td><td>Decrees under the door<small>the only new surface; boss seam only</small></td><td>Text</td><td>1, 3</td><td><span class="pill hi">High</span></td><td><span class="pill m">M</span></td><td>pacing — hard 2.5s cap</td><td><b>2</b></td></tr>
+      <tr><td>X1</td><td>Scratches on the wall<small>start menu, from ch-af-scores</small></td><td>Meta</td><td>4 · memory</td><td><span class="pill hi">High</span></td><td><span class="pill m">M</span></td><td>none</td><td><b>2</b></td></tr>
+      <tr><td>G4a</td><td>Friend portrait + Undermarket voice<small>1 image + ~15 lines</small></td><td>Gfx+Text</td><td>1 · cast</td><td><span class="pill mid">Med</span></td><td><span class="pill m">M</span></td><td>art cost (~$0.20)</td><td><b>2</b></td></tr>
+      <tr><td>G3</td><td>The King's hand on boss turns<small>existing art, reserved</small></td><td>Gfx</td><td>1, 3</td><td><span class="pill mid">Med</span></td><td><span class="pill s">S</span></td><td>overuse — boss only</td><td><b>2</b></td></tr>
+      <tr><td>T5</td><td>Card flavor batch 2 + name payoff<small>~50 flavors + 3 reserved name uses</small></td><td>Text</td><td>1, 2</td><td><span class="pill mid">Med</span></td><td><span class="pill m">M</span></td><td>none</td><td><b>3</b></td></tr>
+      <tr><td>M1</td><td>Act harmonic arc + per-lock timbres<small>chord-table swaps at bar seams</small></td><td>Music</td><td>3, 5</td><td><span class="pill hi">High</span></td><td><span class="pill l">L</span></td><td>regression on boss swap</td><td><b>3</b></td></tr>
+      <tr><td>M2</td><td>The worksong<small>Heat-gated hum → victory reprise</small></td><td>Music</td><td>3, 5</td><td><span class="pill hi">High</span></td><td><span class="pill m">M</span></td><td>earworm fatigue — gate hard</td><td><b>3</b></td></tr>
+      <tr><td>S-b</td><td>Cell ambience + the knock + through-the-wall<small>one filter, one noise bed</small></td><td>Sound</td><td>2, 5</td><td><span class="pill mid">Med</span></td><td><span class="pill m">M</span></td><td>mud — keep at −30dB</td><td><b>3</b></td></tr>
+      <tr><td>X2/3</td><td>Predecessors + Friend firsts</td><td>Meta</td><td>1, 4</td><td><span class="pill mid">Med</span></td><td><span class="pill s">S</span></td><td>none</td><td><b>3</b></td></tr>
+      <tr><td>G4b</td><td>Cell frame vignette + woodcut rank-ups</td><td>Gfx</td><td>2</td><td><span class="pill lo">Low</span></td><td><span class="pill m">M</span></td><td>visual noise</td><td><b>4</b></td></tr>
+      <tr><td>—</td><td>"PRESENT THE WORK" on END TURN</td><td>Text</td><td>2</td><td><span class="pill lo">Low</span></td><td><span class="pill s">S</span></td><td><span class="pill l">muscle memory</span></td><td><b>test last, alone</b></td></tr>
+    </tbody>
+  </table></div></div>
+</section>
+
+<!-- ══════════════════ LAWS ══════════════════ -->
+<section id="laws">
+  <div class="sec-kicker">Guardrails</div>
+  <h2>The laws this layer must obey</h2>
+  <div class="grid g2">
+    <div class="card"><div class="card-label" style="color:var(--red)">1 · Never add a click</div>
+      <p>Story rides existing beats. The decree is the single exception: hard-capped at 2.5s, click-through, boss seam only, never in trials. If a story beat delays the next hand, it dies in review.</p></div>
+    <div class="card"><div class="card-label" style="color:var(--red)">2 · Reserved vocabulary extends to art &amp; sound</div>
+      <p>The GORGES rule made apex words precious. Same law here: the King's hand = boss turns only; the knock = boss turns only; the death-third = death only; the worksong = Heat-gated. Scarcity <i>is</i> the effect.</p></div>
+    <div class="card"><div class="card-label" style="color:var(--red)">3 · Trials stay quiet</div>
+      <p>The coach's wordless contract wins: no barks, decrees, ambience, or motifs during LEARN. <code style="font-family:monospace">inTrial()</code> already gates Heat and juice — the story layer hangs off the same gate.</p></div>
+    <div class="card"><div class="card-label" style="color:var(--red)">4 · Accessibility parity</div>
+      <p>Reduced-motion keeps every story beat via colour, text, and sound; mute keeps every beat via text and visuals. No fact may live in only one channel.</p></div>
+    <div class="card"><div class="card-label" style="color:var(--red)">5 · Display strings only</div>
+      <p>Same law as v0.12: internals (<code style="font-family:monospace">state.turn</code>, <code style="font-family:monospace">#tithe</code>, BOSSES keys) never rename. The 70-assertion suite gates every tier before deploy.</p></div>
+    <div class="card"><div class="card-label" style="color:var(--red)">6 · Watch the numbers</div>
+      <p>This is still the experiment branch. Each tier ships with its build string so /admin can compare retention, run depth and completion against v0.12.2-exp. Story that doesn't move retention is decoration — cut it.</p></div>
+  </div>
+  <div class="foot-note">Proposal only — nothing on this page is implemented. Prototypes are sketches: the sounds are synthesized approximations of what the real AudioFX module would render, the visuals are CSS stand-ins for in-game surfaces. tasks/story-depth-proposal.html · v0.12.2-exp era · 2026-08-05.</div>
+</section>
+
+</main>
+<script>
+/* ═══════════ shared audio (sketch-grade, mirrors the game's zero-dep WebAudio approach) ═══════════ */
+let AC=null,master=null;
+function ctx(){if(!AC){AC=new (window.AudioContext||window.webkitAudioContext)();const comp=AC.createDynamicsCompressor();master=AC.createGain();master.gain.value=.7;master.connect(comp).connect(AC.destination);}if(AC.state==='suspended')AC.resume();return AC;}
+function tone({f,f2,type='sine',dur=.5,g=.2,when=0,att=.012,detune=0,filter=null}){
+  const c=ctx(),t=c.currentTime+when,o=c.createOscillator(),ga=c.createGain();
+  o.type=type;o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(Math.max(20,f2),t+dur);
+  o.detune.value=detune;
+  ga.gain.setValueAtTime(0,t);ga.gain.linearRampToValueAtTime(g,t+att);ga.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  let node=o;if(filter){const fl=c.createBiquadFilter();fl.type=filter.type||'lowpass';fl.frequency.value=filter.f;fl.Q.value=filter.q||.8;o.connect(fl);node=fl;}
+  node.connect(ga).connect(master);o.start(t);o.stop(t+dur+.15);}
+function noise({dur=.3,g=.15,when=0,f=1200,type='bandpass',q=1}){
+  const c=ctx(),t=c.currentTime+when,len=Math.ceil(c.sampleRate*dur),buf=c.createBuffer(1,len,c.sampleRate),d=buf.getChannelData(0);
+  for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*(1-i/len);
+  const s=c.createBufferSource();s.buffer=buf;const fl=c.createBiquadFilter();fl.type=type;fl.frequency.value=f;fl.Q.value=q;
+  const ga=c.createGain();ga.gain.setValueAtTime(g,t);ga.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  s.connect(fl).connect(ga).connect(master);s.start(t);}
+/* motif helper: saw pair + sub through lowpass */
+function kingNote(f,when,dur,g=.16,lp=620,bright=false){
+  tone({f,type:'sawtooth',dur,g,when,detune:-6,filter:{f:lp}});
+  tone({f,type:'sawtooth',dur,g:g*.9,when,detune:7,filter:{f:lp}});
+  tone({f:f/2,type:'sine',dur:dur*1.1,g:g*.8,when});
+  if(bright)tone({f:f*2,type:'triangle',dur:dur*.8,g:g*.25,when});}
+const SND={
+  kingDemand(){kingNote(146.83,0,.55);kingNote(116.54,.42,.55);kingNote(98,.86,1.2);},
+  kingBoss(){kingNote(146.83,0,.9,.17,480);kingNote(138.59,.65,.9,.17,440);kingNote(98,1.35,1.9,.19,400);tone({f:49,type:'sine',dur:3,g:.22,when:0});},
+  kingDeath(){kingNote(146.83,0,.55);kingNote(116.54,.42,.55);kingNote(98,.86,1.0);kingNote(123.47,1.5,1.8,.15,900,true);},
+  kingFree(){kingNote(98,0,.5,.15,2200,true);kingNote(116.54,.38,.5,.15,2400,true);kingNote(146.83,.76,.6,.16,2600,true);kingNote(196,1.2,2.0,.18,3200,true);
+    [784,988,1175].forEach((f,i)=>tone({f,type:'triangle',dur:1.6,g:.05,when:1.35+i*.05}));},
+  friend(){const c=ctx(),dl=c.createDelay(1),fb=c.createGain();dl.delayTime.value=.27;fb.gain.value=.32;dl.connect(fb).connect(dl);
+    const send=c.createGain();send.gain.value=.5;send.connect(dl);dl.connect(master);
+    [[1318.5,0],[987.77,.22],[1568,.44]].forEach(([f,w])=>{tone({f,type:'triangle',dur:.7,g:.12,when:w,att:.004});
+      const t=c.currentTime+w,o=c.createOscillator(),ga=c.createGain();o.type='triangle';o.frequency.value=f;
+      ga.gain.setValueAtTime(.08,t);ga.gain.exponentialRampToValueAtTime(.0001,t+.6);o.connect(ga).connect(send);o.start(t);o.stop(t+.7);});},
+  chain(){noise({dur:.18,g:.3,f:2600,q:.7});
+    [180,497,972,1602].forEach((f,i)=>tone({f,type:'sine',dur:.5-i*.08,g:.16-i*.03,when:.01,att:.002}));
+    [[2400,1700,.16],[1900,1300,.30],[1500,1000,.46]].forEach(([f,f2,w])=>{tone({f,f2,type:'sine',dur:.12,g:.1,when:w,att:.002});noise({dur:.05,g:.05,f:3200,when:w});});},
+  knock(){[0,.65,1.3].forEach(w=>{tone({f:72,f2:48,type:'sine',dur:.28,g:.4,when:w,att:.004});noise({dur:.09,g:.12,f:260,type:'lowpass',when:w});});},
+  worksong(){const seq=[[220,0,.5],[261.6,.45,.5],[293.7,.9,.5],[329.6,1.35,.75],[392,2.0,.6],[329.6,2.55,.6],[293.7,3.1,1.3]];
+    seq.forEach(([f,w,d])=>{const c=ctx(),t=c.currentTime+w,o=c.createOscillator(),ga=c.createGain(),fl=c.createBiquadFilter();
+      o.type='triangle';o.frequency.value=f;const lfo=c.createOscillator(),lg=c.createGain();lfo.frequency.value=5.2;lg.gain.value=3.5;
+      lfo.connect(lg).connect(o.frequency);lfo.start(t);lfo.stop(t+d+.2);
+      fl.type='lowpass';fl.frequency.value=880;ga.gain.setValueAtTime(0,t);ga.gain.linearRampToValueAtTime(.14,t+.09);
+      ga.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(fl).connect(ga).connect(master);o.start(t);o.stop(t+d+.1);});},
+  worksongFree(){const seq=[[440,0,.5],[523.3,.45,.5],[587.3,.9,.5],[659.3,1.35,.75],[784,2.0,.6],[659.3,2.55,.6],[587.3,3.1,1.6]];
+    seq.forEach(([f,w,d])=>{tone({f,type:'triangle',dur:d,g:.13,when:w,att:.06,filter:{f:3800}});tone({f:f/2,type:'sine',dur:d,g:.08,when:w,att:.06});});
+    [587.3,880].forEach((f,i)=>tone({f,type:'triangle',dur:1.8,g:.05,when:3.15+i*.06}));},
+};
+/* toggleable loops */
+const loops={};
+function anvilToggle(on){
+  if(!on){clearInterval(loops.anvil);return;}
+  const hit=(acc)=>{noise({dur:.06,g:acc?.3:.18,f:3000,q:1.4});tone({f:141,f2:80,type:'sine',dur:.16,g:acc?.4:.24,att:.003});
+    [1170,1930].forEach(f=>tone({f,type:'sine',dur:.3,g:acc?.07:.04,att:.002}));};
+  let step=0;hit(true);
+  loops.anvil=setInterval(()=>{step=(step+1)%4;if(step===1)return;hit(step===0);} ,312);}
+function ambienceToggle(on){
+  const c=ctx();
+  if(!on){if(loops.wind){loops.wind.stop();loops.wind=null;}clearInterval(loops.drip);return;}
+  const len=c.sampleRate*3,buf=c.createBuffer(1,len,c.sampleRate),d=buf.getChannelData(0);
+  let last=0;for(let i=0;i<len;i++){const w=Math.random()*2-1;d[i]=(last+.02*w)/1.02;last=d[i];d[i]*=3.5;}
+  const s=c.createBufferSource();s.buffer=buf;s.loop=true;
+  const fl=c.createBiquadFilter();fl.type='lowpass';fl.frequency.value=340;
+  const ga=c.createGain();ga.gain.value=.12;
+  const lfo=c.createOscillator(),lg=c.createGain();lfo.frequency.value=.13;lg.gain.value=.05;lfo.connect(lg).connect(ga.gain);lfo.start();
+  s.connect(fl).connect(ga).connect(master);s.start();loops.wind=s;
+  loops.drip=setInterval(()=>{if(Math.random()<.6){const f=900+Math.random()*700;
+    tone({f,f2:f*.4,type:'sine',dur:.09,g:.07,att:.002});tone({f:f*.99,f2:f*.4,type:'sine',dur:.09,g:.04,when:.14,att:.002});}},1400);}
+let padNodes=null,padTimer=null,wallOn=true;
+function padToggle(on){
+  const c=ctx();
+  if(!on){if(padTimer)clearInterval(padTimer);padTimer=null;if(padNodes){padNodes.g.gain.linearRampToValueAtTime(0,c.currentTime+.4);setTimeout(()=>padNodes&&padNodes.oscs.forEach(o=>o.stop()),500);padNodes=null;}return;}
+  const fl=c.createBiquadFilter();fl.type='lowpass';fl.frequency.value=wallOn?380:5200;
+  const g=c.createGain();g.gain.value=.10;fl.connect(g).connect(master);
+  const oscs=[];const mk=(f)=>{const o=c.createOscillator();o.type='sawtooth';o.frequency.value=f;o.detune.value=Math.random()*10-5;o.connect(fl);o.start();oscs.push(o);return o;};
+  let chord=0;const CH=[[146.83,174.61,220],[130.81,164.81,196]];
+  CH[0].forEach(mk);
+  padNodes={oscs,g,fl};
+  padTimer=setInterval(()=>{chord=1-chord;padNodes.oscs.forEach((o,i)=>o.frequency.setTargetAtTime(CH[chord][i%3],c.currentTime,.25));},2400);}
+document.getElementById('wallBtn').addEventListener('click',()=>{
+  wallOn=!wallOn;document.getElementById('wallState').textContent=wallOn?'BEHIND THE WALL':'AT THE FORGE';
+  document.getElementById('wallBtn').setAttribute('aria-pressed',wallOn);
+  if(padNodes)padNodes.fl.frequency.setTargetAtTime(wallOn?380:5200,ctx().currentTime,.3);});
+document.querySelectorAll('[data-snd]').forEach(b=>{
+  b.addEventListener('click',()=>{
+    const k=b.dataset.snd;
+    if(b.dataset.toggle){const on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',on);
+      if(k==='anvil')anvilToggle(on);else if(k==='ambience')ambienceToggle(on);else if(k==='pad')padToggle(on);return;}
+    SND[k]&&SND[k]();});});
+
+/* ═══════════ window prototype ═══════════ */
+const ACTS=[
+  {n:'Act I — Grey Dawn',l:'A slit of cold light. The first day of the rest of your sentence.',sky:'linear-gradient(180deg,#5a6a7e 0%,#8b95a0 60%,#5f5a52 100%)',cel:{c:'#e8e3d5',x:'62%',y:'58%',b:.5},glow:'rgba(140,155,175,.16)'},
+  {n:'Act II — Pale Noon',l:'The sun crosses without you. Somewhere, markets are open.',sky:'linear-gradient(180deg,#7e97ad 0%,#b5c2c4 55%,#8d8a76 100%)',cel:{c:'#fff6dd',x:'46%',y:'18%',b:1},glow:'rgba(180,195,200,.2)'},
+  {n:'Act III — First Stars',l:'You work later now. The stars keep the tally with you.',sky:'linear-gradient(180deg,#2c3550 0%,#4a4a6b 60%,#3a3049 100%)',cel:{c:'#e8ecff',x:'70%',y:'26%',b:.8},glow:'rgba(110,120,190,.18)'},
+  {n:'Act IV — The Long Rain',l:'Rain on iron. The guards complain of the cold. Good.',sky:'linear-gradient(180deg,#3d4652 0%,#59616a 55%,#454a4c 100%)',cel:{c:'#9aa4ad',x:'34%',y:'30%',b:.35},glow:'rgba(120,130,140,.12)'},
+  {n:'Act V — Deep Winter',l:'Snow silts the sill. The Friend has not come in nine days.',sky:'linear-gradient(180deg,#1e2436 0%,#3c465c 55%,#5c6270 100%)',cel:{c:'#dfe8f5',x:'56%',y:'22%',b:.9},glow:'rgba(150,170,210,.15)'},
+  {n:'Act VI — The Thaw',l:'Dripping everywhere. Things loosen. Locks too, perhaps.',sky:'linear-gradient(180deg,#33455c 0%,#5d7086 55%,#6d7568 100%)',cel:{c:'#f2ead0',x:'40%',y:'34%',b:.7},glow:'rgba(130,160,170,.16)'},
+  {n:'Act VII — Amber Evening',l:'The light goes long and gold, like something poured from the crucible.',sky:'linear-gradient(180deg,#5c3f52 0%,#a05c3f 55%,#d99a4e 100%)',cel:{c:'#ffd98a',x:'50%',y:'62%',b:1},glow:'rgba(232,166,76,.25)'},
+  {n:'Act VIII — Red Dawn',l:'The last morning breaks the colour of the forge. One lock left.',sky:'linear-gradient(180deg,#3d1220 0%,#8a2f26 55%,#e0645c 100%)',cel:{c:'#ffb08a',x:'50%',y:'44%',b:1.1},glow:'rgba(224,100,92,.3)'},
+];
+const winsky=document.getElementById('winsky'),wincel=document.getElementById('wincel'),win=document.getElementById('win');
+function setAct(i){const a=ACTS[i-1];winsky.style.background=a.sky;
+  wincel.style.background=`radial-gradient(circle at 38% 34%,#fff, ${a.cel.c} 45%, transparent 72%)`;
+  wincel.style.left=a.cel.x;wincel.style.top=a.cel.y;wincel.style.opacity=a.cel.b;
+  win.style.setProperty('--wglow',a.glow);win.style.boxShadow=`inset 0 0 40px rgba(0,0,0,.75), 0 0 60px ${a.glow}`;
+  document.getElementById('winname').textContent=a.n;document.getElementById('winline').textContent=a.l;}
+document.getElementById('winrange').addEventListener('input',e=>setAct(+e.target.value));
+setAct(1);
+
+/* ═══════════ chain prototype ═══════════ */
+const LOCKS=['The Sealed Hearth','The Starved Flue','The Tarnish','The Skimming','The Silting','The Hollow Forge','The Iron Cage','The Masterwork'];
+const row=document.getElementById('chainrow');
+LOCKS.forEach((name,i)=>{
+  if(i>0){const bar=document.createElement('div');bar.className='linkbar';row.appendChild(bar);}
+  const d=document.createElement('div');d.className='lock';
+  d.innerHTML=`<svg viewBox="0 0 68 82">
+    <path class="shackle" d="M20 34 V22 a14 14 0 0 1 28 0 V34" fill="none" stroke="#8d8299" stroke-width="7" stroke-linecap="round"/>
+    <rect x="12" y="32" width="44" height="38" rx="8" fill="#2c2038" stroke="#e8b64c" stroke-width="2.5"/>
+    <circle cx="34" cy="49" r="5.5" fill="#e8b64c"/><rect x="31.5" y="51" width="5" height="9" rx="2" fill="#e8b64c"/>
+  </svg><div class="lname">${name}</div>`;
+  d.addEventListener('click',()=>{const was=d.classList.contains('broken');d.classList.toggle('broken');if(!was)SND.chain();});
+  row.appendChild(d);});
+
+/* ═══════════ king's hand ═══════════ */
+const hs=document.getElementById('handstage');
+hs.addEventListener('click',()=>{const on=hs.classList.toggle('reach');
+  document.getElementById('stagecap').textContent=on?'HE REACHES FOR HIS DUE':'A BOSS TURN BEGINS';
+  if(on)SND.kingBoss();});
+
+/* ═══════════ bark generator ═══════════ */
+const BARKS=[ /* [actBand][perf] */
+ [ // Acts I–II — you are nobody
+  ['"Barely worth the coal you burn."','"It will do. Feed it to the smelter with the rest."','"Hm. Perhaps the dungeons found me a smith after all."','"Where was THIS hiding? Do it again, little hammer."'],
+  ['"Do not test the patience of a crowned man."','"Adequate. The word I use for things I forget."','"Pretty. My steward will find a duchess to waste it on."','"I shall wear it to dinner. You still eat in the dark."'],
+ ],
+ [ // Acts III–V — he has noticed
+  ['"The guards say you sing while you work. Sing louder; forge better."','"You meet my number and not one star more. Cunning. I despise cunning."','"They sing about you in the kitchens now. I had the cook flogged."','"The court fights over your work like dogs. I raised the price. And your quota."'],
+  ['"I begin to learn the sound of your hammer. Do not make me learn your name."','"Delivered. Counted. Wanting."','"My treasurer wept. I permitted it."','"Half the realm begs to buy what my prisoner makes. The other half begs to see you."'],
+ ],
+ [ // Acts VI–VIII — he is afraid
+  ['"You are tired, smith. Good. Tired things stay where they are put."','"Paid. Why does a paid king feel poorer every time?"','"Guards at your door are for YOUR protection. Naturally."','"Stop smiling when you strike. I have outlawed it."'],
+  ['"The chains were my grandfather\'s design. He never met you."','"I dreamt the forge was empty. I have doubled the watch."','"What exactly do you intend with all this... excellence?"','"They call you Kingbreaker in the yard. I hanged the yard. They whisper it now."'],
+ ],
+];
+document.getElementById('barkGo').addEventListener('click',()=>{
+  const a=+document.getElementById('barkAct').value,p=+document.getElementById('barkPerf').value;
+  const pool=[BARKS[a][0][p],BARKS[a][1][p]];
+  document.getElementById('barkQ').textContent=pool[Math.floor(Math.random()*pool.length)];});
+document.getElementById('barkGo').click();
+
+/* ═══════════ decree ═══════════ */
+const DECREES=[
+ 'The first lock is nothing. My grandfather added it for sentiment. The quota rises with the sun. — R.',
+ 'It has come to Our attention that you are becoming Someone. Cease. The quota is doubled. I know your name now, smith.',
+ 'One lock remains. Understand: if you break it, everything you have made remains MINE.\n\n(on the back, in pencil:) — He\'s afraid. Finish it. I\'ll be at the gate.',
+];
+document.getElementById('decreeGo').addEventListener('click',()=>{
+  const L=document.getElementById('letter'),B=document.getElementById('letterBody');
+  L.classList.remove('in');
+  setTimeout(()=>{
+    const txt=DECREES[+document.getElementById('decreeSel').value];
+    B.textContent='';L.classList.add('in');noise({dur:.4,g:.08,f:800,type:'lowpass'});
+    let i=0;const tw=setInterval(()=>{B.textContent=txt.slice(0,++i);if(i>=txt.length)clearInterval(tw);},16);
+  },250);});
+
+/* ═══════════ epitaphs ═══════════ */
+const EPIS=[
+ '"He never learned your name."','"The cell is swept. The next smith arrives Tuesday."',
+ '"Your tools were melted down. Waste nothing — his motto."','"The guards drew lots for your bench."',
+ '"The kitchens went quiet for a day. He noticed, and hated it."','"Half the locks stood open. The King has them reforged twice as thick."',
+ '"One lock from the sky. The Friend left a candle burning anyway."','"He keeps the unfinished Masterwork on his desk. He tells visitors it frightens him."',
+];
+const epiR=document.getElementById('epiRange');
+function setEpi(){const a=+epiR.value;document.getElementById('epiLine').textContent=EPIS[a-1];
+  document.getElementById('epiSub').textContent=`FELL IN ACT ${['I','II','III','IV','V','VI','VII','VIII'][a-1]}`;}
+epiR.addEventListener('input',setEpi);setEpi();
+
+/* ═══════════ the wall ═══════════ */
+const RUNS=[{n:'first attempt',d:6},{n:'the greedy run',d:11},{n:'died to the Silting',d:29},{n:'so close',d:41},{n:'walked free',d:48,won:true},{n:'again, faster',d:33},{n:'current best',d:48,won:true}];
+const wall=document.getElementById('wall');
+RUNS.forEach((r,gi)=>{
+  const wrap=document.createElement('span');wrap.style.display='inline-block';wrap.style.margin='0 10px 34px 0';
+  const groups=Math.floor(r.d/5),rem=r.d%5;
+  const mkGrp=(n,slash)=>{const g=document.createElement('span');g.className='scratchgrp'+(r.won?' free':'');
+    g.style.setProperty('--rot',(Math.random()*3-1.5)+'deg');
+    for(let i=0;i<n;i++){const s=document.createElement('i');s.className='scratch';s.style.height=(22+Math.random()*7)+'px';g.appendChild(s);}
+    if(slash){const sl=document.createElement('i');sl.className='scratch slash';g.appendChild(sl);}
+    return g;};
+  for(let i=0;i<groups;i++)wrap.appendChild(mkGrp(4,true));
+  if(rem)wrap.appendChild(mkGrp(rem,false));
+  const last=wrap.lastChild;
+  if(r.won){const sun=document.createElement('span');sun.className='sun';sun.textContent='☀';last.appendChild(sun);}
+  const who=document.createElement('span');who.className='who';who.textContent=`${r.n} · ${r.d} days`;last.appendChild(who);
+  wall.appendChild(wrap);});
+</script>
+</body>
+</html>
