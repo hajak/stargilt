@@ -1,7 +1,8 @@
 # StarGilt — Story & Legibility Spec
 
-> **STATUS: PARTS 1 + 2 + KEY ART BUILT** as `chapters-story · v0.12.0-exp` on this branch
-> (2026-08-04; full test suite 70/70 green). Part 3 (card flavor, warden/lock one-liners, deeper
+> **STATUS: PARTS 1 + 2 + KEY ART BUILT** (`v0.12.0-exp`, 2026-08-04) **+ playtest round 1**
+> (`v0.12.1-exp`, 2026-08-05: cold-open every menu PLAY, laptop annotation fix, lock taunts,
+> death/victory panels, favicon, flavor batch; suite 70/70 green). Part 3 (card flavor, warden/lock one-liners, deeper
 > interstitials) remains open — see §9. Rollback: deploy `main` (tag `stable-v0.11.13`).
 > Author: design conversation with Hampus, 2026-08-04.
 
@@ -214,7 +215,11 @@ Files in `art/` (served statically; `.jpg`/`.webp` added to server.js MIME):
   backdrop via `#startmenu::before` with a radial mask — a missing file degrades to the gradient base).
   The chained smith striking a radiant star on the anvil; the crowned king's silhouette looming above.
 - **`art/emblem.png`** (1024 master) + **`art/emblem-512.png`** — hammer breaking a chain link, star at the
-  break, crown behind. Usable as favicon/OG/store badge (not yet wired anywhere).
+  break, crown behind. **Wired as favicon + apple-touch-icon** (v0.12.1-exp).
+- **`art/death.png/.jpg`** (v0.12.1-exp) — the chained cell door, forge-light dying, the dropped hammer.
+  Masked behind the death screen (`#gameover:not(.win)::before`, opacity .3).
+- **`art/victory.png/.jpg`** (v0.12.1-exp) — broken shackles + snapped chain on the anvil, the star-bright
+  masterwork, the open door in golden light. Glows under the victory ledger (`#debrief::before`, opacity .18).
 
 **Regeneration prompts** (for Midjourney/higher-quality redo — both landed on the first attempt with
 gpt-image-1, so these are proven):
@@ -244,9 +249,15 @@ gpt-image-1, so these are proven):
 Each step: edit index.html → `cp` chapters.html → `cmp` → `cd tests && npm test` → deploy → prod-verify → commit.
 
 ## 9. Remaining work (Part 3 — story depth; open on this branch)
-- **Card flavor** (`DB[*].flavor`, ~60 one-liners) — thread the prison/king/freedom world through over time.
-- **Per-lock menace lines** — one short line per Aspect in the boss intro (the lock "speaking").
-- **Death/victory art panels** (§7b prompts 4) if wanted; wire `emblem` as favicon/OG.
+- ✅ **Per-lock menace lines** (v0.12.1-exp) — each lock speaks in the King's voice (`taunt` field on BOSSES,
+  rendered as `.bi-taunt` in the boss intro). Rank-ups count the chain: "LINK N OF 9 BROKEN".
+- ✅ **Death/victory art panels + favicon** (v0.12.1-exp) — see §7b.
+- ✅ **Card flavor, first batch** (v0.12.1-exp) — 10 rewritten to carry the fiction (spark, coin, tidewake,
+  kindling, tithe, broker, caravan, pyrebloom, zealot, midas); the remaining ~50 already fit the world or
+  await a later pass.
+- **Cold-open cadence** (v0.12.1-exp): plays on EVERY menu PLAY (skippable); restart paths bypass the menu
+  so back-to-back runs never re-see it. Laptop fix: inspector annotations get true widths (width:max-content)
+  and stack below the card at ≤1080px.
 - **The gate page** (server.js "Doors of Durin") could become the cell door — outside the game, optional.
 - **Playtest verdict**: run the experiment with testers; watch /admin (build `chapters-story · v0.12.0-exp`
   separates its telemetry). Then merge → main or roll back per §0.
