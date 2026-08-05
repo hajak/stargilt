@@ -1078,3 +1078,11 @@ From the feedback JSON (15 keep / 5 tweak / 2 cut / 1 solo test):
 - [x] v0.13.2: bark holds 7.5s; knock louder + boss boom waits 2.3s (knocks land in silence); chain-break foley reworked (clunk + shear + ringing links, no noise burst); king's hand .36→.52 + deeper creep; cell frame + tithe links visibly stronger. CUT: per-lock timbres (bossAccent), menu wall (#smwall).
 - [x] v0.13.3: SOLO commit — END TURN → PRESENT THE WORK (button, resets, coach, hint, Grimoire XI). Revert this one commit to restore.
 - [x] 70/70 green both builds; deployed v0.13.3.
+
+## Round 65 — v0.13.5-exp: six quick asks (2026-08-05 evening)
+- [x] COLD OPEN = GRAPHIC NOVEL: each beat rides a full-bleed art panel with Ken Burns drift (cell door → chained smith → tyrant → broken shackles → title); beats 2.3s; click skips; reduced-motion = one still.
+- [x] Start-menu anvil silhouette removed.
+- [x] Cell frame vignette + tithe chain links removed ("doesn't look right"); the window stays.
+- [x] KING SPEAKS ON A NOTE: barks now arrive as an aged-parchment slip with his wax mark (floating text got missed).
+- [x] OLD PAPER RULE: shared fiber+aging texture on king note / decrees / rank notice — never pure white.
+- [x] Build stamp moved from board corner → foot of pause menu; SOUND gets RESET TO DEFAULT.
