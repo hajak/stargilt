@@ -1052,3 +1052,17 @@ Strong-player scores ran the whole mid at 4-10× the tithe (ideal 1.0-1.4×). Us
 - [x] ART (gpt-image-1 round 3): art/king.jpg (tyrant, throne, hand out, chains) behind boss intro, fail-end confirm, Boon, Master-Relic draft; victory.jpg behind the Honor Roll; cover.jpg behind trial intro + farewell.
 - [x] GATE OFF: server.js SG_GATE default ''→ open playtest (set SG_GATE on Railway to re-arm).
 - [x] Tests 70/70 green; chapters.html synced.
+
+
+## Round 62 — v0.13.0-exp: THE STORY LAYER (2026-08-05, branch forged-in-chains)
+The full tasks/story-depth-proposal.html build, everything except the END TURN rename. Rollback anchors pushed to GitHub: v0.12.2-exp + stable-v0.11.13.
+- [x] THREE VOICES: kingSpeaks (.voiceline) + KING_BARKS grammar (3 act-bands × 4 perf-bands × 3 — he arcs from bored to afraid); friendWhispers (.whisper toast + new art/friend.jpg): restock notes, charm arrival/shatter, act-V/VI beats, victory's only signed line (Firsts-gated).
+- [x] A PLACE: #cellwindow (barred sky per act, red dawn at VIII), #cellframe vignette, chain-link tithe plaque, the chapter ribbon = THE CHAIN (8 lock SVGs; felled shackles hang open, gold).
+- [x] AN ARC: decrees under the door after each lock (auto-pocket ~4s, click-through; lock IV names the player; lock VII carries the Friend's scrawl); death epitaphs by act; X2 predecessors from the live roll on the death screen.
+- [x] DAYS NOT TURNS everywhere player-facing (persistence test updated to 'day N').
+- [x] NAME ×3 (reserved): decree IV · Masterwork taunt · victory ledger.
+- [x] SOUND: kingMotif demand/boss/death(major-third)/free(inverted); friendBox (music box; shatter = flattened); chainBreak on every bossDefeat; knock before boss intros; Ambience (wind + drips, −30dB, busy/hidden/mute-aware); AudioFX.wallFlt = through-the-wall lowpass (menu/pause/decree).
+- [x] MUSIC: act arc EARLY/CH/LATE chord tables swapped at bar seams (boss ALT still wins); per-lock bossAccent timbres (8); the WORKSONG gated on Heat .7/.62, reprised free at the victory.
+- [x] MEMORY: #smwall — last 7 runs scratched into the start menu, ☀ where a run walked free.
+- [x] King's hand creeps on boss intros; rank-ups = parchment woodcut notice; 19 flavors rewritten to name the world.
+- [x] Tests 70/70 green; chapters.html synced; deployed.

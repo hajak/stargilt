@@ -18,7 +18,7 @@ export default async function ({ page, ok, errs }) {
   await page.waitForFunction(() => document.querySelector('#sm-continue'), { timeout: 15000 }).catch(() => {});
   await new Promise(r => setTimeout(r, 500));
   const menu = await page.evaluate(() => ({ shown: !document.querySelector('#sm-continue').hidden, note: document.querySelector('#sm-continue-note').textContent }));
-  ok(menu.shown && new RegExp('turn ' + preTurn).test(menu.note), `CONTINUE offered for the mid-run save (${menu.note})`);
+  ok(menu.shown && new RegExp('day ' + preTurn).test(menu.note), `CONTINUE offered for the mid-run save (${menu.note})`); // v0.13-exp: turns are DAYS in the fiction
 
   await page.evaluate(async () => {
     const w = ms => new Promise(r => setTimeout(r, ms));
