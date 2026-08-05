@@ -14,10 +14,9 @@ const ADMIN_KEY = process.env.SG_ADMIN_KEY || '';
 const GEO_OFF = process.env.GEO_OFF === '1';
 const MAX_BODY = 8 * 1024; // telemetry beacons are tiny; reject anything larger
 
-// Playtest gate: the game pages are locked behind a shared password ("Mellon" by default — the elvish word for
-// "friend", per the Doors of Durin). Friends who know the word get in; anyone else who finds the URL is turned away
-// BEFORE the game HTML is ever sent. Set SG_GATE='' to disable, or SG_GATE=<word> to change the password.
-const GATE_PASSWORD = process.env.SG_GATE === undefined ? 'Mellon' : process.env.SG_GATE;
+// Playtest gate — OFF by default (v0.12.2-exp: open playtest, no password). Set SG_GATE=<word> to re-arm it:
+// the game pages then lock behind that shared password ("Speak, friend, and enter" page) BEFORE any HTML is sent.
+const GATE_PASSWORD = process.env.SG_GATE === undefined ? '' : process.env.SG_GATE;
 const GATE_ON = GATE_PASSWORD !== '';
 const GATE_TOKEN = crypto.createHash('sha256').update('sg-gate::' + GATE_PASSWORD).digest('hex').slice(0, 32); // cookie value; never the plaintext
 

@@ -1037,3 +1037,18 @@ Strong-player scores ran the whole mid at 4-10× the tithe (ideal 1.0-1.4×). Us
 - [x] Client (finishScores): one-per-player board + a .hs-reject "won't enter the roll" note when a run doesn't beat your best; returns {entered}; debrief adds the note for a won-but-not-best run (no false NEW BEST). MY RUNS history untouched.
 - [x] Tests: scores.test.mjs (node unit, 8) + hiscore.test.mjs (browser, 8). Suite now 10 files / 70 assertions, all green.
 - Deployed + prod-verified (chapters · v0.11.13).
+
+
+## Round 61 — v0.12.2-exp: playtest round 2 on FORGED IN CHAINS (2026-08-05, branch forged-in-chains)
+13-item batch from Hampus's playtest:
+- [x] Grimoire "Reading a Card" overlap fixed STRUCTURALLY: #inspect.annotate reserves a right panel lane (padding-right:min(400px,36vw)), the tutor panel pins to the right edge (was right+150 clamped INTO the annotations on laptops), stacked-list breakpoint 1080→1240. Verified headless at 1100/1440/1920 — zero rect intersections.
+- [x] Menu de-explained: sm-note subtitles removed (PLAY/LEARN/ANALYTICS); CONTINUE keeps its dynamic Act/turn/★ line; boon DECLINE trimmed.
+- [x] Fail-end confirm is context-aware: nothing playable → "THE HAND IS SPENT / Nothing left to play. / GO BACK / FACE THE KING" (no more surprised tone when the hand is empty).
+- [x] FORGE COST NO LONGER MERGES: forgedDefOf keeps base cost (was +3/tier) — two copies → twice the power, same cost. Undermarket ⁂-ware depth filter compensates by tier. Communicated: one-time post-forge slam (Firsts 'forgecost'), inspector note, Grimoire IX.
+- [x] Bank-style numbers: global fmtN (thousands separators) across tithe HUD, tally equation, floats, honor roll (right-aligned tabular), death stats, boss ledger, analytics, HUD counters.
+- [x] STORY: locks belong to bosses ALONE. Ranks renamed to the LEGEND ladder (The Shackled → The King's Curiosity → … → The Kingbreaker → The Unbound Eternal) — no more "One Link Broken" at 80★. Every boss defeat slams "THE <ORD> LOCK BREAKS · N REMAIN"; Masterwork adds "THE LAST LOCK BREAKS — THE CHAINS FALL"; cold-open plants "EIGHT LOCKS HOLD YOUR CHAINS. BREAK EVERY ONE."; feast "FEEDS"→"IS SATED"; Grimoire I king-voiced.
+- [x] Dead-hand mulligan reads as a relent (the boss-entry "deal→vanish→redeal" video): hand lands 650ms, verdict slams, cards fly BACK to the deck pile, then redeal. Logic unchanged.
+- [x] Death screen = NEW RUN / QUIT (quit reloads without the restart flag → start menu). Trials: TRY AGAIN / QUIT.
+- [x] ART (gpt-image-1 round 3): art/king.jpg (tyrant, throne, hand out, chains) behind boss intro, fail-end confirm, Boon, Master-Relic draft; victory.jpg behind the Honor Roll; cover.jpg behind trial intro + farewell.
+- [x] GATE OFF: server.js SG_GATE default ''→ open playtest (set SG_GATE on Railway to re-arm).
+- [x] Tests 70/70 green; chapters.html synced.
