@@ -1086,3 +1086,12 @@ From the feedback JSON (15 keep / 5 tweak / 2 cut / 1 solo test):
 - [x] KING SPEAKS ON A NOTE: barks now arrive as an aged-parchment slip with his wax mark (floating text got missed).
 - [x] OLD PAPER RULE: shared fiber+aging texture on king note / decrees / rank notice — never pure white.
 - [x] Build stamp moved from board corner → foot of pause menu; SOUND gets RESET TO DEFAULT.
+
+## Round 66 — v0.13.6-exp: coherence playthrough (2026-08-05 night)
+Full scripted playthrough (boot → tally → boss clear → decree → draft → charm-forgiven boss → death → victory), screenshots at every seam.
+- [x] MENU FLASH fixed: PLAY hides the menu before the cold-open panels; the fade reveals the board.
+- [x] Boss-intro guard: fast FACE IT no longer leaves the delayed boom/motif firing over the board.
+- [x] KING PAID IN TREASURE: ladder → PAID / COUNTS IT TWICE / THE VAULTS SWELL / MORE THAN HIS VAULTS CAN HOLD; HUD drops last "tithe" strings; Grimoire X = The King's Demand.
+- [x] CHARM AT A BOSS IS A BEAT: "«BOSS» STANDS — THE LOCK HOLDS" + King's note; NEW state.locksBroken (saved as lk) — forgiven locks stay CLOSED + rust on the chain (verified: lk [1], held ribbon).
+- [x] Relic draft header → THE BROKEN LOCK YIELDS ITS SPOILS; decree waits 900ms for the lock slam to finish; debrief plural fix (1 LOCK BROKEN).
+- [x] Verified in playthrough: decree+draft sequence, Masterwork name taunt, day-48 death epitaph, NEW RUN/QUIT, victory ledger "HAMPUS WALKS FREE". 70/70 green.
