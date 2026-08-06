@@ -76,5 +76,37 @@ export default async function ({ page, ok, errs }) {
   });
   ok(abandoned.before && abandoned.after === null, `menu PLAY abandons the parked run the moment it is chosen`);
 
+  // ── v0.13.10-exp: THE LEFTOVER SWEEP. v0.13.9 stopped the game creating phantom saves but never swept
+  //    the one already in localStorage — which kept lighting CONTINUE for a run that was never played.
+  //    The load path now enforces the write path's contract, and DELETES what fails it. ──
+  const plant = (save) => page.evaluate(async (save) => {
+    localStorage.setItem('ch-sg-save', JSON.stringify(save));
+    const offered = !!loadSave();
+    return { offered, left: localStorage.getItem('ch-sg-save') };
+  }, save);
+  const base = { v: 1, name: 'Claude', gold: 6, glory: 0, rank: 0, focus: 1, buys: 1, tithe: 6,
+                 deck: ['coin'], discard: [], relics: [], commissions: [], market: [{ id: 'coin', remaining: 4 }] };
+
+  const seed = await plant({ ...base, build: 'chapters-story · v0.13.8-exp', turn: 1, ts: Date.now() - 36e5 });
+  ok(!seed.offered && seed.left === null, `the v0.11.11 turn-1 pre-deal seed is rejected AND swept — no phantom CONTINUE`);
+
+  const old = await plant({ ...base, build: 'chapters-story · v0.13.8-exp', turn: 9, glory: 300, ts: Date.now() - 36e5 });
+  ok(!old.offered && old.left === null, `a run saved under older RULES is retired, not resumed into new ones`);
+
+  const unstamped = await plant({ ...base, turn: 9, glory: 300, ts: Date.now() - 36e5 });
+  ok(!unstamped.offered && unstamped.left === null, `an unstamped save is treated as pre-contract`);
+
+  const current = await plant({ ...base, build: await page.evaluate(() => BUILD), turn: 9, glory: 300, ts: Date.now() - 36e5 });
+  ok(current.offered && current.left !== null, `a save from THIS build is kept and offered — the sweep is not indiscriminate`);
+
+  // ── and the CONTINUE line says when you left it, so an old run is never a mystery ──
+  const note = await page.evaluate(async () => {
+    const w = ms => new Promise(r => setTimeout(r, ms));
+    document.querySelector('#sm-continue').hidden = true;
+    initStartMenu(); await w(80);
+    return { hidden: document.querySelector('#sm-continue').hidden, text: document.querySelector('#sm-continue-note').textContent };
+  });
+  ok(!note.hidden && /left .+ago|left yesterday|left just now/.test(note.text), `CONTINUE names the run AND when it was left (${note.text})`);
+
   ok(errs.length === 0, `no page errors (${errs.length}${errs.length ? ': ' + errs[0] : ''})`);
 }

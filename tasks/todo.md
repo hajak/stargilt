@@ -1123,3 +1123,9 @@ Full scripted playthrough (boot → tally → boss clear → decree → draft �
 - [x] (8) DEAD HAND = NO DRAW — one clause, readable off the Coalturner (was "cannot dig nor pay"). tests/deadhand.test.mjs. WATCH: ~36% of opening 5-card hands from the 13-card start deck hold no Tidewake, so the relic will fire often early — that is the protection asked for, but the fire rate is now in the difficulty log (openDraw).
 - [x] (9) PLAY·BUY·PRESENT strip REMOVED; in its place, until the first lock breaks, presenting a PAID day with an unspent ⚒ asks "Don't you want to buy anything?" once. Never stacks with the fail-confirm (else-branch).
 - [x] Suite grew 73 → 104 assertions across 12 files, all green.
+
+## Round 71 — v0.13.11-exp: the leftover sweep (2026-08-06)
+- [x] "When I open the game now, it says CONTINUE. How?" — REPRODUCED headlessly: a save written by v0.13.8 with turn:1 (the v0.11.11 pre-deal seed) still loads on v0.13.10 and shows "Act 1 · day 1 · 0 ★". v0.13.9 stopped the game CREATING those saves but never swept the one already in localStorage — loadSave() had no lower turn bound and no build check, so every cold load re-offered it.
+- [x] FIX at the load path (it must enforce the write path's contract): loadSave() now rejects AND DELETES (a) turn<2 saves — impossible to write since v0.13.9, so their existence proves they predate the fix — and (b) saves stamped older than SAVE_CONTRACT=v0.13.9, played under different rules (burn payouts, dead-hand trigger, charm-at-a-lock). Self-healing: one load and the junk is gone.
+- [x] CONTINUE now says when you left it ("· left 2 days ago") — an unrecognised CONTINUE in a one-active-run game is alarming; a date makes it a fact about your week.
+- [x] 5 new persistence assertions incl. "a save from THIS build is still kept" (the sweep is not indiscriminate). Suite 104 → 109, all green.
