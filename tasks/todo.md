@@ -1111,3 +1111,15 @@ Full scripted playthrough (boot → tally → boss clear → decree → draft �
 - [x] PROVEN (headless): victory + death both clear the save — no CONTINUE after a finished run. The phantom CONTINUE = the v0.11.11 turn-1 pre-deal seed (NEW RUN → leave untouched → resurrectable unplayed run). Seed removed; saves begin at the first PRESENTED work (guard back to turn<2). Persistence test rewritten to the new contract.
 - [x] Trial deaths no longer delete the parked chapter run's save (clearRun !inTrial()-gated).
 - [x] DEAD HAND redefined per user: dead = can NEITHER dig (no draw/❖) NOR plausibly pay (playable ★ ×3 < demand; openSnap.pot). Day-1 coins ≠ dead; the same hand vs 1,872 = dead. Coalturner texts updated. 73/73 green.
+
+## Round 70 — v0.13.10-exp: nine playtest notes (2026-08-06)
+- [x] (1) BURN CANCEL: the zoom's "CANCEL" only backed out of that card and left the furnace lit — that IS the "Burn text still under the cards". Exits renamed to what they do: PICK ANOTHER (furnace stays lit) / CANCEL BURN (puts it out). Covered by tests/burn.test.mjs.
+- [x] (2) BURN IS A BUILD: ① fuel decides the second payment (Dross → +2⬤, any other card → +1❖); ② the day's streak multiplies ★ (×1/×1.5/×2, "THE FURNACE ROARS"); ③ THE ASH LADDER at 4/9/16 burned → +1 base ★ / +1 ❖ / +0.5× MULT, permanent, paid into the same buckets relics use (no display can drift from the tally). Registered in difficultyConfig; telemetry logs burnedToday + ashRungs.
+- [x] (3) A CHARM AT A LOCK NO LONGER PASSES IT — the day REPEATS (same Aspect, same demand, fresh hand); the intro re-enters with IT STILL STANDS / FACE IT AGAIN; forgiven locks still count for nothing.
+- [x] (4) CONTINUE latched: clearRun→endRun sets runOver so nothing in flight can re-save a finished run; menu PLAY abandons a parked run at the click. Could NOT reproduce a stale CONTINUE on 0.13.9 (the seed bug it fixed shipped only minutes before the report) — hardened + pinned by 4 new persistence assertions.
+- [x] (5) HONOR ROLL: the local board was the loading fallback under THE WORLD — that was the "flashes My Runs" bug. First open now says "Consulting the roll…"; only a failed answer falls back.
+- [x] (6) "— R." removed from decree I: an initial for a King the game never names (letterhead + seal already sign it).
+- [x] (7) THE EMBERHEART COMES FROM THE MARKET: shelf lit → a copy flies to the bench → THEN it is named. Stock untouched, so the rack still offers 3 buyable relics (asserted in smoke).
+- [x] (8) DEAD HAND = NO DRAW — one clause, readable off the Coalturner (was "cannot dig nor pay"). tests/deadhand.test.mjs. WATCH: ~36% of opening 5-card hands from the 13-card start deck hold no Tidewake, so the relic will fire often early — that is the protection asked for, but the fire rate is now in the difficulty log (openDraw).
+- [x] (9) PLAY·BUY·PRESENT strip REMOVED; in its place, until the first lock breaks, presenting a PAID day with an unspent ⚒ asks "Don't you want to buy anything?" once. Never stacks with the fail-confirm (else-branch).
+- [x] Suite grew 73 → 104 assertions across 12 files, all green.

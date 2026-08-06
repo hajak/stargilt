@@ -4,6 +4,19 @@ export const name = 'smoke';
 
 export default async function ({ page, ok, errs }) {
   await bootGame(page, { fresh: true });
+
+  // v0.13.10-exp: the opening gift comes FROM the Undermarket's relic shelf — and does NOT deplete it.
+  // The rack must still offer three buyable relics after the charm lands on your bench.
+  const open = await page.evaluate(() => ({
+    rack: state.market.filter(s => s.rack && s.def && s.remaining > 0).length,
+    charmInStock: state.market.some(s => s.rack && s.def && s.def.mercyCharge && s.remaining > 0),
+    bench: state.relics.filter(r => r.def.mercyCharge).length,
+    hintStrip: !!document.querySelector('#hint'),
+  }));
+  ok(open.bench === 1 && open.charmInStock, `the gifted Emberheart sits on the bench AND is still stocked on the shelf it came from`);
+  ok(open.rack === 3, `the relic shelf still offers three relics to buy (${open.rack})`);
+  ok(!open.hintStrip, `the standing PLAY · BUY · PRESENT strip is gone from the board`);
+
   const g0 = await page.evaluate(() => __af.glory);
   // A no-buy driver may occasionally double-miss and die on an unlucky draw — that's driver variance,
   // not a game bug, so we assert the game PLAYS real turns + scores + renders coherently, tolerating a death.

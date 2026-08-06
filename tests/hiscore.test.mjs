@@ -33,5 +33,26 @@ export default async function ({ page, ok, errs }) {
   ok(/newbest/.test(r.high.html) && !/hs-reject/.test(r.high.html), `the new best takes the slot (NEW BEST title, no reject note)`);
   ok(/hs-row me/.test(r.high.html) && /900\s*★/.test(r.high.html), `the board highlights your new best (900★)`);
 
+  // ── v0.13.10-exp: THE WORLD must never borrow MY RUNS while it loads. That fallback WAS the
+  //    "it flashes My Runs, then shows The World" bug — the same rows under the wrong heading. ──
+  const roll = await page.evaluate(async () => {
+    const w = ms => new Promise(r => setTimeout(r, ms));
+    localStorage.setItem('ch-af-scores', JSON.stringify([{ g: 777, t: 30, r: 'Master Smith', d: '2026-01-01', n: 'Claude' }]));
+    openHiscore(); await w(50);
+    hsGlobalTop = null; hsLoading = true; renderHiscore();      // the state a first open holds while asking
+    const loading = { html: document.querySelector('#hs-body').innerHTML, tab: document.querySelector('.hs-tab.on').dataset.hstab };
+    hsGlobalTop = [{ g: 4000, t: 48, r: 'Kingbreaker', d: '2026-02-02', n: 'Someone' }]; hsLoading = false; renderHiscore();
+    const world = document.querySelector('#hs-body').innerHTML;
+    hsTab = 'local'; renderHiscore();
+    const mine = document.querySelector('#hs-body').innerHTML;
+    document.querySelector('#hiscore').classList.remove('on');
+    return { loading, world, mine };
+  });
+  ok(roll.loading.tab === 'global', `opening the honor roll always lands on THE WORLD, whatever tab you left on`);
+  ok(/Consulting/i.test(roll.loading.html) && !/777/.test(roll.loading.html),
+    `while the shared board loads, THE WORLD shows no local rows — nothing to flash away`);
+  ok(/4,?000/.test(roll.world) && !/777/.test(roll.world), `the answer replaces the placeholder with the world's rows`);
+  ok(/777/.test(roll.mine), `MY RUNS still shows this device's own history`);
+
   ok(errs.length === 0, `no page errors (${errs.length}${errs.length ? ': ' + errs[0] : ''})`);
 }

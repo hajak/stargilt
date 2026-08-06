@@ -46,5 +46,35 @@ export default async function ({ page, ok, errs }) {
   });
   ok(cleared === null, `death clears the save (no CONTINUE for a dead run)`);
 
+  // ── v0.13.10-exp THE LATCH: once a run has ended, NOTHING may write its save back. A straggling
+  //    tally, a queued await — any late saveRun() after death is the phantom CONTINUE the player saw. ──
+  const latched = await page.evaluate(async () => {
+    const w = ms => new Promise(r => setTimeout(r, ms));
+    __af.gameOver = false; __af.turn = 9;   // pretend a late beat resumed and tried to persist
+    saveRun(); await w(50);
+    const wrote = localStorage.getItem('ch-sg-save');
+    __af.gameOver = true;
+    return wrote;
+  });
+  ok(latched === null, `a late saveRun() after the run ended writes nothing — the finished run cannot come back`);
+
+  // ── and the reopen a player actually does: cold load after a finished run offers no CONTINUE ──
+  await page.evaluate(() => { try { sessionStorage.clear(); } catch (e) {} });
+  await page.reload({ waitUntil: 'networkidle2' });
+  await page.waitForFunction(() => document.querySelector('#sm-continue'), { timeout: 15000 }).catch(() => {});
+  await new Promise(r => setTimeout(r, 600));
+  const after = await page.evaluate(() => ({ hidden: document.querySelector('#sm-continue').hidden, save: localStorage.getItem('ch-sg-save') }));
+  ok(after.hidden && after.save === null, `reopening after a finished run shows NO CONTINUE`);
+
+  // ── menu PLAY abandons a parked run AT THE CLICK (not silently at the new run's own day 2) ──
+  const abandoned = await page.evaluate(async () => {
+    const w = ms => new Promise(r => setTimeout(r, ms));
+    localStorage.setItem('ch-sg-save', JSON.stringify({ v: 1, turn: 7, glory: 400, name: 'Claude', market: [], deck: [], discard: [], relics: [], commissions: [] }));
+    const before = !!localStorage.getItem('ch-sg-save');
+    document.querySelector('#sm-play').click(); await w(300);
+    return { before, after: localStorage.getItem('ch-sg-save') };
+  });
+  ok(abandoned.before && abandoned.after === null, `menu PLAY abandons the parked run the moment it is chosen`);
+
   ok(errs.length === 0, `no page errors (${errs.length}${errs.length ? ': ' + errs[0] : ''})`);
 }
