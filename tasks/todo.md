@@ -1106,3 +1106,8 @@ Full scripted playthrough (boot → tally → boss clear → decree → draft �
 - [x] THE MOMENT SHOWS: hand greys (.deadhand) → "A DEAD HAND — NO FIRE IN IT" (1.4s) → the Coalturner answers from the bench (burst + float) → "TURNS THE HAND — BACK TO THE COALS" → fly-back → redeal.
 - [x] Registered as a difficulty change (difficultyConfig.deadHandMulligan:'relic') — WATCH dead-hand death rate in /admin (v0.11.5 added the default because bricks ended runs).
 - [x] Verified headless: no relic = hand untouched; with relic = full shown sequence. Suite 73/73.
+
+## Round 69 — v0.13.9-exp: one active run + the honest dead hand (2026-08-06)
+- [x] PROVEN (headless): victory + death both clear the save — no CONTINUE after a finished run. The phantom CONTINUE = the v0.11.11 turn-1 pre-deal seed (NEW RUN → leave untouched → resurrectable unplayed run). Seed removed; saves begin at the first PRESENTED work (guard back to turn<2). Persistence test rewritten to the new contract.
+- [x] Trial deaths no longer delete the parked chapter run's save (clearRun !inTrial()-gated).
+- [x] DEAD HAND redefined per user: dead = can NEITHER dig (no draw/❖) NOR plausibly pay (playable ★ ×3 < demand; openSnap.pot). Day-1 coins ≠ dead; the same hand vs 1,872 = dead. Coalturner texts updated. 73/73 green.

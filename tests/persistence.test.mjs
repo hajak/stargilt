@@ -1,17 +1,19 @@
-// Persistence / CONTINUE: a brand-new run is saved from turn 1 (v0.11.11), a mid-run save resumes
-// exactly, and death clears the save. Exercises the real reopen path (fresh sessionStorage).
+// Persistence / CONTINUE (v0.13.9-exp contract: ONE ACTIVE RUN, no save-games): an untouched
+// brand-new run leaves NO save; persistence begins at the first presented work; a mid-run save
+// resumes exactly; death clears the save. Exercises the real reopen path (fresh sessionStorage).
 import { bootGame, playTurns, BASE } from './harness.mjs';
 export const name = 'persistence';
 
 export default async function ({ page, ok, errs }) {
-  // ── a fresh new game writes a turn-1 save BEFORE the first END TURN ──
+  // ── a fresh, untouched new game leaves NO save (no phantom CONTINUE for an unplayed run) ──
   await bootGame(page, { fresh: true });
   const s1 = await page.evaluate(() => { try { return JSON.parse(localStorage.getItem('ch-sg-save')); } catch (e) { return null; } });
-  ok(s1 && s1.v === 1 && s1.turn === 1, `a brand-new run persists a turn-1 save before any END TURN (turn ${s1 && s1.turn})`);
-  ok(s1 && Array.isArray(s1.market) && s1.market.length > 0 && s1.name === 'Claude', `the turn-1 save carries the rolled market (${s1 && s1.market.length}) + name`);
+  ok(s1 === null, `an untouched brand-new run leaves NO save — one active run, no save-games`);
 
-  // ── play a couple turns, then REOPEN (clear sessionStorage = new tab) → CONTINUE resumes the exact run ──
+  // ── play a couple turns (persistence begins at the first END TURN), then REOPEN → CONTINUE resumes ──
   const st = await playTurns(page, 2);
+  const s2 = await page.evaluate(() => { try { return JSON.parse(localStorage.getItem('ch-sg-save')); } catch (e) { return null; } });
+  ok(s2 && s2.v === 1 && Array.isArray(s2.market) && s2.market.length > 0 && s2.name === 'Claude', `after the first presented work the save exists with the market (${s2 && s2.market.length}) + name`);
   const preTurn = await page.evaluate(() => __af.turn), preGlory = await page.evaluate(() => __af.glory);
   await page.evaluate(() => { try { sessionStorage.clear(); } catch (e) {} });
   await page.reload({ waitUntil: 'networkidle2' });
