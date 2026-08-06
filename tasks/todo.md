@@ -1137,3 +1137,11 @@ Full scripted playthrough (boot → tally → boss clear → decree → draft �
 - [x] THE REAL FAILURE WAS THE TEST SUITE: every "no CONTINUE" assertion read `el.hidden` (the property — correctly true the whole time) instead of the rendering. Added harness.onScreen() (computed display + visibility + non-zero box); retargeted every persistence assertion at it; new tests/menu.test.mjs adds a GENERAL guard that walks every [hidden] element and fails if any renders. Verified by reverting the CSS line: fails on exactly those 2 assertions, names sm-continue.
 - [x] LESSON: assert what the player sees, never the attribute that is supposed to cause it. Suite 109 → 119 across 13 files.
 - [x] The v0.13.9–11 save hygiene (latch, leftover sweep, "left 2 days ago") is all real and stays — it just was never the cause.
+
+## Round 73 — v0.13.13-exp: the deep sweep (2026-08-06)
+- [x] 6 finder agents over the whole file (async/races, persistence, scoring math, CSS/visibility, market/bosses, fresh features); 23 raw findings → 14 unique; verifier agents died on session limits so every claim was re-verified by code-trace inline. 16 fixes, 2 refuted.
+- [x] CRITICAL: burn prompts serialize — two trash cards in flight overwrote burnMode; the orphaned pendingEffect froze PRESENT THE WORK forever.
+- [x] MAJORS: faceBossNow busy guard (no leaping out of a failed day); skipBonus saved/restored; SOLD market slots saved as holes (restock paths need somewhere to land); restored boss day reseeds drossSeed + twist re-cloned via bossFor (live() readout back); charm slot flagged + restocks a CHARM (was: anonymous hole → random relic); ash rung 3 joins the tally's mult climb.
+- [x] MINORS: trial-win QUIT bound; ESC no longer declines a Boon; bossFor deep-copies dampColor (Tarnish pick mutated the global config); forged wares respect afterBoss; King's note waits out the boss intro; Coach targets topmost modal + peek; pile-view burn quotes join the streak; combobadge clears the cell window; cellwindow pinned to board edge on ultrawide.
+- [x] tests/sweep.test.mjs pins criticals+majors. Suite 119 → 131 across 14 files, all green.
+- [ ] Publishability review HTML (in progress).
