@@ -1100,3 +1100,9 @@ Full scripted playthrough (boot → tally → boss clear → decree → draft �
 - [x] FACE THE BOSS redesigned per user: clicking ARMS the leap (gold armed button, click again to cancel); it fires only AFTER the work is presented and the tally clears; a missed turn cancels it — no escape hatch. skipToBoss mid-turn exit + BANKED path + pledged-gate deleted.
 - [x] DEAL AUDIT (instrumented dealCards over boot/turns/armed leap/boss/CONTINUE): exactly one hand-deal per turn everywhere; no double-deal anywhere. The "hand dealt again" sightings = the old mid-turn FACE sweep+redeal (now gone) + the mulligan (made legible in v0.12.2).
 - [x] tests/boss.test.mjs rewritten to the queued contract; suite 73/73 green.
+
+## Round 68 — v0.13.8-exp: The Coalturner (2026-08-06)
+- [x] Dead-hand mulligan is NO LONGER a free default — it's a relic: The Coalturner (uncommon, 6⬤, relic-rack pool, "↻ redeals a dead hand"). Without it, a dead hand is simply your hand.
+- [x] THE MOMENT SHOWS: hand greys (.deadhand) → "A DEAD HAND — NO FIRE IN IT" (1.4s) → the Coalturner answers from the bench (burst + float) → "TURNS THE HAND — BACK TO THE COALS" → fly-back → redeal.
+- [x] Registered as a difficulty change (difficultyConfig.deadHandMulligan:'relic') — WATCH dead-hand death rate in /admin (v0.11.5 added the default because bricks ended runs).
+- [x] Verified headless: no relic = hand untouched; with relic = full shown sequence. Suite 73/73.
