@@ -1145,3 +1145,12 @@ Full scripted playthrough (boot → tally → boss clear → decree → draft �
 - [x] MINORS: trial-win QUIT bound; ESC no longer declines a Boon; bossFor deep-copies dampColor (Tarnish pick mutated the global config); forged wares respect afterBoss; King's note waits out the boss intro; Coach targets topmost modal + peek; pile-view burn quotes join the streak; combobadge clears the cell window; cellwindow pinned to board edge on ultrawide.
 - [x] tests/sweep.test.mjs pins criticals+majors. Suite 119 → 131 across 14 files, all green.
 - [x] Publishability review HTML delivered (~/.agent/diagrams/stargilt-publishability.html): verdict = the gap is run-variety, not polish; Act-1 cliff evidenced by two headless runs (both dead day 5, charm day 4, before boss 1); 8 sections; prototype plan w/ kill criteria (cliff fix → ascension → loadouts → daily seed → boss pools/endings/art). Scratch drivers rotated out per test-suite practice.
+
+## Round 74 — v0.13.14-exp: six playtest directives (2026-08-06)
+- [x] (1) NO difficulty selects — THE CLIMB instead: every death opens the King's Ledger dossier (died face: "Not Yet Forged", UN-PAID seal) with the attempts wall (bar per run, gold=won, ember=this fall, ▲=deepest) + THE WORK (top played/bought/burned). The journey is visible at every fall.
+- [x] (2) TAKE BACK — ghost undo beside the menu button; arms only when the play revealed/rolled nothing; exact snapshot restore; closes on buy/forge/present.
+- [x] (3) Cell window → upper-left corner, replacing the .corner.tl flourish; moon rescaled; HUD clears it.
+- [x] (4) 13-term hover glossary + GUIDANCE master switch in pause menu (silences tooltips, concept notes, shopping nudge; LEARN exempt).
+- [x] (5) ANALYTICS gains THE LEDGER OF ATTEMPTS (per-run: day/★/locks/signature/what ended it); pile view gains deck stats strip.
+- [x] (6) Tiered procedural art: uncommon/rare/mythic/master each add scene layers (rays, facets, shards, gold frame). NOTE: illustrated raster art (Aspect portraits etc.) still needs an external art pass — no image generation available in this environment.
+- [x] tests/features.test.mjs pins all six. Suite 131 → 145 across 15 files, all green. Visually verified (corner window, undo btn, death ledger).
