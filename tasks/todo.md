@@ -1095,3 +1095,8 @@ Full scripted playthrough (boot → tally → boss clear → decree → draft �
 - [x] CHARM AT A BOSS IS A BEAT: "«BOSS» STANDS — THE LOCK HOLDS" + King's note; NEW state.locksBroken (saved as lk) — forgiven locks stay CLOSED + rust on the chain (verified: lk [1], held ribbon).
 - [x] Relic draft header → THE BROKEN LOCK YIELDS ITS SPOILS; decree waits 900ms for the lock slam to finish; debrief plural fix (1 LOCK BROKEN).
 - [x] Verified in playthrough: decree+draft sequence, Masterwork name taunt, day-48 death epitaph, NEW RUN/QUIT, victory ledger "HAMPUS WALKS FREE". 70/70 green.
+
+## Round 67 — v0.13.7-exp: Face the Boss = queued intent + deal audit (2026-08-06)
+- [x] FACE THE BOSS redesigned per user: clicking ARMS the leap (gold armed button, click again to cancel); it fires only AFTER the work is presented and the tally clears; a missed turn cancels it — no escape hatch. skipToBoss mid-turn exit + BANKED path + pledged-gate deleted.
+- [x] DEAL AUDIT (instrumented dealCards over boot/turns/armed leap/boss/CONTINUE): exactly one hand-deal per turn everywhere; no double-deal anywhere. The "hand dealt again" sightings = the old mid-turn FACE sweep+redeal (now gone) + the mulligan (made legible in v0.12.2).
+- [x] tests/boss.test.mjs rewritten to the queued contract; suite 73/73 green.
