@@ -30,6 +30,17 @@ export function startServer(repoRoot) {
   return spawn('python3', ['-m', 'http.server', String(PORT)], { cwd: repoRoot, stdio: 'ignore' });
 }
 
+// What the PLAYER actually sees — never the `hidden` PROPERTY. Any author rule that sets `display`
+// beats the UA's `[hidden]{display:none}`, so `el.hidden === true` can describe a fully visible button.
+// That is exactly how #sm-continue shipped visible-for-everyone while the suite reported it hidden
+// (v0.13.11-exp). Assert visibility with this; assert the property never.
+export const onScreen = (page, sel) => page.evaluate((s) => {
+  const el = document.querySelector(s);
+  if (!el) return false;
+  const cs = getComputedStyle(el), r = el.getBoundingClientRect();
+  return cs.display !== 'none' && cs.visibility !== 'hidden' && r.width > 0 && r.height > 0;
+}, sel);
+
 // Boot a chapter run to a playable state. fresh=true clears storage first (a brand-new run);
 // fresh=false keeps localStorage (used to exercise CONTINUE across a reload).
 export async function bootGame(page, { fresh = true, name = 'Claude' } = {}) {

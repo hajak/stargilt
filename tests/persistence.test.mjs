@@ -1,7 +1,7 @@
 // Persistence / CONTINUE (v0.13.9-exp contract: ONE ACTIVE RUN, no save-games): an untouched
 // brand-new run leaves NO save; persistence begins at the first presented work; a mid-run save
 // resumes exactly; death clears the save. Exercises the real reopen path (fresh sessionStorage).
-import { bootGame, playTurns, BASE } from './harness.mjs';
+import { bootGame, playTurns, onScreen, BASE } from './harness.mjs';
 export const name = 'persistence';
 
 export default async function ({ page, ok, errs }) {
@@ -19,7 +19,7 @@ export default async function ({ page, ok, errs }) {
   await page.reload({ waitUntil: 'networkidle2' });
   await page.waitForFunction(() => document.querySelector('#sm-continue'), { timeout: 15000 }).catch(() => {});
   await new Promise(r => setTimeout(r, 500));
-  const menu = await page.evaluate(() => ({ shown: !document.querySelector('#sm-continue').hidden, note: document.querySelector('#sm-continue-note').textContent }));
+  const menu = { shown: await onScreen(page, '#sm-continue'), note: await page.evaluate(() => document.querySelector('#sm-continue-note').textContent) };
   ok(menu.shown && new RegExp('day ' + preTurn).test(menu.note), `CONTINUE offered for the mid-run save (${menu.note})`); // v0.13-exp: turns are DAYS in the fiction
 
   await page.evaluate(async () => {
@@ -63,8 +63,8 @@ export default async function ({ page, ok, errs }) {
   await page.reload({ waitUntil: 'networkidle2' });
   await page.waitForFunction(() => document.querySelector('#sm-continue'), { timeout: 15000 }).catch(() => {});
   await new Promise(r => setTimeout(r, 600));
-  const after = await page.evaluate(() => ({ hidden: document.querySelector('#sm-continue').hidden, save: localStorage.getItem('ch-sg-save') }));
-  ok(after.hidden && after.save === null, `reopening after a finished run shows NO CONTINUE`);
+  const after = { onScreen: await onScreen(page, '#sm-continue'), save: await page.evaluate(() => localStorage.getItem('ch-sg-save')) };
+  ok(!after.onScreen && after.save === null, `reopening after a finished run shows NO CONTINUE — measured on screen, not by the \`hidden\` property`);
 
   // ── menu PLAY abandons a parked run AT THE CLICK (not silently at the new run's own day 2) ──
   const abandoned = await page.evaluate(async () => {
@@ -104,9 +104,11 @@ export default async function ({ page, ok, errs }) {
     const w = ms => new Promise(r => setTimeout(r, ms));
     document.querySelector('#sm-continue').hidden = true;
     initStartMenu(); await w(80);
-    return { hidden: document.querySelector('#sm-continue').hidden, text: document.querySelector('#sm-continue-note').textContent };
+    return { text: document.querySelector('#sm-continue-note').textContent, playPrimary: document.querySelector('#sm-play').classList.contains('primary') };
   });
-  ok(!note.hidden && /left .+ago|left yesterday|left just now/.test(note.text), `CONTINUE names the run AND when it was left (${note.text})`);
+  ok(await onScreen(page, '#sm-continue'), `a real save puts CONTINUE on screen`);
+  ok(/left .+ago|left yesterday|left just now/.test(note.text), `CONTINUE names the run AND when it was left (${note.text})`);
+  ok(!note.playPrimary, `PLAY steps down from primary when CONTINUE is offered — the two states are visibly different`);
 
   ok(errs.length === 0, `no page errors (${errs.length}${errs.length ? ': ' + errs[0] : ''})`);
 }
