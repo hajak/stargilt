@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StarGilt → Steam · The Road to the Store</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Alegreya+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#14101d; --paper:#1c1728; --paper2:#221b31; --border:rgba(232,182,76,.22); --border-soft:rgba(255,255,255,.08);
+  --ink:#ece4d4; --dim:#9b8f7c; --gold:#e8b64c; --gold-bright:#ffd98a; --ember:#ff8a5c; --tide:#7fb8ff; --ok:#7fd49a;
+  --disp:'Fraunces',Georgia,serif; --sans:'Alegreya Sans','Helvetica Neue',sans-serif;
+}
+@media (prefers-color-scheme: light){
+  :root{--bg:#f4eee2; --paper:#fbf7ee; --paper2:#f1e9d8; --border:rgba(140,100,20,.35); --border-soft:rgba(0,0,0,.09);
+  --ink:#2b2318; --dim:#8a7c64; --gold:#a97b17; --gold-bright:#8a6410; --ember:#c2511f; --tide:#2563b0; --ok:#2e7d4f}
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.55;
+  background-image:radial-gradient(900px 500px at 15% -5%, rgba(232,182,76,.07), transparent 60%),
+                   radial-gradient(700px 500px at 95% 100%, rgba(255,110,60,.05), transparent 55%);
+  padding:clamp(16px,4vw,48px)}
+.doc{max-width:880px;margin:0 auto;background:var(--paper);border:1px solid var(--border);border-radius:14px;
+  padding:clamp(22px,4.5vw,54px);box-shadow:0 22px 70px rgba(0,0,0,.35);position:relative}
+.klass{font:800 .6rem/1 var(--sans);letter-spacing:.32em;color:var(--dim);text-transform:uppercase}
+h1{font:700 clamp(1.7rem,4.6vw,2.7rem)/1.1 var(--disp);color:var(--gold-bright);margin:.5rem 0 .4rem;text-wrap:balance}
+.sub{color:var(--dim);font-size:.95rem;max-width:60ch}
+.seal{position:absolute;right:clamp(14px,4vw,44px);top:clamp(18px,4vw,48px);transform:rotate(7deg);
+  border:2px solid var(--ember);color:var(--ember);border-radius:8px;padding:.4rem .7rem;
+  font:800 .62rem/1.25 var(--sans);letter-spacing:.14em;text-align:center;opacity:.9}
+.nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:1.6rem 0 0}
+.num{background:var(--paper2);border:1px solid var(--border-soft);border-radius:10px;padding:.8rem .9rem}
+.num b{display:block;font:700 1.45rem/1.1 var(--disp);color:var(--gold-bright);font-variant-numeric:tabular-nums}
+.num span{font-size:.62rem;font-weight:800;letter-spacing:.16em;color:var(--dim);text-transform:uppercase}
+h2{font:700 1.05rem/1.2 var(--sans);letter-spacing:.24em;color:var(--gold);text-transform:uppercase;
+  margin:2.6rem 0 1rem;padding-bottom:.45rem;border-bottom:1px solid var(--border)}
+.fork{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:640px){.fork{grid-template-columns:1fr}}
+.path{background:var(--paper2);border:1px solid var(--border-soft);border-radius:12px;padding:1rem 1.1rem}
+.path.rec{border-color:var(--border);box-shadow:inset 0 0 0 1px var(--border)}
+.path h3{font:700 1.05rem var(--disp);color:var(--ink);margin-bottom:.4rem}
+.path .tag{display:inline-block;font:800 .56rem/1 var(--sans);letter-spacing:.14em;color:var(--bg);
+  background:var(--gold);border-radius:99px;padding:.28em .7em;margin-left:.4em;vertical-align:2px}
+.path ul{list-style:none;margin-top:.5rem}
+.path li{padding-left:1.1em;position:relative;font-size:.88rem;margin:.3rem 0;color:var(--ink)}
+.path li::before{content:'—';position:absolute;left:0;color:var(--dim)}
+.warn{color:var(--ember);font-weight:700}
+.phase{position:relative;padding:0 0 1.9rem 2.4rem;border-left:2px solid var(--border);margin-left:.6rem}
+.phase:last-of-type{border-left-color:transparent}
+.phase::before{content:attr(data-n);position:absolute;left:-1.05rem;top:-.15rem;width:2rem;height:2rem;border-radius:50%;
+  background:var(--paper);border:2px solid var(--gold);color:var(--gold-bright);
+  font:700 .95rem/1.75rem var(--disp);text-align:center}
+.phase h3{font:700 1.25rem var(--disp);color:var(--ink);padding-top:0.05rem}
+.meta{font-size:.72rem;font-weight:800;letter-spacing:.14em;color:var(--dim);text-transform:uppercase;margin:.15rem 0 .6rem}
+.meta em{font-style:normal;color:var(--ember)}
+.meta i{font-style:normal;color:var(--tide)}
+label.step{display:flex;gap:.6rem;align-items:flex-start;padding:.42rem .55rem;border-radius:8px;cursor:pointer;font-size:.92rem}
+label.step:hover{background:var(--paper2)}
+label.step input{margin-top:.32rem;accent-color:var(--gold);flex:0 0 auto}
+label.step.done{color:var(--dim);text-decoration:line-through;text-decoration-color:rgba(232,182,76,.5)}
+label.step b{color:var(--gold-bright)}
+.note{background:var(--paper2);border-left:3px solid var(--gold);border-radius:0 9px 9px 0;
+  padding:.7rem .9rem;font-size:.85rem;color:var(--ink);margin:.7rem 0 0}
+.note.red{border-left-color:var(--ember)}
+.sizes{width:100%;border-collapse:collapse;font-size:.85rem;margin-top:.5rem}
+.sizes th{font:800 .6rem/1.4 var(--sans);letter-spacing:.14em;color:var(--dim);text-transform:uppercase;text-align:left;padding:.3rem .5rem;border-bottom:1px solid var(--border)}
+.sizes td{padding:.34rem .5rem;border-bottom:1px solid var(--border-soft)}
+.sizes td:nth-child(2){font-variant-numeric:tabular-nums;color:var(--gold-bright);font-weight:700;white-space:nowrap}
+.foot{margin-top:2.6rem;padding-top:1rem;border-top:1px solid var(--border);font-size:.8rem;color:var(--dim)}
+.foot a{color:var(--tide);text-decoration:none}
+.foot a:hover{text-decoration:underline}
+.progress{position:sticky;top:0;background:var(--paper);z-index:5;padding:.55rem 0 .4rem;margin-bottom:-.4rem}
+.pbar{height:6px;border-radius:4px;background:var(--paper2);overflow:hidden;border:1px solid var(--border-soft)}
+.pfill{height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--ember));transition:width .35s}
+.plabel{font-size:.62rem;font-weight:800;letter-spacing:.16em;color:var(--dim);margin-bottom:.3rem;text-transform:uppercase}
+@media print{.doc{box-shadow:none;border:none}body{background:#fff}}
+</style>
+</head>
+<body>
+<div class="doc">
+  <div class="seal">NOT YET<br>FILED</div>
+  <span class="klass">StarGilt · The King's Ledger · Expedition Papers</span>
+  <h1>The Road to the Store</h1>
+  <p class="sub">Every step from “I have a game” to the green Release button — as a working checklist.
+  Your ticks are saved in this browser. Full research with sources lives beside this file in
+  <code>research/steam/</code>.</p>
+
+  <div class="nums">
+    <div class="num"><b>$100</b><span>total hard cost*</span></div>
+    <div class="num"><b>~1 week</b><span>actual work</span></div>
+    <div class="num"><b>5–8 wks</b><span>calendar (mostly waiting)</span></div>
+    <div class="num"><b>0</b><span>certificates (win + linux)</span></div>
+  </div>
+
+  <div class="progress"><div class="plabel">the climb · <span id="pct">0%</span></div><div class="pbar"><div class="pfill" id="pfill"></div></div></div>
+
+  <h2>Gate 0 · The one decision everything hangs on</h2>
+  <div class="fork">
+    <div class="path rec">
+      <h3>Paid, low tier, + free demo<span class="tag">recommended</span></h3>
+      <ul>
+        <li>e.g. $4.99 — recoups the $100 at ≈200 copies</li>
+        <li>Demo = its own free App ID, <b>no second fee</b></li>
+        <li>Keeps Steam Next Fest meaningful (needs a demo)</li>
+        <li>Can go paid→free later, cleanly</li>
+      </ul>
+    </div>
+    <div class="path">
+      <h3>Free</h3>
+      <ul>
+        <li>$100 is sunk forever (recoup needs $1,000 revenue)</li>
+        <li>No payout/Swedish-tax questions at all</li>
+        <li class="warn">One-way-ish door: free→paid later = support ticket, 1 week public notice, and every free claimer keeps it forever</li>
+      </ul>
+    </div>
+  </div>
+  <div class="note">Also decide now, because they freeze later: the <b>exact name</b>
+  (“StarGilt — Forged in Chains”? — frozen at page review), and <b>launch platforms</b>
+  (recommended: Windows + native Linux; macOS deferred — it's the only platform needing a
+  certificate: Apple notarization, $99/yr).</div>
+
+  <h2>The road, phase by phase</h2>
+
+  <div class="phase" data-n="I">
+    <h3>The Account</h3>
+    <div class="meta">you personally · no company · <i>wait: 2–7 business days</i> · $0</div>
+    <label class="step"><input type="checkbox" data-k="s1a"><span>Register at <b>partner.steamgames.com</b> as <b>Sole Proprietorship</b> under your exact legal name (no “StarGilt Studio” — the name must match your bank and tax papers exactly).</span></label>
+    <label class="step"><input type="checkbox" data-k="s1b"><span>Sign the NDA + Steam Distribution Agreement digitally.</span></label>
+    <label class="step"><input type="checkbox" data-k="s1c"><span>Enter bank details (account-holder name must match) and complete the <b>tax interview</b>: claim the US–Sweden treaty with your <b>personnummer</b> → 0% US withholding.</span></label>
+    <label class="step"><input type="checkbox" data-k="s1d"><span>Wait out identity verification (2–7 business days; have ID ready).</span></label>
+  </div>
+
+  <div class="phase" data-n="II">
+    <h3>Pay the fee — it starts the big clock</h3>
+    <div class="meta"><em>starts the 30-day release clock</em> · $100 (+ possible VAT)</div>
+    <label class="step"><input type="checkbox" data-k="s2a"><span>Buy the <b>$100 app credit</b> (any Steam payment method except wallet funds). The game cannot release sooner than <b>30 days</b> after this — so pay early once decided.</span></label>
+    <label class="step"><input type="checkbox" data-k="s2b"><span>Create the app; tick <b>“This is a free product”</b> OR set the price tier now (Valve reviews pricing in 1–2 days).</span></label>
+  </div>
+
+  <div class="phase" data-n="III">
+    <h3>The Wrapper</h3>
+    <div class="meta">work: 1–2 days · Electron + steamworks.js · $0</div>
+    <label class="step"><input type="checkbox" data-k="s3a"><span>Wrap <b>index.html + art/</b> in Electron; enable the overlay (<code>electronEnableSteamOverlay()</code> + <code>--in-process-gpu</code>); grant WebAudio autoplay; F11 fullscreen.</span></label>
+    <label class="step"><input type="checkbox" data-k="s3b"><span>Save adapter: dual-write the 8 localStorage keys to <b>Steam Cloud via the API</b> (<code>cloud.writeFile</code>) — never Auto-Cloud the LevelDB folder.</span></label>
+    <label class="step"><input type="checkbox" data-k="s3c"><span>Map ~15 achievements from the existing <b>Firsts</b> ledger; publish their definitions in App Admin <b>before</b> testing against the real AppID.</span></label>
+    <label class="step"><input type="checkbox" data-k="s3d"><span>Ship <b>unsigned</b> on Windows (Steam needs no Authenticode; SmartScreen can't fire) and skip Valve's DRM wrapper (their own docs call it trivially removable — and it breaks Electron).</span></label>
+    <label class="step"><input type="checkbox" data-k="s3e"><span>Write the one-page <b>privacy notice</b> (GDPR: the telemetry cid is pseudonymous = personal data; legitimate-interest basis, deletion contact) — link it from the game menu + Steam support URL.</span></label>
+  </div>
+
+  <div class="phase" data-n="IV">
+    <h3>The Store Page</h3>
+    <div class="meta">work: 2–3 days · <i>wait: review 3–5 business days</i> · $0</div>
+    <label class="step"><input type="checkbox" data-k="s4a"><span>Produce the asset pack from one key-art master (title/logo only on capsules — no quotes, no awards):</span></label>
+    <table class="sizes">
+      <tr><th>asset</th><th>size</th><th>note</th></tr>
+      <tr><td>Header capsule</td><td>920×430</td><td>page top</td></tr>
+      <tr><td>Small capsule</td><td>462×174</td><td>logo must survive 120×45</td></tr>
+      <tr><td>Main capsule</td><td>1232×706</td><td>front-page features</td></tr>
+      <tr><td>Vertical capsule</td><td>748×896</td><td>sales layouts</td></tr>
+      <tr><td>Library capsule</td><td>600×900 PNG</td><td>the “box cover”</td></tr>
+      <tr><td>Library hero</td><td>3840×1240 PNG</td><td>center 860×380 safe area, <b>no text</b></td></tr>
+      <tr><td>Library logo</td><td>1280w / 720h PNG</td><td>transparent</td></tr>
+      <tr><td>Screenshots ×5+</td><td>1920×1080+</td><td>real gameplay; capture at 2× DPR (game is 1470×830)</td></tr>
+      <tr><td>Trailer</td><td>1080p H.264 5000+ Kbps</td><td>open on gameplay</td></tr>
+    </table>
+    <label class="step"><input type="checkbox" data-k="s4b"><span>Write the page: 300-char short description, feature bullets, <b>no external links</b> (and never mention the free web version). Tags: Deckbuilding, Roguelike Deckbuilder, Card Game, Singleplayer, Difficult.</span></label>
+    <label class="step"><input type="checkbox" data-k="s4c"><span>Complete the <b>content survey</b> — it locks after approval. AI section: card art is procedural code = not AI; but any AI-assisted <b>store art</b> must be disclosed.</span></label>
+    <label class="step"><input type="checkbox" data-k="s4d"><span>Set release window as <b>month or quarter</b> (not an exact date), then <b>Mark As Ready For Review</b>.</span></label>
+  </div>
+
+  <div class="phase" data-n="V">
+    <h3>Coming Soon</h3>
+    <div class="meta"><em>hard gate: 2 weeks minimum public</em> · wishlists live here</div>
+    <label class="step"><input type="checkbox" data-k="s5a"><span>Page goes public in <b>Coming Soon</b> — the 2-week clock runs (overlapping the 30-day fee clock).</span></label>
+    <label class="step"><input type="checkbox" data-k="s5b"><span>Decide <b>Steam Next Fest</b> — once per game, EVER, pre-release only, needs a public demo; registration closes ~7–8 weeks before a fest. Do not release before deciding.</span></label>
+    <label class="step"><input type="checkbox" data-k="s5c"><span>Optional: Curator Connect — up to 100 curator copies once a build is uploaded.</span></label>
+    <label class="step"><input type="checkbox" data-k="s5d"><span>If paid: configure the <b>launch discount now</b> (max 40%, 7–14 days) — after release the price locks for 30 days.</span></label>
+  </div>
+
+  <div class="phase" data-n="VI">
+    <h3>Build Review → the Button</h3>
+    <div class="meta"><i>wait: 1–5 days (first accounts: budget 2–4 extra weeks)</i></div>
+    <label class="step"><input type="checkbox" data-k="s6a"><span>Upload via SteamPipe; submit for build review. The #1 rejection: <b>“fails to launch through the Steam client”</b> — test the Steam-installed copy, not your dev folder.</span></label>
+    <label class="step"><input type="checkbox" data-k="s6b"><span>All gates green (30 days since fee · 2 weeks Coming Soon · page + build approved) → press <b>Release App</b>. Wishlisters are emailed automatically.</span></label>
+  </div>
+
+  <div class="phase" data-n="VII">
+    <h3>After Launch</h3>
+    <div class="meta">updates are never re-reviewed · deck review is free</div>
+    <label class="step"><input type="checkbox" data-k="s7a"><span>Keep the weekly cadence — <b>post-launch updates skip review entirely</b>.</span></label>
+    <label class="step"><input type="checkbox" data-k="s7b"><span>Steam Deck review comes free (~1 week): expect <b>Playable</b> (mouse game → trackpad). Freeze the branch while it runs; ship a default trackpad Steam Input template.</span></label>
+    <label class="step"><input type="checkbox" data-k="s7c"><span>Keep the web version live as the playtest channel — Cookie Clicker precedent. Steam = stable channel with Cloud + achievements, one shared Railway scoreboard across both.</span></label>
+  </div>
+
+  <div class="foot">
+    *Plus $99/yr Apple Developer only if macOS ships later. Sources &amp; full detail:
+    <a href="README.md">README</a> ·
+    <a href="01-process-and-money.md">process &amp; money</a> ·
+    <a href="02-packaging.md">packaging</a> ·
+    <a href="03-signing-review-drm.md">signing &amp; review</a> ·
+    <a href="04-store-page-assets.md">store assets</a> ·
+    <a href="05-stargilt-specific.md">StarGilt-specific</a> ·
+    <a href="99-decisions-and-open-questions.md">decisions</a>.
+    Researched 2026-08-07 against current Steamworks docs.
+  </div>
+</div>
+<script>
+const KEY='sg-steam-road';
+let st={};try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+const boxes=[...document.querySelectorAll('label.step input')];
+const seal=document.querySelector('.seal');
+function paint(){
+  let done=0;
+  boxes.forEach(b=>{const on=!!st[b.dataset.k];b.checked=on;b.closest('label').classList.toggle('done',on);if(on)done++});
+  const pct=Math.round(done/boxes.length*100);
+  document.getElementById('pfill').style.width=pct+'%';
+  document.getElementById('pct').textContent=pct+'%';
+  seal.innerHTML=pct>=100?'FILED<br>IN FULL':pct>0?'UNDER<br>WAY':'NOT YET<br>FILED';
+  seal.style.borderColor=seal.style.color=pct>=100?'var(--ok)':pct>0?'var(--gold)':'var(--ember)';
+}
+boxes.forEach(b=>b.addEventListener('change',()=>{st[b.dataset.k]=b.checked;try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){};paint()}));
+paint();
+</script>
+</body>
+</html>
