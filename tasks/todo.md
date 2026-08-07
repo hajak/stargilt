@@ -1154,3 +1154,8 @@ Full scripted playthrough (boot → tally → boss clear → decree → draft �
 - [x] (5) ANALYTICS gains THE LEDGER OF ATTEMPTS (per-run: day/★/locks/signature/what ended it); pile view gains deck stats strip.
 - [x] (6) Tiered procedural art: uncommon/rare/mythic/master each add scene layers (rays, facets, shards, gold frame). NOTE: illustrated raster art (Aspect portraits etc.) still needs an external art pass — no image generation available in this environment.
 - [x] tests/features.test.mjs pins all six. Suite 131 → 145 across 15 files, all green. Visually verified (corner window, undo btn, death ledger).
+
+## Round 75 — v0.13.15-exp: the Grimoire greets the first run (2026-08-06)
+- [x] First-ever chapter run (not CONTINUE, not trials) auto-opens the Grimoire; ch-af-tutor-off stamped at open = once ever; pause menu still holds the book. Tutor.seen()/mark() were orphans of the removed old auto-open — rewired.
+- [x] SKIP restyled from dim text to a bordered button beside BEGIN (the way out must read as a real door when the book arrives unasked).
+- [x] harness.onScreen() now checks opacity via checkVisibility({checkOpacity}) — #tutor closes by opacity:0 with its box intact; the old check called a transparent panel "visible". 4 new assertions (opens+SKIP visible / stamped once / SKIP → playable / never again). Suite 145 → 149, green.

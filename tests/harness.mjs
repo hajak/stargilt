@@ -34,11 +34,17 @@ export function startServer(repoRoot) {
 // beats the UA's `[hidden]{display:none}`, so `el.hidden === true` can describe a fully visible button.
 // That is exactly how #sm-continue shipped visible-for-everyone while the suite reported it hidden
 // (v0.13.11-exp). Assert visibility with this; assert the property never.
+// v0.13.15-exp: opacity too — #tutor taught us an overlay can close via opacity:0 while keeping its
+// box, so a display/visibility check alone still lies. checkVisibility({checkOpacity}) walks the
+// ANCESTOR chain, which a hand-rolled computed-style read of one element cannot.
 export const onScreen = (page, sel) => page.evaluate((s) => {
   const el = document.querySelector(s);
   if (!el) return false;
-  const cs = getComputedStyle(el), r = el.getBoundingClientRect();
-  return cs.display !== 'none' && cs.visibility !== 'hidden' && r.width > 0 && r.height > 0;
+  const r = el.getBoundingClientRect();
+  if (r.width <= 0 || r.height <= 0) return false;
+  if (el.checkVisibility) return el.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true });
+  const cs = getComputedStyle(el);
+  return cs.display !== 'none' && cs.visibility !== 'hidden' && +cs.opacity > 0.05;
 }, sel);
 
 // Boot a chapter run to a playable state. fresh=true clears storage first (a brand-new run);

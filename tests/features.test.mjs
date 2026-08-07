@@ -105,5 +105,32 @@ export default async function ({ page, ok, errs }) {
   ok(art.commonLines === 0 && art.mythicLines >= 8 && art.sizeGap > 500,
     `tiered art: a common has NO rays, a mythic has ${art.mythicLines} — and ${art.sizeGap} extra bytes of scene`);
 
+  // ── 7. v0.13.15-exp: the GRIMOIRE greets the very first run — SKIP on screen, once ever ──
+  await page.evaluate(() => {
+    localStorage.clear(); sessionStorage.clear();
+    localStorage.setItem('ch-sg-name', 'Claude'); sessionStorage.setItem('ch-sg-name', 'Claude');
+    localStorage.setItem('sg-learned', '1');               // deliberately NOT ch-af-tutor-off — a true first-timer
+    sessionStorage.setItem('ch-af-restart', '1');
+  });
+  await page.reload({ waitUntil: 'networkidle2' });
+  await page.waitForFunction(() => window.__af && !__af.busy, { timeout: 30000 }).catch(() => {});
+  await page.waitForFunction(() => document.querySelector('#tutor').classList.contains('on'), { timeout: 30000 }).catch(() => {});
+  await new Promise(r => setTimeout(r, 800)); // let the 450ms opacity fade land — visibility is asserted, not the class
+  const grim = { open: await onScreen(page, '#tutpanel'), skip: await onScreen(page, '#tutskip'),
+    marked: await page.evaluate(() => localStorage.getItem('ch-af-tutor-off')) };
+  ok(grim.open && grim.skip, `the first-ever run opens the Grimoire unasked, SKIP visibly on screen`);
+  ok(grim.marked === '1', `the greeting is stamped at open — once ever`);
+  const afterSkip = await page.evaluate(async () => {
+    document.querySelector('#tutskip').click();
+    await new Promise(r => setTimeout(r, 400));
+    return { closed: !document.querySelector('#tutor').classList.contains('on'), playable: !state.busy && !state.gameOver };
+  });
+  ok(afterSkip.closed && afterSkip.playable, `SKIP closes the book and the run is immediately playable`);
+  await page.evaluate(() => { sessionStorage.setItem('ch-af-restart', '1'); });
+  await page.reload({ waitUntil: 'networkidle2' });
+  await page.waitForFunction(() => window.__af && !__af.busy, { timeout: 30000 }).catch(() => {});
+  await new Promise(r => setTimeout(r, 1500));
+  ok(!(await onScreen(page, '#tutpanel')), `the second run starts clean — the book never auto-opens again`);
+
   ok(errs.length === 0, `no page errors (${errs.length}${errs.length ? ': ' + errs[0] : ''})`);
 }
