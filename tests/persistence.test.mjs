@@ -40,7 +40,7 @@ export default async function ({ page, ok, errs }) {
     for (let i = 0; i < 60 && __af.busy; i++) await w(120);
     document.querySelector('#endturn').click(); await w(250);
     const ce = document.querySelector('#confirmend'); if (ce && ce.classList.contains('on')) document.querySelector('#ce-go').click();
-    for (let i = 0; i < 140 && !document.querySelector('#gameover').classList.contains('show'); i++) await w(120);
+    for (let i = 0; i < 140 && !document.querySelector('#debrief').classList.contains('on'); i++) await w(120); // v0.13.16-exp: the ledger IS the death screen
     await w(200);
     return localStorage.getItem('ch-sg-save');
   });

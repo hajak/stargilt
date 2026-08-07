@@ -16,10 +16,11 @@ export default async function ({ page, ok, errs }) {
     playCard(coin);
     for (let i = 0; i < 50 && state.pendingEffects.length; i++) await w(120);
     await w(200);
-    const armed = !!lastUndo && !document.querySelector('#undobtn').hidden;
+    const vis = () => getComputedStyle(document.querySelector('#undobtn')).visibility; // v0.13.16: slot reserved, visibility toggles
+    const armed = !!lastUndo && vis() === 'visible';
     undoLastPlay(); await w(300);
     const after = { hand: state.hand.length, played: state.played.length, gold: state.gold, focus: state.focus, bonus: state.bonusStars, combo: state.combo };
-    return { skip: false, armed, match: JSON.stringify(before) === JSON.stringify(after), btnGone: document.querySelector('#undobtn').hidden };
+    return { skip: false, armed, match: JSON.stringify(before) === JSON.stringify(after), btnGone: vis() === 'hidden' };
   });
   if (!undo.skip) {
     ok(undo.armed, `a consequence-free play arms TAKE BACK (button visible)`);
@@ -76,24 +77,30 @@ export default async function ({ page, ok, errs }) {
     for (let i = 0; i < 60 && state.busy; i++) await w(120);
     document.querySelector('#endturn').click(); await w(300);
     const ce = document.querySelector('#confirmend'); if (ce && ce.classList.contains('on')) document.querySelector('#ce-go').click();
-    for (let i = 0; i < 140 && !document.querySelector('#gameover').classList.contains('show'); i++) await w(150);
-    for (let i = 0; i < 60 && !document.querySelector('#debrief').classList.contains('on'); i++) await w(200);
+    // v0.13.16-exp: ONE death screen — the ledger opens directly; #gameover must stay dark
+    for (let i = 0; i < 200 && !document.querySelector('#debrief').classList.contains('on'); i++) await w(150);
     await w(300);
     const db = document.querySelector('#debrief');
     return {
       opened: db.classList.contains('on'), died: db.classList.contains('died'),
+      gameoverShown: document.querySelector('#gameover').classList.contains('show'),
       title: db.querySelector('.db-title').textContent,
       seal: document.querySelector('#db-seal').textContent.replace(/\s+/g, ''),
+      epitaph: (document.querySelector('#db-epitaph') || {}).textContent || '',
       climbBars: db.querySelectorAll('#db-climb .cl-bar').length,
       curBarIsLast: !!db.querySelector('#db-climb .cl-bar:last-child.cur'),
-      workCols: db.querySelectorAll('#db-work .dw-col').length,
+      sealedStubs: db.querySelectorAll('.db-lock').length,
+      curveSealed: !!db.querySelector('#db-curve .db-lock'),
+      workSealed: !!db.querySelector('#db-work .db-lock'),
       newRunThere: !!document.querySelector('#db-newrun'),
     };
   });
-  ok(ledger.opened && ledger.died, `death opens the full ledger over the death screen (died face on)`);
+  ok(ledger.opened && ledger.died && !ledger.gameoverShown, `death opens the ledger DIRECTLY — one screen, #gameover stays dark`);
   ok(/Not Yet Forged/.test(ledger.title) && /UN-?PAID/.test(ledger.seal), `the death face reads "${ledger.title}" · seal ${ledger.seal}`);
+  ok(/He demanded/.test(ledger.epitaph), `the verdict line lives in the ledger's masthead now`);
   ok(ledger.climbBars === 3 && ledger.curBarIsLast, `THE CLIMB shows every attempt (${ledger.climbBars} bars) with THIS one lit last`);
-  ok(ledger.workCols === 3 && ledger.newRunThere, `THE WORK's three columns render and NEW RUN is a step away`);
+  ok(ledger.curveSealed && ledger.workSealed && ledger.sealedStubs >= 4, `a day-1 death EARNS almost nothing — ${ledger.sealedStubs} pages sealed (curve, autopsy, work, deck…)`);
+  ok(ledger.newRunThere, `NEW RUN is a step away on the ledger itself`);
 
   // ── 6. tiered art: a mythic's SVG carries strictly more scene than a common's ──
   const art = await page.evaluate(() => {
